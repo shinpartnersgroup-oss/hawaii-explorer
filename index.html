@@ -2,1618 +2,1018 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Hawaii Explorer - ハワイ観光ガイド</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="description" content="オアフ島の観光スポット・グルメを写真付きで探せるガイドアプリ。現在地からのルート案内、複数スポットの巡回プランも作成可能。">
+<meta name="theme-color" content="#F06292">
+<meta property="og:title" content="Oahu Explorer - オアフ島観光ガイド">
+<meta property="og:description" content="50以上のスポット＆グルメを写真付きで。Googleマップ連携ルート案内付き。">
+<title>Oahu Explorer - オアフ島完全観光ガイド</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&family=Zen+Maru+Gothic:wght@400;500;700&family=Patrick+Hand&display=swap" rel="stylesheet">
 <style>
-:root {
-  --sun: #FFD93D;
-  --sun-light: #FFF3B0;
-  --ocean: #4FC3F7;
-  --ocean-deep: #0288D1;
-  --ocean-light: #B3E5FC;
-  --palm: #81C784;
-  --palm-dark: #388E3C;
-  --sand: #FFFDE7;
-  --coral: #FF8A65;
-  --coral-light: #FFCCBC;
-  --hibiscus: #F06292;
-  --hibiscus-light: #F8BBD0;
-  --lava: #E64A19;
-  --plumeria: #FCE4EC;
-  --sky: #E3F2FD;
-  --lavender: #E8EAF6;
-  --mint: #E0F2F1;
-  --peach: #FFF3E0;
-  --ink: #455A64;
-  --ink-light: #90A4AE;
-  --sketch-border: 2.5px solid #546E7A;
-  --card-radius: 20px;
-  --shadow-cute: 4px 4px 0 rgba(69,90,100,0.1);
-  --shadow-hover: 6px 6px 0 rgba(69,90,100,0.15);
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --pink:#F06292;--pink-light:#F8BBD0;--pink-bg:#FCE4EC;
+  --blue:#4FC3F7;--blue-deep:#0288D1;--blue-light:#B3E5FC;--blue-bg:#E3F2FD;
+  --green:#81C784;--green-deep:#388E3C;--green-bg:#E8F5E9;
+  --orange:#FF8A65;--orange-light:#FFCCBC;
+  --yellow:#FFD54F;--yellow-light:#FFF8E1;
+  --purple:#BA68C8;--purple-light:#E1BEE7;
+  --ink:#37474F;--ink-light:#78909C;--ink-muted:#B0BEC5;
+  --sand:#FFFDF5;--white:#fff;
+  --radius:16px;--radius-lg:24px;--radius-full:50px;
+  --shadow:0 2px 12px rgba(0,0,0,.08);--shadow-lg:0 8px 30px rgba(0,0,0,.12);
+  --transition:all .25s cubic-bezier(.22,1,.36,1);
 }
-
-* { margin: 0; padding: 0; box-sizing: border-box; }
-
-body {
-  font-family: 'Zen Maru Gothic', sans-serif;
-  background: var(--sand);
-  color: var(--ink);
-  overflow-x: hidden;
-  min-height: 100vh;
-  background-image:
-    radial-gradient(circle at 5% 15%, rgba(240,98,146,0.08) 0%, transparent 40%),
-    radial-gradient(circle at 95% 25%, rgba(79,195,247,0.1) 0%, transparent 40%),
-    radial-gradient(circle at 50% 80%, rgba(255,217,61,0.08) 0%, transparent 40%);
+body{
+  font-family:'Zen Maru Gothic',system-ui,sans-serif;color:var(--ink);
+  background:var(--sand);min-height:100vh;overflow-x:hidden;
+  background-image:radial-gradient(circle at 10% 20%,rgba(240,98,146,.04) 0%,transparent 50%),radial-gradient(circle at 90% 80%,rgba(79,195,247,.05) 0%,transparent 50%);
 }
-
-/* ===== Scrollbar ===== */
-::-webkit-scrollbar { width: 8px; }
-::-webkit-scrollbar-track { background: var(--sand); }
-::-webkit-scrollbar-thumb { background: var(--hibiscus-light); border-radius: 10px; }
-
-/* ===== Sketch Box ===== */
-.sketch-box {
-  border: var(--sketch-border);
-  border-radius: var(--card-radius);
-  position: relative;
-  background: #fff;
-  box-shadow: var(--shadow-cute);
-}
-.sketch-box::before {
-  content: '';
-  position: absolute;
-  inset: -4px;
-  border: 2px dashed rgba(69,90,100,0.12);
-  border-radius: 23px;
-  pointer-events: none;
-}
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-thumb{background:var(--pink-light);border-radius:10px}
+a{color:var(--blue-deep);text-decoration:none}
+button{cursor:pointer;font-family:inherit;border:none;background:none}
+img{display:block;max-width:100%}
 
 /* ===== Header ===== */
-header {
-  text-align: center;
-  padding: 32px 16px 28px;
-  background: linear-gradient(135deg, #F8BBD0 0%, #B3E5FC 50%, #C8E6C9 100%);
-  position: relative;
-  overflow: hidden;
+.header{
+  background:linear-gradient(135deg,#F8BBD0 0%,#B3E5FC 50%,#C8E6C9 100%);
+  padding:28px 16px 32px;text-align:center;position:relative;overflow:hidden;
 }
-header::before {
-  content: '';
-  position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background:
-    radial-gradient(circle at 20% 80%, rgba(255,255,255,0.3) 0%, transparent 30%),
-    radial-gradient(circle at 80% 20%, rgba(255,255,255,0.3) 0%, transparent 30%);
-  animation: shimmer 8s ease-in-out infinite;
+.header::after{
+  content:'';position:absolute;bottom:0;left:0;right:0;height:20px;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 20'%3E%3Cpath d='M0,20Q50,0,100,20Q150,0,200,20Q250,0,300,20Q350,0,400,20Q450,0,500,20Q550,0,600,20Q650,0,700,20Q750,0,800,20Q850,0,900,20Q950,0,1000,20Q1050,0,1100,20Q1150,0,1200,20' fill='%23FFFDF5'/%3E%3C/svg%3E") repeat-x bottom;
+  background-size:600px 20px;
 }
-@keyframes shimmer {
-  0%,100% { transform: rotate(0deg); }
-  50% { transform: rotate(3deg); }
-}
-header::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 24px;
-  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 24'%3E%3Cpath d='M0,24 Q50,0 100,24 Q150,0 200,24 Q250,0 300,24 Q350,0 400,24 Q450,0 500,24 Q550,0 600,24 Q650,0 700,24 Q750,0 800,24 Q850,0 900,24 Q950,0 1000,24 Q1050,0 1100,24 Q1150,0 1200,24' fill='%23FFFDE7'/%3E%3C/svg%3E") repeat-x bottom;
-  background-size: 600px 24px;
-}
-header h1 {
-  font-family: 'Caveat', cursive;
-  font-size: clamp(2.2rem, 7vw, 3.5rem);
-  color: var(--ink);
-  text-shadow: 2px 2px 0 rgba(255,255,255,0.6);
-  letter-spacing: 2px;
-  position: relative;
-  z-index: 1;
-}
-header p {
-  font-family: 'Caveat', cursive;
-  color: var(--ink);
-  font-size: 1.2rem;
-  margin-top: 4px;
-  opacity: .7;
-  position: relative;
-  z-index: 1;
-}
-.header-deco {
-  position: absolute;
-  font-size: 2.2rem;
-  opacity: .4;
-  z-index: 0;
-  animation: float 3s ease-in-out infinite;
-}
-.header-deco:nth-child(1) { top: 10px; left: 10%; animation-delay: 0s; }
-.header-deco:nth-child(2) { top: 15px; right: 8%; animation-delay: .5s; }
-.header-deco:nth-child(3) { bottom: 30px; left: 20%; animation-delay: 1s; }
-.header-deco:nth-child(4) { bottom: 25px; right: 15%; animation-delay: 1.5s; }
-@keyframes float {
-  0%,100% { transform: translateY(0) rotate(0deg); }
-  50% { transform: translateY(-8px) rotate(5deg); }
-}
+.header h1{font-family:'Caveat',cursive;font-size:clamp(2rem,7vw,3.2rem);color:var(--ink);text-shadow:2px 2px 0 rgba(255,255,255,.5);position:relative;z-index:1}
+.header p{font-family:'Caveat',cursive;color:var(--ink);opacity:.6;font-size:1.1rem;position:relative;z-index:1}
+.header-icons{position:absolute;inset:0;pointer-events:none;z-index:0}
+.header-icons span{position:absolute;font-size:1.8rem;opacity:.25;animation:hfloat 4s ease-in-out infinite}
+.header-icons span:nth-child(1){top:8px;left:8%;animation-delay:0s}
+.header-icons span:nth-child(2){top:12px;right:6%;animation-delay:.7s}
+.header-icons span:nth-child(3){bottom:28px;left:15%;animation-delay:1.2s}
+.header-icons span:nth-child(4){bottom:24px;right:12%;animation-delay:1.8s}
+@keyframes hfloat{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-6px) rotate(5deg)}}
 
 /* ===== Location Bar ===== */
-.location-bar {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 14px 18px;
-  margin: 18px 16px 10px;
-  border-radius: 50px;
-  background: linear-gradient(135deg, #E8F5E9, #fff, #E3F2FD);
-  border: 2px solid var(--palm);
-  box-shadow: var(--shadow-cute);
-  cursor: pointer;
-  transition: all .2s;
+.loc-bar{
+  display:flex;align-items:center;gap:10px;padding:12px 16px;margin:14px 16px 8px;
+  border-radius:var(--radius-full);background:var(--white);border:2px solid var(--green);
+  box-shadow:var(--shadow);cursor:pointer;transition:var(--transition);
 }
-.location-bar:hover { transform: scale(1.01); box-shadow: var(--shadow-hover); }
-.location-bar .pin { font-size: 1.4rem; animation: float 2s ease-in-out infinite; }
-.location-bar .text { flex: 1; font-size: .9rem; }
-.location-bar .status {
-  font-size: .72rem;
-  padding: 4px 12px;
-  border-radius: 20px;
-  background: var(--palm);
-  color: #fff;
-  font-weight: 700;
-  letter-spacing: .5px;
-}
-.location-bar .status.pending { background: #FFB74D; }
+.loc-bar:hover{box-shadow:var(--shadow-lg)}
+.loc-bar .pin{font-size:1.3rem;animation:hfloat 2.5s ease-in-out infinite}
+.loc-bar .text{flex:1;font-size:.88rem}
+.loc-bar .status{font-size:.7rem;padding:3px 10px;border-radius:var(--radius-full);background:var(--green);color:#fff;font-weight:700}
+.loc-bar .status.pending{background:#FFB74D}
 
-/* ===== Suggest Section (NEW) ===== */
-.suggest-section {
-  margin: 12px 16px;
-  padding: 20px;
-  background: linear-gradient(135deg, var(--plumeria), #fff, var(--lavender));
-  border-color: var(--hibiscus);
-  overflow: visible;
-}
-.suggest-section h2 {
-  font-family: 'Caveat', cursive;
-  font-size: 1.6rem;
-  color: var(--hibiscus);
-  margin-bottom: 12px;
-  text-align: center;
-}
-.suggest-section h2 span { font-size: 1.3em; }
-.suggest-presets {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-bottom: 14px;
-  justify-content: center;
-}
-.suggest-preset {
-  padding: 8px 16px;
-  border-radius: 50px;
-  border: 2px solid var(--hibiscus-light);
-  background: #fff;
-  font-size: .85rem;
-  cursor: pointer;
-  transition: all .2s;
-  font-family: 'Zen Maru Gothic', sans-serif;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-}
-.suggest-preset:hover {
-  background: var(--hibiscus-light);
-  transform: translateY(-2px);
-  box-shadow: 2px 3px 0 rgba(0,0,0,0.08);
-}
-.suggest-preset.active {
-  background: var(--hibiscus);
-  color: #fff;
-  border-color: var(--hibiscus);
-}
-.suggest-input-wrap {
-  display: flex;
-  gap: 8px;
-}
-.suggest-input {
-  flex: 1;
-  padding: 12px 18px;
-  border-radius: 50px;
-  border: 2px solid var(--hibiscus-light);
-  font-size: .95rem;
-  font-family: 'Zen Maru Gothic', sans-serif;
-  background: #fff;
-  outline: none;
-  transition: all .2s;
-}
-.suggest-input:focus {
-  border-color: var(--hibiscus);
-  box-shadow: 0 0 0 3px rgba(240,98,146,0.15);
-}
-.suggest-input::placeholder { color: #ccc; }
-.suggest-btn {
-  padding: 12px 24px;
-  border-radius: 50px;
-  border: 2px solid var(--hibiscus);
-  background: linear-gradient(135deg, var(--hibiscus), var(--coral));
-  color: #fff;
-  font-weight: 700;
-  font-size: .95rem;
-  cursor: pointer;
-  font-family: 'Zen Maru Gothic', sans-serif;
-  transition: all .2s;
-  white-space: nowrap;
-}
-.suggest-btn:hover {
-  transform: scale(1.05);
-  box-shadow: 0 4px 15px rgba(240,98,146,0.3);
-}
-.suggest-btn:active { transform: scale(.98); }
+/* ===== Tabs: 観光/グルメ/履歴 ===== */
+.main-tabs{display:flex;gap:0;margin:10px 16px;border-radius:var(--radius);overflow:hidden;border:2px solid var(--ink);background:var(--white)}
+.main-tab{flex:1;padding:10px;text-align:center;font-size:.9rem;font-weight:700;transition:var(--transition);border-right:1px solid #eee}
+.main-tab:last-child{border-right:none}
+.main-tab.active{background:var(--pink);color:#fff}
+.main-tab:not(.active):hover{background:var(--pink-bg)}
 
-.suggest-results {
-  margin-top: 16px;
-  display: none;
-}
-.suggest-results.show { display: block; }
-.suggest-results-title {
-  font-family: 'Caveat', cursive;
-  font-size: 1.3rem;
-  color: var(--hibiscus);
-  margin-bottom: 10px;
-  padding-left: 4px;
-}
-.suggest-result-card {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px 14px;
-  background: #fff;
-  border: 2px solid var(--hibiscus-light);
-  border-radius: 16px;
-  margin-bottom: 8px;
-  cursor: pointer;
-  transition: all .2s;
-}
-.suggest-result-card:hover {
-  transform: translateX(4px);
-  border-color: var(--hibiscus);
-  box-shadow: var(--shadow-cute);
-}
-.suggest-result-emoji { font-size: 2rem; }
-.suggest-result-info { flex: 1; }
-.suggest-result-name { font-weight: 700; font-size: .95rem; }
-.suggest-result-reason { font-size: .8rem; color: var(--ink-light); margin-top: 2px; }
-.suggest-result-match {
-  font-family: 'Caveat', cursive;
-  font-size: 1.2rem;
-  font-weight: 700;
-  color: var(--hibiscus);
-  padding: 4px 12px;
-  background: var(--plumeria);
-  border-radius: 12px;
-}
-.suggest-loading {
-  text-align: center;
-  padding: 20px;
-  font-family: 'Caveat', cursive;
-  font-size: 1.2rem;
-  color: var(--hibiscus);
-}
-.suggest-loading .dots::after {
-  content: '';
-  animation: dots 1.5s steps(4) infinite;
-}
-@keyframes dots {
-  0% { content: ''; }
-  25% { content: '.'; }
-  50% { content: '..'; }
-  75% { content: '...'; }
-}
+/* ===== Suggest Section ===== */
+.suggest{margin:10px 16px;padding:18px;border-radius:var(--radius-lg);background:linear-gradient(135deg,var(--pink-bg),var(--white),#E8EAF6);border:2px solid var(--pink-light);box-shadow:var(--shadow)}
+.suggest h2{font-family:'Caveat',cursive;font-size:1.4rem;color:var(--pink);text-align:center;margin-bottom:10px}
+.suggest-presets{display:flex;flex-wrap:wrap;gap:7px;justify-content:center;margin-bottom:12px}
+.suggest-preset{padding:7px 14px;border-radius:var(--radius-full);border:2px solid var(--pink-light);background:var(--white);font-size:.82rem;transition:var(--transition)}
+.suggest-preset:hover{background:var(--pink-light);transform:translateY(-2px)}
+.suggest-preset.active{background:var(--pink);color:#fff;border-color:var(--pink)}
+.suggest-row{display:flex;gap:8px}
+.suggest-input{flex:1;padding:11px 16px;border-radius:var(--radius-full);border:2px solid var(--pink-light);font-size:.9rem;font-family:inherit;outline:none;transition:var(--transition)}
+.suggest-input:focus{border-color:var(--pink);box-shadow:0 0 0 3px rgba(240,98,146,.12)}
+.suggest-btn{padding:11px 22px;border-radius:var(--radius-full);background:linear-gradient(135deg,var(--pink),var(--orange));color:#fff;font-weight:700;font-size:.9rem;transition:var(--transition)}
+.suggest-btn:hover{transform:scale(1.05);box-shadow:0 4px 15px rgba(240,98,146,.3)}
+.suggest-results{margin-top:14px;display:none}
+.suggest-results.show{display:block}
+.suggest-results-title{font-family:'Caveat',cursive;font-size:1.2rem;color:var(--pink);margin-bottom:8px}
+.sr-card{display:flex;gap:12px;align-items:center;padding:10px;background:var(--white);border:2px solid var(--pink-light);border-radius:var(--radius);margin-bottom:8px;cursor:pointer;transition:var(--transition)}
+.sr-card:hover{transform:translateX(4px);border-color:var(--pink);box-shadow:var(--shadow)}
+.sr-card img{width:56px;height:56px;border-radius:12px;object-fit:cover}
+.sr-info{flex:1}
+.sr-name{font-weight:700;font-size:.9rem}
+.sr-reason{font-size:.75rem;color:var(--ink-light);margin-top:2px}
+.sr-match{font-family:'Caveat',cursive;font-size:1.15rem;font-weight:700;color:var(--pink);padding:3px 10px;background:var(--pink-bg);border-radius:10px}
 
-/* ===== Search ===== */
-.search-wrap {
-  padding: 8px 16px;
-}
-.search-input {
-  width: 100%;
-  padding: 13px 18px 13px 46px;
-  border-radius: 50px;
-  border: 2px solid var(--ocean-light);
-  font-size: .95rem;
-  font-family: 'Zen Maru Gothic', sans-serif;
-  background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%2390A4AE' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='M21 21l-4.35-4.35'/%3E%3C/svg%3E") 16px center no-repeat;
-  box-shadow: var(--shadow-cute);
-  outline: none;
-  transition: all .2s;
-}
-.search-input:focus {
-  border-color: var(--ocean);
-  box-shadow: 0 0 0 3px rgba(79,195,247,0.2);
-}
+/* ===== Search + Area Filter ===== */
+.search-area{padding:8px 16px;display:flex;gap:8px}
+.search-box{flex:1;position:relative}
+.search-box input{width:100%;padding:11px 16px 11px 40px;border-radius:var(--radius-full);border:2px solid #e0e0e0;font-size:.9rem;font-family:inherit;outline:none;background:var(--white);transition:var(--transition)}
+.search-box input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(79,195,247,.15)}
+.search-box::before{content:'🔍';position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:.9rem;pointer-events:none}
+.area-select{padding:10px 14px;border-radius:var(--radius-full);border:2px solid #e0e0e0;font-family:inherit;font-size:.85rem;background:var(--white);outline:none;cursor:pointer;min-width:100px}
 
-/* ===== Island Tabs ===== */
-.island-tabs {
-  display: flex;
-  gap: 8px;
-  padding: 12px 16px;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;
-}
-.island-tabs::-webkit-scrollbar { display: none; }
-.island-tab {
-  flex-shrink: 0;
-  padding: 9px 18px;
-  border-radius: 50px;
-  border: 2px solid var(--ocean-light);
-  background: #fff;
-  font-size: .9rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all .25s;
-  white-space: nowrap;
-}
-.island-tab:hover { border-color: var(--ocean); }
-.island-tab.active {
-  background: linear-gradient(135deg, var(--ocean), var(--ocean-deep));
-  color: #fff;
-  border-color: var(--ocean-deep);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(2,136,209,0.25);
-}
+/* ===== Category Chips ===== */
+.cats{padding:6px 16px;display:flex;gap:7px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.cats::-webkit-scrollbar{display:none}
+.cat{flex-shrink:0;padding:7px 15px;border-radius:var(--radius-full);border:2px solid #e0e0e0;background:var(--white);font-size:.82rem;font-weight:500;transition:var(--transition)}
+.cat:hover{transform:translateY(-2px);box-shadow:var(--shadow)}
+.cat.active{color:#fff;border-color:transparent;box-shadow:0 3px 10px rgba(0,0,0,.1);transform:translateY(-2px)}
+.cat[data-c="all"].active{background:linear-gradient(135deg,var(--ink),#263238)}
+.cat[data-c="beach"].active{background:linear-gradient(135deg,var(--blue),var(--blue-deep))}
+.cat[data-c="nature"].active{background:linear-gradient(135deg,var(--green),var(--green-deep))}
+.cat[data-c="culture"].active{background:linear-gradient(135deg,#8D6E63,#5D4037)}
+.cat[data-c="food"].active{background:linear-gradient(135deg,var(--orange),#E64A19)}
+.cat[data-c="activity"].active{background:linear-gradient(135deg,var(--pink),#D81B60)}
+.cat[data-c="shopping"].active{background:linear-gradient(135deg,var(--yellow),#FFB300);color:var(--ink)}
+.cat[data-c="scenic"].active{background:linear-gradient(135deg,var(--purple),#7B1FA2)}
+.cat[data-c="cafe"].active{background:linear-gradient(135deg,#A1887F,#6D4C41)}
 
-/* ===== Hawaii SVG Map ===== */
-.map-section {
-  margin: 12px 16px;
-  padding: 18px;
-  background: linear-gradient(135deg, #E3F2FD, #fff, #E8F5E9);
-}
-.hawaii-svg-wrap {
-  position: relative;
-  width: 100%;
-  max-width: 480px;
-  margin: 0 auto;
-}
-.hawaii-svg-wrap svg { width: 100%; height: auto; }
-.hawaii-svg-wrap svg path {
-  fill: var(--palm);
-  stroke: var(--ink);
-  stroke-width: 1.5;
-  cursor: pointer;
-  transition: all .3s;
-  transform-origin: center;
-  filter: drop-shadow(2px 2px 0 rgba(0,0,0,0.08));
-}
-.hawaii-svg-wrap svg path:hover {
-  fill: var(--sun);
-  transform: scale(1.03);
-  filter: drop-shadow(3px 3px 0 rgba(0,0,0,0.15));
-}
-.hawaii-svg-wrap svg path.active-island {
-  fill: var(--hibiscus);
-  filter: drop-shadow(3px 3px 0 rgba(240,98,146,0.3));
-}
-.island-label {
-  font-family: 'Caveat', cursive;
-  font-size: 12px;
-  font-weight: 700;
-  fill: var(--ink);
-  pointer-events: none;
-}
-.map-section h2 {
-  font-family: 'Caveat', cursive;
-  font-size: 1.5rem;
-  text-align: center;
-  margin-bottom: 10px;
-  color: var(--ocean-deep);
-}
+/* ===== Spot Grid ===== */
+.spots{padding:8px 16px 120px}
+.spots-count{font-family:'Caveat',cursive;font-size:1rem;color:var(--ink-light);padding:4px 0 8px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px}
+@media(max-width:700px){.grid{grid-template-columns:1fr}}
 
-/* ===== Category Filter ===== */
-.category-section {
-  padding: 8px 16px 12px;
-}
-.category-chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  justify-content: center;
-}
-.cat-chip {
-  padding: 8px 16px;
-  border-radius: 50px;
-  border: 2px solid #e0e0e0;
-  background: #fff;
-  font-size: .85rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all .25s;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-.cat-chip:hover { transform: translateY(-2px); box-shadow: var(--shadow-cute); }
-.cat-chip.active {
-  color: #fff;
-  border-color: transparent;
-  box-shadow: 0 3px 10px rgba(0,0,0,0.12);
-  transform: translateY(-2px);
-}
-.cat-chip[data-cat="beach"].active { background: linear-gradient(135deg, var(--ocean), #039BE5); }
-.cat-chip[data-cat="nature"].active { background: linear-gradient(135deg, var(--palm), var(--palm-dark)); }
-.cat-chip[data-cat="culture"].active { background: linear-gradient(135deg, #8D6E63, #6D4C41); }
-.cat-chip[data-cat="food"].active { background: linear-gradient(135deg, var(--coral), #F4511E); }
-.cat-chip[data-cat="activity"].active { background: linear-gradient(135deg, var(--hibiscus), #D81B60); }
-.cat-chip[data-cat="shopping"].active { background: linear-gradient(135deg, var(--sun), #FFB300); color: var(--ink); }
-.cat-chip[data-cat="scenic"].active { background: linear-gradient(135deg, #7E57C2, #5E35B1); }
-.cat-chip[data-cat="all"].active { background: linear-gradient(135deg, var(--ink), #263238); }
+/* ===== Spot Card ===== */
+.card{border-radius:var(--radius-lg);background:var(--white);border:2px solid #e8e8e8;overflow:hidden;cursor:pointer;transition:var(--transition);position:relative}
+.card:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg);border-color:var(--blue)}
+.card.selected{border-color:var(--pink);border-width:3px}
+.card-img{width:100%;height:180px;object-fit:cover;background:#eee}
+.card-img-placeholder{width:100%;height:180px;display:flex;align-items:center;justify-content:center;font-size:4rem;background:linear-gradient(135deg,var(--blue-bg),var(--green-bg))}
+.card-num{position:absolute;top:12px;left:12px;width:30px;height:30px;border-radius:50%;background:rgba(0,0,0,.55);color:#fff;font-family:'Caveat',cursive;font-size:1.1rem;font-weight:700;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
+.card-sel{position:absolute;top:12px;right:12px;width:32px;height:32px;border-radius:50%;background:var(--pink);color:#fff;font-family:'Caveat',cursive;font-size:1.1rem;font-weight:700;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(240,98,146,.4);animation:popIn .3s cubic-bezier(.22,1,.36,1)}
+@keyframes popIn{0%{transform:scale(0)}100%{transform:scale(1)}}
+.card-body{padding:14px 16px}
+.card-top{display:flex;align-items:flex-start;gap:8px;margin-bottom:6px}
+.card-emoji{font-size:1.6rem;flex-shrink:0}
+.card-title{font-size:1.05rem;font-weight:700;line-height:1.3}
+.card-en{font-size:.72rem;color:var(--ink-light);font-family:'Patrick Hand',cursive}
+.card-area-tag{font-size:.65rem;padding:2px 8px;border-radius:var(--radius-full);background:var(--blue-bg);color:var(--blue-deep);font-weight:500;display:inline-block;margin-top:2px}
+.card-desc{font-size:.82rem;line-height:1.65;color:#666;margin:8px 0;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.card-tags{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:10px}
+.card-tag{font-size:.68rem;padding:2px 8px;border-radius:var(--radius-full);background:var(--blue-bg);color:var(--blue-deep)}
+.card-tag.food-tag{background:var(--orange-light);color:#BF360C}
+.card-footer{display:flex;justify-content:space-between;align-items:center}
+.card-dist{font-family:'Caveat',cursive;font-size:1.05rem;font-weight:700;color:var(--blue-deep)}
+.card-actions{display:flex;gap:6px}
+.card-btn{padding:6px 14px;border-radius:var(--radius-full);font-size:.78rem;font-weight:700;border:2px solid var(--ink);transition:var(--transition)}
+.btn-route{background:linear-gradient(135deg,var(--yellow),var(--yellow-light))}
+.btn-route:hover{background:var(--pink);color:#fff;border-color:var(--pink)}
+.btn-gmaps{background:linear-gradient(135deg,#4285F4,#34A853);color:#fff;border-color:transparent}
+.btn-gmaps:hover{transform:scale(1.05);box-shadow:0 2px 8px rgba(66,133,244,.3)}
+.card-hours{font-size:.72rem;color:var(--ink-muted);margin-top:4px}
+.card-price{font-size:.72rem;color:var(--orange);font-weight:700}
 
-/* ===== Spot Cards ===== */
-.spots-section { padding: 0 16px 100px; }
-.spots-count {
-  font-family: 'Caveat', cursive;
-  font-size: 1.1rem;
-  color: var(--ink-light);
-  padding: 4px 0 10px;
+/* ===== Route Planner Panel ===== */
+.route-panel{
+  position:fixed;bottom:0;left:0;right:0;background:var(--white);
+  border-radius:var(--radius-lg) var(--radius-lg) 0 0;
+  border-top:3px solid var(--ink);padding:16px 16px 30px;
+  transform:translateY(100%);transition:transform .4s cubic-bezier(.22,1,.36,1);
+  z-index:1000;max-height:88vh;overflow-y:auto;box-shadow:0 -8px 40px rgba(0,0,0,.15);
 }
-.spots-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 16px;
-}
-.spot-card {
-  padding: 18px;
-  cursor: pointer;
-  transition: all .25s cubic-bezier(.22,1,.36,1);
-  position: relative;
-  overflow: hidden;
-  background: linear-gradient(135deg, #fff 60%, var(--sky));
-}
-.spot-card::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 60px;
-  height: 60px;
-  background: radial-gradient(circle at top right, rgba(240,98,146,0.06), transparent 70%);
-  pointer-events: none;
-}
-.spot-card:hover {
-  transform: translateY(-5px) rotate(-0.3deg);
-  box-shadow: var(--shadow-hover);
-  border-color: var(--ocean);
-}
-.spot-card.selected {
-  border-color: var(--hibiscus);
-  border-width: 3px;
-  background: linear-gradient(135deg, var(--plumeria) 30%, #fff);
-}
-.spot-card.selected::before { border-color: rgba(240,98,146,0.2); }
-.spot-num {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 34px;
-  height: 34px;
-  background: linear-gradient(135deg, var(--ocean), var(--ocean-deep));
-  color: #fff;
-  font-family: 'Caveat', cursive;
-  font-size: 1.1rem;
-  font-weight: 700;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 0 0 14px 0;
-}
-.spot-header {
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  margin-bottom: 10px;
-  padding-left: 28px;
-}
-.spot-emoji {
-  font-size: 2.2rem;
-  filter: drop-shadow(1px 1px 0 rgba(0,0,0,0.1));
-}
-.spot-title {
-  font-family: 'Caveat', cursive;
-  font-size: 1.35rem;
-  font-weight: 700;
-  line-height: 1.2;
-  color: var(--ink);
-}
-.spot-subtitle {
-  font-size: .75rem;
-  color: var(--ink-light);
-  font-family: 'Patrick Hand', cursive;
-}
-.spot-desc {
-  font-size: .84rem;
-  line-height: 1.7;
-  color: #666;
-  margin-bottom: 12px;
-}
-.spot-tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 5px;
-  margin-bottom: 12px;
-}
-.spot-tag {
-  font-size: .7rem;
-  padding: 3px 10px;
-  border-radius: 50px;
-  background: var(--sky);
-  color: var(--ocean-deep);
-  font-weight: 500;
-}
-.spot-meta {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-.spot-distance {
-  font-weight: 700;
-  color: var(--ocean-deep);
-  font-family: 'Caveat', cursive;
-  font-size: 1.15rem;
-}
-.spot-btn {
-  padding: 7px 18px;
-  border-radius: 50px;
-  border: 2px solid var(--ink);
-  background: linear-gradient(135deg, var(--sun), var(--sun-light));
-  font-family: 'Zen Maru Gothic', sans-serif;
-  font-weight: 700;
-  font-size: .8rem;
-  cursor: pointer;
-  transition: all .2s;
-}
-.spot-btn:hover {
-  background: linear-gradient(135deg, var(--hibiscus), var(--coral));
-  color: #fff;
-  border-color: var(--hibiscus);
-  transform: scale(1.05);
-}
-.spot-select-badge {
-  position: absolute;
-  top: 8px;
-  right: 12px;
-  background: linear-gradient(135deg, var(--hibiscus), var(--coral));
-  color: #fff;
-  border-radius: 50%;
-  width: 30px;
-  height: 30px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 700;
-  font-family: 'Caveat', cursive;
-  font-size: 1.15rem;
-  box-shadow: 0 2px 8px rgba(240,98,146,0.3);
-  animation: popIn .3s cubic-bezier(.22,1,.36,1);
-}
-@keyframes popIn {
-  0% { transform: scale(0); }
-  100% { transform: scale(1); }
-}
-
-/* ===== Route Panel ===== */
-.route-panel {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: #fff;
-  border-top: 3px solid var(--ink);
-  border-radius: 28px 28px 0 0;
-  padding: 20px 16px 30px;
-  transform: translateY(100%);
-  transition: transform .4s cubic-bezier(.22,1,.36,1);
-  z-index: 1000;
-  max-height: 85vh;
-  overflow-y: auto;
-  box-shadow: 0 -8px 40px rgba(0,0,0,0.15);
-}
-.route-panel.open { transform: translateY(0); }
-.route-handle {
-  width: 50px;
-  height: 5px;
-  background: #ddd;
-  border-radius: 3px;
-  margin: 0 auto 16px;
-}
-.route-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 14px;
-}
-.route-header h3 {
-  font-family: 'Caveat', cursive;
-  font-size: 1.5rem;
-  color: var(--ink);
-}
-.route-close {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  border: 2px solid #ddd;
-  background: #fff;
-  font-size: 1.1rem;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all .2s;
-}
-.route-close:hover { background: var(--hibiscus); color: #fff; border-color: var(--hibiscus); }
-
-.route-dest-info {
-  display: flex;
-  gap: 14px;
-  align-items: center;
-  padding: 14px;
-  background: linear-gradient(135deg, var(--sky), #fff, var(--mint));
-  border-radius: 16px;
-  border: 2px solid var(--ocean-light);
-  margin-bottom: 14px;
-}
-.route-dest-emoji { font-size: 2.5rem; }
-.route-dest-name {
-  font-family: 'Caveat', cursive;
-  font-size: 1.4rem;
-  font-weight: 700;
-}
-.route-dest-dist {
-  font-size: 1rem;
-  color: var(--ocean-deep);
-  font-weight: 700;
-}
-
-#routeMap {
-  width: 100%;
-  height: 300px;
-  border-radius: 16px;
-  border: 2px solid var(--ocean-light);
-  margin-bottom: 14px;
-}
-
-.route-steps { list-style: none; }
-.route-step {
-  display: flex;
-  gap: 12px;
-  padding: 12px 0;
-  border-bottom: 2px dashed #eee;
-  align-items: flex-start;
-}
-.step-icon {
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, var(--ocean), var(--ocean-deep));
-  color: #fff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: .85rem;
-  font-weight: 700;
-  flex-shrink: 0;
-  box-shadow: 0 2px 6px rgba(2,136,209,0.2);
-}
-.step-icon.start { background: linear-gradient(135deg, var(--palm), var(--palm-dark)); }
-.step-icon.end { background: linear-gradient(135deg, var(--hibiscus), var(--coral)); }
-.step-text { font-size: .9rem; line-height: 1.5; font-weight: 500; }
-.step-dist { font-size: .78rem; color: var(--ink-light); }
+.route-panel.open{transform:translateY(0)}
+.route-handle{width:50px;height:5px;background:#ddd;border-radius:3px;margin:0 auto 14px}
+.route-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.route-head h3{font-family:'Caveat',cursive;font-size:1.4rem}
+.route-close{width:34px;height:34px;border-radius:50%;border:2px solid #ddd;background:var(--white);font-size:1rem;display:flex;align-items:center;justify-content:center;transition:var(--transition)}
+.route-close:hover{background:var(--pink);color:#fff;border-color:var(--pink)}
+.route-summary{display:flex;gap:12px;align-items:center;padding:14px;background:linear-gradient(135deg,var(--blue-bg),var(--white),var(--green-bg));border-radius:var(--radius);border:2px solid var(--blue-light);margin-bottom:12px}
+.route-summary-emoji{font-size:2.2rem}
+.route-summary-name{font-family:'Caveat',cursive;font-size:1.3rem;font-weight:700}
+.route-summary-stats{font-size:.95rem;color:var(--blue-deep);font-weight:700}
+#routeMap{width:100%;height:280px;border-radius:var(--radius);border:2px solid var(--blue-light);margin-bottom:12px}
+.route-steps{list-style:none}
+.route-step{display:flex;gap:12px;padding:10px 0;border-bottom:2px dashed #eee;align-items:flex-start}
+.step-num{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--blue),var(--blue-deep));color:#fff;display:flex;align-items:center;justify-content:center;font-size:.85rem;font-weight:700;flex-shrink:0;box-shadow:0 2px 6px rgba(2,136,209,.2)}
+.step-num.start{background:linear-gradient(135deg,var(--green),var(--green-deep))}
+.step-num.end{background:linear-gradient(135deg,var(--pink),var(--orange))}
+.step-text{font-size:.88rem;font-weight:500}
+.step-sub{font-size:.76rem;color:var(--ink-light)}
+.gmaps-nav-btn{display:block;width:100%;padding:14px;border-radius:var(--radius);background:linear-gradient(135deg,#4285F4,#34A853);color:#fff;font-size:1rem;font-weight:700;text-align:center;margin-top:12px;transition:var(--transition)}
+.gmaps-nav-btn:hover{transform:scale(1.02);box-shadow:0 4px 20px rgba(66,133,244,.3)}
 
 /* ===== Itinerary Bar ===== */
-.itinerary-bar {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: linear-gradient(135deg, var(--hibiscus), var(--coral));
-  color: #fff;
-  padding: 14px 16px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  z-index: 999;
-  transform: translateY(100%);
-  transition: transform .35s cubic-bezier(.22,1,.36,1);
-  border-radius: 20px 20px 0 0;
-  box-shadow: 0 -4px 20px rgba(240,98,146,0.25);
+.iti-bar{
+  position:fixed;bottom:0;left:0;right:0;
+  background:linear-gradient(135deg,var(--pink),var(--orange));color:#fff;
+  padding:12px 16px;display:flex;align-items:center;gap:10px;z-index:999;
+  transform:translateY(100%);transition:transform .35s cubic-bezier(.22,1,.36,1);
+  border-radius:var(--radius-lg) var(--radius-lg) 0 0;box-shadow:0 -4px 20px rgba(240,98,146,.2);
 }
-.itinerary-bar.show { transform: translateY(0); }
-.itinerary-bar .count {
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
-  background: #fff;
-  color: var(--hibiscus);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 700;
-  font-size: 1.1rem;
-}
-.itinerary-bar .info { flex: 1; }
-.itinerary-bar .info > div:first-child { font-size: .85rem; opacity: .9; }
-.itinerary-bar .total-dist { font-weight: 700; font-size: 1rem; }
-.iti-btn {
-  padding: 8px 18px;
-  border-radius: 50px;
-  border: 2px solid #fff;
-  background: rgba(255,255,255,0.15);
-  color: #fff;
-  font-weight: 700;
-  cursor: pointer;
-  font-size: .85rem;
-  font-family: 'Zen Maru Gothic', sans-serif;
-  transition: all .2s;
-  backdrop-filter: blur(4px);
-}
-.iti-btn:hover { background: rgba(255,255,255,0.3); }
+.iti-bar.show{transform:translateY(0)}
+.iti-count{width:32px;height:32px;border-radius:50%;background:#fff;color:var(--pink);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:1.05rem}
+.iti-info{flex:1}
+.iti-info>div:first-child{font-size:.82rem;opacity:.9}
+.iti-info .total{font-weight:700;font-size:.95rem}
+.iti-btn{padding:7px 16px;border-radius:var(--radius-full);border:2px solid #fff;background:rgba(255,255,255,.15);color:#fff;font-weight:700;font-size:.82rem;transition:var(--transition);backdrop-filter:blur(4px)}
+.iti-btn:hover{background:rgba(255,255,255,.3)}
 
-/* ===== Doodles ===== */
-.doodle {
-  position: fixed;
-  pointer-events: none;
-  opacity: .08;
-  font-size: 3.5rem;
-  z-index: -1;
-}
-.doodle.d1 { top: 12%; left: 3%; animation: float 4s ease-in-out infinite; }
-.doodle.d2 { top: 35%; right: 2%; animation: float 3.5s ease-in-out infinite .5s; }
-.doodle.d3 { top: 60%; left: 5%; animation: float 4.5s ease-in-out infinite 1s; }
-.doodle.d4 { top: 82%; right: 4%; animation: float 3s ease-in-out infinite 1.5s; }
-.doodle.d5 { top: 48%; left: 50%; animation: float 5s ease-in-out infinite 2s; }
+/* ===== History Tab ===== */
+.history-section{padding:16px;display:none}
+.history-section.show{display:block}
+.history-section h3{font-family:'Caveat',cursive;font-size:1.3rem;color:var(--ink);margin-bottom:12px}
+.history-group{margin-bottom:20px}
+.history-group-title{font-size:.85rem;font-weight:700;color:var(--ink-light);margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.history-list{display:flex;gap:10px;overflow-x:auto;padding-bottom:8px;scrollbar-width:none}
+.history-list::-webkit-scrollbar{display:none}
+.history-item{flex-shrink:0;width:140px;cursor:pointer;transition:var(--transition)}
+.history-item:hover{transform:translateY(-3px)}
+.history-item img{width:140px;height:95px;border-radius:12px;object-fit:cover;border:2px solid #eee}
+.history-item .h-name{font-size:.78rem;font-weight:700;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.history-item .h-date{font-size:.65rem;color:var(--ink-muted)}
+.history-empty{text-align:center;padding:30px;color:var(--ink-muted);font-size:.9rem}
+.clear-history-btn{font-size:.75rem;color:var(--pink);cursor:pointer;margin-left:auto}
+
+/* ===== Detail Modal ===== */
+.detail-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1100;display:none;align-items:flex-end;justify-content:center;backdrop-filter:blur(3px)}
+.detail-overlay.show{display:flex}
+.detail-modal{background:var(--white);border-radius:var(--radius-lg) var(--radius-lg) 0 0;width:100%;max-width:600px;max-height:90vh;overflow-y:auto;animation:slideUp .3s ease-out}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.detail-img{width:100%;height:220px;object-fit:cover}
+.detail-body{padding:20px}
+.detail-header{display:flex;align-items:flex-start;gap:10px;margin-bottom:12px}
+.detail-emoji{font-size:2.2rem}
+.detail-name{font-size:1.3rem;font-weight:700}
+.detail-en{font-size:.85rem;color:var(--ink-light);font-family:'Patrick Hand',cursive}
+.detail-desc{font-size:.9rem;line-height:1.8;color:#555;margin-bottom:14px}
+.detail-meta{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
+.detail-meta-item{padding:10px;background:var(--blue-bg);border-radius:12px;text-align:center}
+.detail-meta-item .label{font-size:.7rem;color:var(--ink-light)}
+.detail-meta-item .value{font-size:.95rem;font-weight:700;color:var(--ink)}
+.detail-btns{display:flex;gap:8px;flex-wrap:wrap}
+.detail-btn{flex:1;min-width:120px;padding:12px;border-radius:var(--radius);font-weight:700;font-size:.9rem;text-align:center;transition:var(--transition)}
+.detail-btn-gmaps{background:#4285F4;color:#fff}
+.detail-btn-gmaps:hover{background:#3367D6}
+.detail-btn-select{background:var(--pink);color:#fff}
+.detail-btn-select:hover{background:#E91E63}
+.detail-btn-close{background:#eee;color:var(--ink)}
+.detail-btn-close:hover{background:#ddd}
 
 /* ===== Loading ===== */
-.loading-overlay {
-  position: fixed;
-  inset: 0;
-  background: linear-gradient(135deg, var(--plumeria), var(--sky));
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  z-index: 9999;
-  transition: opacity .6s;
-}
-.loading-overlay.hide { opacity: 0; pointer-events: none; }
-.loading-emoji {
-  font-size: 4rem;
-  animation: bounce 1s ease-in-out infinite;
-}
-@keyframes bounce {
-  0%,100% { transform: translateY(0) scale(1); }
-  50% { transform: translateY(-20px) scale(1.1); }
-}
-.loading-text {
-  font-family: 'Caveat', cursive;
-  font-size: 1.8rem;
-  margin-top: 12px;
-  color: var(--hibiscus);
-}
-.loading-sub {
-  font-size: .9rem;
-  color: var(--ink-light);
-  margin-top: 4px;
-}
+.loader{position:fixed;inset:0;background:linear-gradient(135deg,var(--pink-bg),var(--blue-bg));display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;transition:opacity .5s}
+.loader.hide{opacity:0;pointer-events:none}
+.loader-emoji{font-size:3.5rem;animation:bounce 1s infinite}
+@keyframes bounce{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-15px) scale(1.1)}}
+.loader-text{font-family:'Caveat',cursive;font-size:1.6rem;color:var(--pink);margin-top:10px}
 
 /* ===== Responsive ===== */
-@media (max-width: 600px) {
-  .spots-grid { grid-template-columns: 1fr; }
-  header h1 { font-size: 1.9rem; }
-  .suggest-input-wrap { flex-direction: column; }
-  .suggest-btn { width: 100%; }
+@media(max-width:600px){
+  .header h1{font-size:1.8rem}
+  .suggest-row{flex-direction:column}
+  .search-area{flex-direction:column}
+  .area-select{width:100%}
+  .detail-meta{grid-template-columns:1fr}
 }
 
 /* ===== Leaflet ===== */
-.leaflet-popup-content-wrapper {
-  border-radius: 16px !important;
-  border: 2px solid var(--ocean-light) !important;
-  font-family: 'Zen Maru Gothic', sans-serif !important;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.1) !important;
-}
-
-/* ===== Footer ===== */
-footer {
-  text-align: center;
-  padding: 30px 16px 50px;
-  font-family: 'Caveat', cursive;
-  font-size: 1.1rem;
-  color: var(--ink-light);
-}
+.leaflet-popup-content-wrapper{border-radius:14px!important;font-family:'Zen Maru Gothic',sans-serif!important;box-shadow:var(--shadow-lg)!important}
 </style>
 </head>
 <body>
 
-<!-- Loading -->
-<div class="loading-overlay" id="loader">
-  <div class="loading-emoji">🌺</div>
-  <div class="loading-text">Aloha!</div>
-  <div class="loading-sub">ハワイの魅力をロード中...</div>
+<div class="loader" id="loader">
+  <div class="loader-emoji">🌺</div>
+  <div class="loader-text">Aloha! Loading Oahu...</div>
 </div>
 
-<!-- Doodles -->
-<div class="doodle d1">🌴</div>
-<div class="doodle d2">🐢</div>
-<div class="doodle d3">🌺</div>
-<div class="doodle d4">🐬</div>
-<div class="doodle d5">🐚</div>
-
-<!-- Header -->
-<header>
-  <div class="header-deco">🌺</div>
-  <div class="header-deco">🏝️</div>
-  <div class="header-deco">🐠</div>
-  <div class="header-deco">🌴</div>
-  <h1>Hawaii Explorer</h1>
-  <p>~ Your Kawaii Guide to Paradise ~</p>
+<header class="header">
+  <div class="header-icons"><span>🌺</span><span>🏝️</span><span>🐠</span><span>🌴</span></div>
+  <h1>Oahu Explorer</h1>
+  <p>~ オアフ島 完全観光ガイド ~</p>
 </header>
 
-<!-- Location -->
-<div class="location-bar" id="locationBar" onclick="getLocation()">
+<div class="loc-bar" onclick="getLocation()">
   <span class="pin">📍</span>
   <div class="text"><div id="locText">タップして現在地を取得</div></div>
   <span class="status pending" id="locStatus">取得中</span>
 </div>
 
-<!-- Suggest Section (NEW!) -->
-<div class="suggest-section sketch-box">
-  <h2><span>✨</span> イメージから探す <span>✨</span></h2>
-  <div class="suggest-presets">
-    <div class="suggest-preset" data-q="のんびりビーチでリラックスしたい">🏖️ のんびりビーチ</div>
-    <div class="suggest-preset" data-q="インスタ映えする絶景スポット">📸 映えスポット</div>
-    <div class="suggest-preset" data-q="子連れ家族で安全に楽しめる">👨‍👩‍👧 子連れ向き</div>
-    <div class="suggest-preset" data-q="冒険的なアクティビティを体験したい">🤿 冒険アクティビティ</div>
-    <div class="suggest-preset" data-q="ハワイの歴史や文化を学びたい">📖 歴史・文化</div>
-    <div class="suggest-preset" data-q="美味しいハワイグルメを堪能したい">🍽️ グルメ巡り</div>
-    <div class="suggest-preset" data-q="ロマンチックなカップル旅行">💕 カップル旅</div>
-    <div class="suggest-preset" data-q="大自然の絶景に感動したい">🌿 大自然</div>
-    <div class="suggest-preset" data-q="サンセットや星空を見たい">🌅 サンセット・星空</div>
-  </div>
-  <div class="suggest-input-wrap">
-    <input type="text" class="suggest-input" id="suggestInput" placeholder="例: 海が綺麗でのんびりできる場所、家族で楽しめるスポット...">
-    <button class="suggest-btn" onclick="runSuggest()">提案して!</button>
-  </div>
-  <div class="suggest-results" id="suggestResults">
-    <div class="suggest-results-title" id="suggestTitle"></div>
-    <div id="suggestCards"></div>
-  </div>
+<!-- Main Tabs -->
+<div class="main-tabs">
+  <div class="main-tab active" data-tab="explore" onclick="switchTab('explore')">🗺️ 探す</div>
+  <div class="main-tab" data-tab="plan" onclick="switchTab('plan')">📋 プラン</div>
+  <div class="main-tab" data-tab="history" onclick="switchTab('history')">🕐 履歴</div>
 </div>
 
-<!-- Search -->
-<div class="search-wrap">
-  <input type="text" class="search-input" id="searchInput" placeholder="スポット名・キーワードで検索...">
-</div>
-
-<!-- Hawaii Map -->
-<div class="map-section sketch-box" style="margin:12px 16px;">
-  <h2>島をタップして探索</h2>
-  <div class="hawaii-svg-wrap">
-    <svg viewBox="0 0 600 400" xmlns="http://www.w3.org/2000/svg">
-      <path id="island-kauai" data-island="kauai"
-        d="M80,120 Q60,100 75,80 Q95,60 120,65 Q140,70 150,90 Q155,110 140,125 Q120,140 95,135 Z" />
-      <text class="island-label" x="95" y="105">Kauai</text>
-      <path id="island-oahu" data-island="oahu"
-        d="M190,130 Q175,110 185,95 Q200,80 225,78 Q250,80 260,95 Q268,110 260,128 Q248,142 230,148 Q210,148 195,138 Z" />
-      <text class="island-label" x="210" y="118">Oahu</text>
-      <path id="island-molokai" data-island="molokai"
-        d="M280,145 Q290,135 320,132 Q350,133 365,140 Q370,148 355,155 Q330,160 300,158 Q285,155 280,145 Z" />
-      <text class="island-label" x="310" y="150">Molokai</text>
-      <path id="island-lanai" data-island="lanai"
-        d="M305,175 Q310,165 325,163 Q340,167 342,180 Q338,193 325,197 Q312,194 305,183 Z" />
-      <text class="island-label" x="312" y="183">Lanai</text>
-      <path id="island-maui" data-island="maui"
-        d="M370,155 Q365,140 375,130 Q390,122 405,128 Q412,138 408,155 Q418,150 435,148 Q455,152 465,168 Q468,188 455,200 Q440,210 420,208 Q405,200 400,185 Q395,170 385,168 Q375,170 370,160 Z" />
-      <text class="island-label" x="420" y="180">Maui</text>
-      <path id="island-bigisland" data-island="bigisland"
-        d="M430,230 Q420,210 425,190 Q435,175 455,168 Q475,165 495,172 Q515,180 525,200 Q535,225 530,255 Q520,285 500,305 Q480,318 455,315 Q435,305 428,285 Q422,265 430,245 Z" />
-      <text class="island-label" x="462" y="250">Big Island</text>
-    </svg>
+<!-- Explore Tab -->
+<div id="tab-explore">
+  <div class="suggest">
+    <h2>✨ イメージから探す ✨</h2>
+    <div class="suggest-presets">
+      <button class="suggest-preset" data-q="ビーチでのんびりリラックス">🏖️ のんびりビーチ</button>
+      <button class="suggest-preset" data-q="インスタ映え絶景">📸 映えスポット</button>
+      <button class="suggest-preset" data-q="子連れ家族で楽しめる">👨‍👩‍👧 ファミリー</button>
+      <button class="suggest-preset" data-q="ローカルハワイアンフード">🍽️ ローカルグルメ</button>
+      <button class="suggest-preset" data-q="サンセット夕日ロマンチック">🌅 サンセット</button>
+      <button class="suggest-preset" data-q="冒険アクティビティ体験">🤿 アクティビティ</button>
+      <button class="suggest-preset" data-q="カフェでまったりコーヒー">☕ カフェ巡り</button>
+      <button class="suggest-preset" data-q="ハワイ歴史文化を学ぶ">📖 歴史・文化</button>
+      <button class="suggest-preset" data-q="ショッピングお土産">🛍️ ショッピング</button>
+    </div>
+    <div class="suggest-row">
+      <input type="text" class="suggest-input" id="suggestInput" placeholder="例: 海がきれいでのんびりできるところ...">
+      <button class="suggest-btn" onclick="runSuggest()">提案して!</button>
+    </div>
+    <div class="suggest-results" id="suggestResults">
+      <div class="suggest-results-title" id="suggestTitle"></div>
+      <div id="suggestCards"></div>
+    </div>
   </div>
-</div>
 
-<!-- Island Tabs -->
-<div class="island-tabs" id="islandTabs">
-  <div class="island-tab active" data-island="all">🏝️ 全島</div>
-  <div class="island-tab" data-island="oahu">🌇 オアフ</div>
-  <div class="island-tab" data-island="maui">🌅 マウイ</div>
-  <div class="island-tab" data-island="bigisland">🌋 ハワイ島</div>
-  <div class="island-tab" data-island="kauai">🌿 カウアイ</div>
-  <div class="island-tab" data-island="molokai">🏖️ モロカイ</div>
-  <div class="island-tab" data-island="lanai">🐬 ラナイ</div>
-</div>
+  <div class="search-area">
+    <div class="search-box"><input type="text" id="searchInput" placeholder="スポット名・キーワードで検索..."></div>
+    <select class="area-select" id="areaSelect">
+      <option value="all">全エリア</option>
+      <option value="waikiki">ワイキキ</option>
+      <option value="honolulu">ホノルル</option>
+      <option value="kailua">カイルア</option>
+      <option value="northshore">ノースショア</option>
+      <option value="westside">西海岸</option>
+      <option value="eastside">東海岸</option>
+      <option value="central">中部</option>
+    </select>
+  </div>
 
-<!-- Category Chips -->
-<div class="category-section">
-  <div class="category-chips" id="catChips">
-    <div class="cat-chip active" data-cat="all">🌈 すべて</div>
-    <div class="cat-chip" data-cat="beach">🏖️ ビーチ</div>
-    <div class="cat-chip" data-cat="nature">🌿 自然</div>
-    <div class="cat-chip" data-cat="culture">🏛️ 文化</div>
-    <div class="cat-chip" data-cat="food">🍽️ グルメ</div>
-    <div class="cat-chip" data-cat="activity">🏄 アクティビティ</div>
-    <div class="cat-chip" data-cat="shopping">🛍️ ショッピング</div>
-    <div class="cat-chip" data-cat="scenic">📸 絶景</div>
+  <div class="cats" id="cats">
+    <button class="cat active" data-c="all">🌈 すべて</button>
+    <button class="cat" data-c="beach">🏖️ ビーチ</button>
+    <button class="cat" data-c="nature">🌿 自然</button>
+    <button class="cat" data-c="food">🍽️ グルメ</button>
+    <button class="cat" data-c="cafe">☕ カフェ</button>
+    <button class="cat" data-c="culture">🏛️ 文化</button>
+    <button class="cat" data-c="activity">🏄 体験</button>
+    <button class="cat" data-c="scenic">📸 絶景</button>
+    <button class="cat" data-c="shopping">🛍️ 買い物</button>
+  </div>
+
+  <div class="spots">
+    <div class="spots-count" id="spotsCount"></div>
+    <div class="grid" id="grid"></div>
   </div>
 </div>
 
-<!-- Spot Cards -->
-<div class="spots-section">
-  <div class="spots-count" id="spotsCount"></div>
-  <div class="spots-grid" id="spotsGrid"></div>
+<!-- Plan Tab -->
+<div id="tab-plan" style="display:none">
+  <div style="padding:16px">
+    <h3 style="font-family:Caveat,cursive;font-size:1.4rem;margin-bottom:12px">📋 マイプラン</h3>
+    <p style="font-size:.85rem;color:var(--ink-light);margin-bottom:16px">スポットカードをタップして追加。ドラッグで順番変更。</p>
+    <div id="planList"></div>
+    <div id="planEmpty" style="text-align:center;padding:40px;color:var(--ink-muted)">
+      <div style="font-size:3rem;margin-bottom:10px">🗺️</div>
+      <div>「探す」タブでスポットをタップして<br>プランに追加しましょう</div>
+    </div>
+    <div id="planSummary" style="display:none;margin-top:16px;padding:14px;border-radius:var(--radius);background:var(--blue-bg);border:2px solid var(--blue-light)">
+      <div style="font-family:Caveat,cursive;font-size:1.2rem;color:var(--blue-deep);margin-bottom:6px">ルートサマリー</div>
+      <div id="planStats" style="font-size:.9rem"></div>
+      <button class="gmaps-nav-btn" onclick="openGmapsMulti()" style="margin-top:10px">🗺️ Googleマップでナビ開始</button>
+    </div>
+  </div>
+</div>
+
+<!-- History Tab -->
+<div id="tab-history" style="display:none" class="history-section show">
+  <h3>🕐 閲覧・選択履歴</h3>
+  <div class="history-group">
+    <div class="history-group-title">📍 最近選択したスポット <span class="clear-history-btn" onclick="clearHistory('selected')">クリア</span></div>
+    <div class="history-list" id="historySelected"></div>
+  </div>
+  <div class="history-group">
+    <div class="history-group-title">👁️ 最近閲覧したスポット <span class="clear-history-btn" onclick="clearHistory('viewed')">クリア</span></div>
+    <div class="history-list" id="historyViewed"></div>
+  </div>
+  <div class="history-group">
+    <div class="history-group-title">🔍 検索履歴 <span class="clear-history-btn" onclick="clearHistory('searches')">クリア</span></div>
+    <div id="historySearches" style="display:flex;flex-wrap:wrap;gap:6px"></div>
+  </div>
+</div>
+
+<!-- Detail Modal -->
+<div class="detail-overlay" id="detailOverlay" onclick="if(event.target===this)closeDetail()">
+  <div class="detail-modal" id="detailModal"></div>
 </div>
 
 <!-- Itinerary Bar -->
-<div class="itinerary-bar" id="itineraryBar">
-  <div class="count" id="itiCount">0</div>
-  <div class="info">
+<div class="iti-bar" id="itiBar">
+  <div class="iti-count" id="itiCount">0</div>
+  <div class="iti-info">
     <div>選択中のスポット</div>
-    <div class="total-dist" id="totalDist">合計: ---</div>
+    <div class="total" id="itiTotal">合計: ---</div>
   </div>
-  <button class="iti-btn" onclick="showItinerary()">🗺️ ルート</button>
+  <button class="iti-btn" onclick="showRoutePanel()">🗺️ ルート</button>
+  <button class="iti-btn" onclick="openGmapsMulti()">📍 Gマップ</button>
   <button class="iti-btn" onclick="clearSelection()">✕</button>
 </div>
 
 <!-- Route Panel -->
 <div class="route-panel" id="routePanel">
   <div class="route-handle"></div>
-  <div class="route-header">
+  <div class="route-head">
     <h3>🗺️ ルート案内</h3>
     <button class="route-close" onclick="closeRoute()">✕</button>
   </div>
   <div id="routeContent"></div>
   <div id="routeMap"></div>
   <ul class="route-steps" id="routeSteps"></ul>
+  <div id="routeGmaps"></div>
 </div>
-
-<footer>Made with Aloha - Hawaii Explorer</footer>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
-// ===== SPOT DATA =====
-const SPOTS = [
-  // OAHU
-  { id:1, name:"ワイキキビーチ", en:"Waikiki Beach", emoji:"🏖️", island:"oahu",
-    cat:["beach","activity"], lat:21.2766, lng:-157.8278,
-    tags:["relaxing","couple","family","sunset","surfing","beginner"],
-    desc:"世界で最も有名なビーチの一つ。サーフィン初心者にも優しい穏やかな波と、ダイヤモンドヘッドを背景にした絶景が魅力。夕暮れのフラショーも必見。" },
-  { id:2, name:"ダイヤモンドヘッド", en:"Diamond Head", emoji:"🌋", island:"oahu",
-    cat:["nature","scenic"], lat:21.2620, lng:-157.8055,
-    tags:["hiking","panorama","sunrise","exercise","instagram"],
-    desc:"ホノルルのシンボル的存在。片道30分のトレイルを登れば、ワイキキからカハラまでのパノラマビューが広がる。早朝がおすすめ。" },
-  { id:3, name:"パールハーバー", en:"Pearl Harbor", emoji:"🏛️", island:"oahu",
-    cat:["culture"], lat:21.3649, lng:-157.9507,
-    tags:["history","wwii","museum","educational"],
-    desc:"第二次世界大戦の歴史を伝える国立記念館。アリゾナ記念館や戦艦ミズーリなど、平和の大切さを学べる場所。事前予約推奨。" },
-  { id:4, name:"ノースショア", en:"North Shore", emoji:"🏄", island:"oahu",
-    cat:["beach","activity","food"], lat:21.5794, lng:-158.1044,
-    tags:["surfing","shrimp","shaveice","local","adventure","nature"],
-    desc:"冬はビッグウェーブのサーフィンの聖地。ハレイワタウンではガーリックシュリンプやシェイブアイスが人気。のんびりした雰囲気が魅力。" },
-  { id:5, name:"ハナウマ湾", en:"Hanauma Bay", emoji:"🐠", island:"oahu",
-    cat:["nature","beach","activity"], lat:21.2690, lng:-157.6938,
-    tags:["snorkeling","turtle","fish","family","nature","clear-water"],
-    desc:"火山のクレーターが海とつながった自然保護区。透明度抜群の海でシュノーケリングが楽しめる。ウミガメに会えることも。入場制限あり。" },
-  { id:6, name:"カイルア", en:"Kailua", emoji:"🌴", island:"oahu",
-    cat:["beach","shopping","food"], lat:21.4022, lng:-157.7394,
-    tags:["cafe","boutique","lanikai","relaxing","instagram","couple"],
-    desc:"全米No.1ビーチに選ばれたラニカイビーチへの玄関口。おしゃれなブティックやカフェが並ぶタウンは散策に最適。" },
-  { id:7, name:"アラモアナセンター", en:"Ala Moana Center", emoji:"🛍️", island:"oahu",
-    cat:["shopping","food"], lat:21.2910, lng:-157.8440,
-    tags:["shopping","souvenirs","food-court","brands","family"],
-    desc:"世界最大級のオープンエアショッピングセンター。350以上の店舗とレストランが揃い、ハワイ限定アイテムの宝庫。" },
-  { id:8, name:"クアロア・ランチ", en:"Kualoa Ranch", emoji:"🎬", island:"oahu",
-    cat:["nature","activity"], lat:21.5207, lng:-157.8373,
-    tags:["movie","jurassicpark","horseback","zipline","adventure","family"],
-    desc:"映画『ジュラシック・パーク』のロケ地として有名。乗馬、ATV、ジップラインなど多彩なアクティビティが楽しめる壮大な渓谷。" },
+// ===== OAHU SPOT DATABASE =====
+const S = [
+  // ========== BEACHES ==========
+  {id:1,name:"ワイキキビーチ",en:"Waikiki Beach",emoji:"🏖️",area:"waikiki",cat:["beach","activity"],
+   lat:21.2766,lng:-157.8278,photo:"https://images.unsplash.com/photo-1507876466758-bc54f384809c?w=600&h=400&fit=crop",
+   tags:["relaxing","couple","family","sunset","surfing","beginner","instagram"],
+   price:"無料",hours:"24時間",
+   desc:"世界で最も有名なビーチ。穏やかな波はサーフィン初心者に最適で、ダイヤモンドヘッドを背景にした夕日は格別。夕方のフラショーも無料で楽しめる。レンタルサーフボードやSUPも豊富。"},
+  {id:2,name:"ラニカイビーチ",en:"Lanikai Beach",emoji:"🏝️",area:"kailua",cat:["beach","scenic"],
+   lat:21.3922,lng:-157.7148,photo:"https://images.unsplash.com/photo-1559339352-11d035aa65de?w=600&h=400&fit=crop",
+   tags:["crystal-clear","secluded","instagram","romantic","couple","sunrise"],
+   price:"無料",hours:"24時間",
+   desc:"全米No.1ビーチに選出された天国のビーチ。エメラルドグリーンの海と白砂、沖合に浮かぶモクルア島が絵画のような美しさ。シャワー・トイレなし、住宅街を抜けてアクセス。"},
+  {id:3,name:"カイルアビーチ",en:"Kailua Beach Park",emoji:"🌊",area:"kailua",cat:["beach","activity"],
+   lat:21.3962,lng:-157.7265,photo:"https://images.unsplash.com/photo-1505852679233-d9fd70aff56d?w=600&h=400&fit=crop",
+   tags:["family","kayak","windsurf","safe","relaxing","spacious"],
+   price:"無料",hours:"5:00-22:00",
+   desc:"約4kmの白砂ビーチ。設備が充実しシャワー・トイレ・BBQ台完備。カヤックでモクルア島へ渡るのが人気。ウインドサーフィンやSUPも盛ん。子連れファミリーにも安心。"},
+  {id:4,name:"ノースショア（サンセットビーチ）",en:"Sunset Beach",emoji:"🏄",area:"northshore",cat:["beach","activity","scenic"],
+   lat:21.6786,lng:-158.0425,photo:"https://images.unsplash.com/photo-1502933691298-84fc14542831?w=600&h=400&fit=crop",
+   tags:["surfing","bigwave","sunset","dramatic","winter","professional"],
+   price:"無料",hours:"24時間",
+   desc:"冬季は10m超のビッグウェーブが押し寄せるサーファーの聖地。夏は穏やかでシュノーケリングも可能。名前の通りサンセットが壮観。Triple Crown of Surfingの舞台。"},
+  {id:5,name:"ハナウマ湾",en:"Hanauma Bay",emoji:"🐠",area:"eastside",cat:["beach","nature","activity"],
+   lat:21.2690,lng:-157.6938,photo:"https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=600&h=400&fit=crop",
+   tags:["snorkeling","fish","turtle","family","nature","clear-water","reservation"],
+   price:"$25/人",hours:"6:45-16:00（水曜休）",
+   desc:"火山クレーターが海とつながった自然保護区。450種以上の魚が棲む透明な海で最高のシュノーケリング体験。ウミガメ遭遇率も高い。要オンライン事前予約。入場教育ビデオの視聴必須。"},
+  {id:6,name:"アラモアナビーチパーク",en:"Ala Moana Beach Park",emoji:"🌅",area:"honolulu",cat:["beach"],
+   lat:21.2887,lng:-157.8460,photo:"https://images.unsplash.com/photo-1471922694854-ff1b63b20054?w=600&h=400&fit=crop",
+   tags:["local","family","sunset","jogging","safe","free"],
+   price:"無料",hours:"4:00-22:00",
+   desc:"ロコに愛される穏やかなビーチ。リーフに守られた海は波が静かで子連れも安心。マジックアイランドから見るワイキキ方面のサンセットが絶景。週末はBBQで賑わう。"},
+  {id:7,name:"コオリナ・ラグーン",en:"Ko Olina Lagoons",emoji:"🏖️",area:"westside",cat:["beach"],
+   lat:21.3397,lng:-158.1233,photo:"https://images.unsplash.com/photo-1510414842594-a61c69b5ae57?w=600&h=400&fit=crop",
+   tags:["resort","family","safe","calm","luxury","couple"],
+   price:"無料（駐車場あり）",hours:"24時間",
+   desc:"人工のラグーン4つが並ぶリゾートビーチ。波がほぼ無く幼児連れでも安全。ディズニーリゾートAulagiが隣接。夕日も美しくハネムーナーにも人気。"},
+  {id:8,name:"ワイマナロビーチ",en:"Waimanalo Beach",emoji:"🏖️",area:"eastside",cat:["beach","scenic"],
+   lat:21.3340,lng:-157.6960,photo:"https://images.unsplash.com/photo-1509233725247-49e657c54213?w=600&h=400&fit=crop",
+   tags:["local","long-beach","quiet","authentic","nature","turquoise"],
+   price:"無料",hours:"7:00-19:45",
+   desc:"約8.5kmの長大なターコイズブルーのビーチ。観光客が少なくローカル感たっぷり。マカプウ側から見るコバルトブルーの海は息を呑む美しさ。"},
 
-  // MAUI
-  { id:9, name:"ハレアカラ山", en:"Haleakala", emoji:"🌅", island:"maui",
-    cat:["nature","scenic"], lat:20.7097, lng:-156.2533,
-    tags:["sunrise","sunset","stars","volcano","panorama","romantic","couple"],
-    desc:"標高3,055mの休火山。雲海の上で見るサンライズは「世界で最も美しい日の出」と称される。要事前予約。防寒具を忘れずに。" },
-  { id:10, name:"ハナへの道", en:"Road to Hana", emoji:"🌺", island:"maui",
-    cat:["scenic","nature"], lat:20.7564, lng:-155.9900,
-    tags:["drive","waterfall","tropical","adventure","instagram"],
-    desc:"620のカーブと59の橋を越える絶景ドライブルート。途中に滝、熱帯植物園、黒砂ビーチなど数々の見どころが点在。丸一日かけて。" },
-  { id:11, name:"カアナパリビーチ", en:"Kaanapali Beach", emoji:"🏖️", island:"maui",
-    cat:["beach","activity"], lat:20.9268, lng:-156.6943,
-    tags:["resort","whale","snorkeling","sunset","relaxing","couple"],
-    desc:"マウイ島屈指のリゾートビーチ。ブラックロックからの飛び込みが名物。冬季はビーチからクジラの潮吹きが見えることも。" },
-  { id:12, name:"ラハイナ", en:"Lahaina", emoji:"🏛️", island:"maui",
-    cat:["culture","shopping","food"], lat:20.8783, lng:-156.6825,
-    tags:["history","art","gallery","restaurant","walking","couple"],
-    desc:"かつてハワイ王国の首都だった歴史ある港町。アートギャラリーやレストランが並ぶフロントストリートは散策が楽しい。" },
-  { id:13, name:"モロキニ島", en:"Molokini Crater", emoji:"🐢", island:"maui",
-    cat:["nature","activity"], lat:20.6328, lng:-156.4957,
-    tags:["snorkeling","diving","fish","clear-water","adventure","boat"],
-    desc:"三日月形の火山クレーターに囲まれた海域は透明度50m以上。シュノーケリングやダイビングで250種以上の魚に出会える。" },
+  // ========== NATURE & SCENIC ==========
+  {id:10,name:"ダイヤモンドヘッド",en:"Diamond Head",emoji:"🌋",area:"waikiki",cat:["nature","scenic","activity"],
+   lat:21.2620,lng:-157.8055,photo:"https://images.unsplash.com/photo-1565371557106-c2abcc1f86db?w=600&h=400&fit=crop",
+   tags:["hiking","panorama","sunrise","exercise","instagram","must-see"],
+   price:"$5/人（要予約）",hours:"6:00-18:00",
+   desc:"ホノルルのシンボル。片道30-40分のトレイルで山頂からワイキキ〜カハラのパノラマビュー。早朝予約が取りにくいほど人気。帽子・水・スニーカー必須。"},
+  {id:11,name:"マノアの滝",en:"Manoa Falls",emoji:"🌿",area:"honolulu",cat:["nature"],
+   lat:21.3330,lng:-157.8025,photo:"https://images.unsplash.com/photo-1559128010-7c1ad6e1b6a5?w=600&h=400&fit=crop",
+   tags:["waterfall","rainforest","hiking","easy","nature","cool"],
+   price:"$5（駐車場）",hours:"日の出-日没",
+   desc:"ワイキキから車15分で行ける熱帯雨林ハイク。片道30分の平坦なトレイルの先に高さ45mの滝が出現。ジュラシックパークのロケ地にもなった鬱蒼とした森。雨上がりがベスト。"},
+  {id:12,name:"ココヘッド",en:"Koko Head",emoji:"⛰️",area:"eastside",cat:["nature","activity"],
+   lat:21.2782,lng:-157.6902,photo:"https://images.unsplash.com/photo-1542259009477-d625272157b7?w=600&h=400&fit=crop",
+   tags:["hiking","hardcore","stairs","exercise","challenge","panorama"],
+   price:"無料",hours:"日の出-日没",
+   desc:"旧軍用鉄道の線路跡を登る1,048段の階段トレイル。急勾配でかなりハードだが山頂からの360度パノラマは圧巻。朝の涼しい時間帯推奨。水を十分に持参。"},
+  {id:13,name:"マカプウ灯台トレイル",en:"Makapuu Lighthouse Trail",emoji:"🐳",area:"eastside",cat:["nature","scenic"],
+   lat:21.3108,lng:-157.6504,photo:"https://images.unsplash.com/photo-1519046904884-53103b34b206?w=600&h=400&fit=crop",
+   tags:["whale","lighthouse","ocean-view","easy","winter","panorama"],
+   price:"無料",hours:"日の出-日没",
+   desc:"舗装路で歩きやすい絶景トレイル。冬季（12-4月）はザトウクジラのブリーチングを高確率で目撃可能。灯台と断崖の海岸線は息を呑む美しさ。"},
+  {id:14,name:"タンタラスの丘",en:"Tantalus Lookout",emoji:"🌃",area:"honolulu",cat:["scenic"],
+   lat:21.3280,lng:-157.8180,photo:"https://images.unsplash.com/photo-1542259009477-d625272157b7?w=600&h=400&fit=crop",
+   tags:["nightview","panorama","honolulu","couple","romantic","sunset"],
+   price:"無料",hours:"日の出-日没",
+   desc:"ホノルル市街とダイヤモンドヘッドを一望する展望台。夕暮れから夜景への移り変わりが特に美しい。カップルに人気のドライブスポット。"},
+  {id:15,name:"ホオマルヒア植物園",en:"Hoomaluhia Botanical Garden",emoji:"🌺",area:"kailua",cat:["nature","scenic"],
+   lat:21.3889,lng:-157.8047,photo:"https://images.unsplash.com/photo-1547036967-23d11aacaee0?w=600&h=400&fit=crop",
+   tags:["garden","instagram","peaceful","free","mountains","tropical"],
+   price:"無料",hours:"9:00-16:00",
+   desc:"コオラウ山脈を背景にした壮大な植物園。入口のフォトスポットはInstagramで大人気。世界中の熱帯植物が400エーカーに広がる。釣りやキャンプも可能。"},
+  {id:16,name:"ラニカイ・ピルボックス",en:"Lanikai Pillbox Trail",emoji:"🥾",area:"kailua",cat:["nature","scenic"],
+   lat:21.3853,lng:-157.7141,photo:"https://images.unsplash.com/photo-1518173946687-a7ecbc8b8f52?w=600&h=400&fit=crop",
+   tags:["hiking","sunrise","instagram","panorama","pillbox","easy-moderate"],
+   price:"無料",hours:"日の出-日没",
+   desc:"片道30分で到達するWWII時代の監視壕跡。カラフルにペイントされたピルボックスとラニカイの絶景が広がる。サンライズハイクの定番。滑りやすい箇所あり。"},
 
-  // BIG ISLAND
-  { id:14, name:"キラウエア火山", en:"Kilauea Volcano", emoji:"🌋", island:"bigisland",
-    cat:["nature","scenic"], lat:19.4069, lng:-155.2834,
-    tags:["volcano","lava","national-park","night","dramatic","educational"],
-    desc:"世界で最も活発な火山の一つ。ハワイ火山国立公園内で、溶岩台地や火口を間近に見られる。夜の溶岩グローは幻想的。" },
-  { id:15, name:"マウナケア山", en:"Mauna Kea", emoji:"⭐", island:"bigisland",
-    cat:["nature","scenic"], lat:19.8207, lng:-155.4681,
-    tags:["stars","sunset","observatory","romantic","couple","night"],
-    desc:"海底からの高さは世界一の山。山頂には世界各国の天文台が集まり、星空観測の名所。サンセット＆星空ツアーが人気。" },
-  { id:16, name:"ワイピオ渓谷", en:"Waipio Valley", emoji:"🌿", island:"bigisland",
-    cat:["nature","scenic"], lat:20.1194, lng:-155.5894,
-    tags:["valley","hiking","waterfall","sacred","dramatic","nature"],
-    desc:"「王の谷」と呼ばれる神聖な渓谷。断崖絶壁に囲まれた谷底にはタロイモ畑と黒砂ビーチが広がる。展望台からの眺望は圧巻。" },
-  { id:17, name:"コナコーヒー農園", en:"Kona Coffee Farm", emoji:"☕", island:"bigisland",
-    cat:["food","culture"], lat:19.5592, lng:-155.9688,
-    tags:["coffee","farm-tour","tasting","local","couple","relaxing"],
-    desc:"世界三大コーヒーの一つ、コナコーヒーの産地。農園ツアーで栽培から焙煎までを体験し、淹れたての一杯を味わえる。" },
-  { id:18, name:"プナルウ黒砂海岸", en:"Punaluu Black Sand Beach", emoji:"🐢", island:"bigisland",
-    cat:["beach","nature"], lat:19.1362, lng:-155.5047,
-    tags:["black-sand","turtle","seal","unique","instagram","nature"],
-    desc:"溶岩が砕けてできた真っ黒な砂浜。ハワイアンモンクシールやウミガメが日光浴する姿が見られる、自然の驚異。" },
+  // ========== CULTURE ==========
+  {id:20,name:"パールハーバー（真珠湾）",en:"Pearl Harbor",emoji:"🏛️",area:"central",cat:["culture"],
+   lat:21.3649,lng:-157.9507,photo:"https://images.unsplash.com/photo-1568402102990-bc541580b59f?w=600&h=400&fit=crop",
+   tags:["history","wwii","museum","educational","must-see","reservation"],
+   price:"無料（ミズーリ$35）",hours:"7:00-17:00",
+   desc:"1941年日本軍の攻撃を受けた歴史的軍港。USSアリゾナ記念館（無料・要予約）、戦艦ミズーリ、航空博物館など。半日はかかる見応え。事前のオンライン予約が必須。"},
+  {id:21,name:"イオラニ宮殿",en:"Iolani Palace",emoji:"👑",area:"honolulu",cat:["culture"],
+   lat:21.3068,lng:-157.8583,photo:"https://images.unsplash.com/photo-1578469550956-0e16b69c6a3d?w=600&h=400&fit=crop",
+   tags:["history","royalty","hawaii-kingdom","educational","architecture"],
+   price:"$28（ガイド付）",hours:"9:00-16:00（月曜休）",
+   desc:"アメリカ唯一の王宮。ハワイ王朝最後の二人の王が暮らした建物で、リリウオカラニ女王の幽閉の間も見学可能。日本語オーディオガイドあり。"},
+  {id:22,name:"ビショップ・ミュージアム",en:"Bishop Museum",emoji:"🏛️",area:"honolulu",cat:["culture"],
+   lat:21.3333,lng:-157.8710,photo:"https://images.unsplash.com/photo-1575505586569-646b2ca898fc?w=600&h=400&fit=crop",
+   tags:["museum","polynesian","educational","family","science","planetarium"],
+   price:"$27.95",hours:"9:00-17:00",
+   desc:"ハワイ・ポリネシア文化の世界最大級の博物館。250万点以上のコレクション、プラネタリウム、サイエンスセンターも併設。家族連れにもおすすめ。"},
+  {id:23,name:"ポリネシア文化センター",en:"Polynesian Cultural Center",emoji:"🎭",area:"northshore",cat:["culture","activity"],
+   lat:21.6399,lng:-157.9225,photo:"https://images.unsplash.com/photo-1542259009477-d625272157b7?w=600&h=400&fit=crop",
+   tags:["culture","show","luau","family","educational","evening"],
+   price:"$69.95〜",hours:"12:00-21:00（日曜休）",
+   desc:"ポリネシア6つの島の文化を体験できるテーマパーク。カヌーショー、ルアウディナー、イブニングショー「HA:Breath of Life」は圧巻。丸一日楽しめる。"},
+  {id:24,name:"平等院テンプル",en:"Byodo-In Temple",emoji:"⛩️",area:"eastside",cat:["culture","scenic"],
+   lat:21.4308,lng:-157.8325,photo:"https://images.unsplash.com/photo-1545569341-9eb8b30979d9?w=600&h=400&fit=crop",
+   tags:["temple","peaceful","japanese","garden","koi","photography"],
+   price:"$5",hours:"9:00-17:00",
+   desc:"京都の平等院鳳凰堂を模した寺院。コオラウ山脈を背景に立つ朱色の建物と日本庭園は圧巻。鯉に餌やりも可能。心が洗われる静寂な空間。"},
 
-  // KAUAI
-  { id:19, name:"ナパリコースト", en:"Na Pali Coast", emoji:"⛰️", island:"kauai",
-    cat:["scenic","nature"], lat:22.1617, lng:-159.6456,
-    tags:["cliff","helicopter","kayak","hiking","dramatic","instagram","adventure"],
-    desc:"高さ1,200mの断崖が海岸線に連なる絶景。ヘリコプターツアー、カヤック、カララウトレイルのハイキングでアクセス。映画の舞台にも。" },
-  { id:20, name:"ワイメア渓谷", en:"Waimea Canyon", emoji:"🏜️", island:"kauai",
-    cat:["scenic","nature"], lat:22.0667, lng:-159.6622,
-    tags:["canyon","rainbow","panorama","hiking","dramatic","nature"],
-    desc:"「太平洋のグランドキャニオン」と称される全長16kmの大渓谷。赤土と緑のコントラストが壮観。展望台から虹が見えることも。" },
-  { id:21, name:"ポイプビーチ", en:"Poipu Beach", emoji:"🏖️", island:"kauai",
-    cat:["beach","activity"], lat:21.8742, lng:-159.4592,
-    tags:["family","safe","seal","snorkeling","relaxing","sunny"],
-    desc:"全米ベストビーチに選ばれた南海岸のビーチ。年間を通じて天気が良く、モンクシールに出会えるチャンスも。子連れにも安心。" },
+  // ========== ACTIVITIES ==========
+  {id:30,name:"クアロア・ランチ",en:"Kualoa Ranch",emoji:"🎬",area:"eastside",cat:["activity","nature"],
+   lat:21.5207,lng:-157.8373,photo:"https://images.unsplash.com/photo-1533587851505-d119e13fa0d7?w=600&h=400&fit=crop",
+   tags:["movie","jurassicpark","horseback","zipline","atv","adventure","family"],
+   price:"$53〜",hours:"7:30-17:30",
+   desc:"映画『ジュラシック・パーク』『LOST』のロケ地。乗馬、ATV、ジップライン、映画ロケ地ツアーなど多彩。1日では回りきれないほど充実。弁当持参OK。"},
+  {id:31,name:"シャークスコーブ",en:"Shark's Cove",emoji:"🤿",area:"northshore",cat:["activity","beach"],
+   lat:21.6519,lng:-158.0635,photo:"https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=600&h=400&fit=crop",
+   tags:["snorkeling","diving","fish","clear-water","summer","tidepool"],
+   price:"無料",hours:"24時間",
+   desc:"名前に反してサメはいない安全なシュノーケリングスポット。夏季の透明度は抜群で熱帯魚やウミガメに高確率で出会える。冬は波が高く遊泳禁止。"},
+  {id:32,name:"ドール・プランテーション",en:"Dole Plantation",emoji:"🍍",area:"central",cat:["activity"],
+   lat:21.5263,lng:-158.0352,photo:"https://images.unsplash.com/photo-1490885578174-acda8905c2c6?w=600&h=400&fit=crop",
+   tags:["pineapple","family","maze","train","ice-cream","souvenir"],
+   price:"入場無料（体験有料）",hours:"9:30-17:30",
+   desc:"パイナップル農園のテーマパーク。ギネス認定の巨大迷路（$8）、パイナップル列車（$14）が人気。名物ドールホイップ（パイナップルソフト）は必食。"},
+  {id:33,name:"シーライフパーク",en:"Sea Life Park",emoji:"🐬",area:"eastside",cat:["activity"],
+   lat:21.3122,lng:-157.6594,photo:"https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=600&h=400&fit=crop",
+   tags:["dolphin","family","marine","interaction","educational"],
+   price:"$44.99",hours:"10:00-17:00",
+   desc:"イルカやアシカとの触れ合い体験ができる水族館。ドルフィンスイムやシャークダイブなどのプログラムが人気。マカプウ岬のすぐ近くにあり景色も抜群。"},
 
-  // MOLOKAI
-  { id:22, name:"カラウパパ国立歴史公園", en:"Kalaupapa NHP", emoji:"🏛️", island:"molokai",
-    cat:["culture","scenic"], lat:21.1858, lng:-156.9769,
-    tags:["history","mule-tour","cliff","educational","unique"],
-    desc:"半島全体が歴史公園。ハンセン病患者の隔離地だった場所で、ダミアン神父の奉仕の歴史を学べる。ミュールツアーで断崖を下る。" },
-  { id:23, name:"パポハクビーチ", en:"Papohaku Beach", emoji:"🏖️", island:"molokai",
-    cat:["beach"], lat:21.1650, lng:-157.2481,
-    tags:["sunset","quiet","nature","long-beach","secluded","romantic"],
-    desc:"ハワイ最長の白砂ビーチ（約4.8km）。人がほとんどいない手付かずの美しさで、夕日の名所としても知られる。" },
+  // ========== FOOD & RESTAURANTS ==========
+  {id:40,name:"ジョバンニ（ガーリックシュリンプ）",en:"Giovanni's Shrimp Truck",emoji:"🦐",area:"northshore",cat:["food"],
+   lat:21.5801,lng:-158.1044,photo:"https://images.unsplash.com/photo-1565299585323-38d6b0865b47?w=600&h=400&fit=crop",
+   tags:["shrimp","garlic","famous","truck","must-eat","local","lunch"],
+   price:"$15-18",hours:"10:30-17:00",
+   desc:"ノースショアで最も有名なガーリックシュリンプトラック。バターとガーリックたっぷりのスキャンピーが名物。白いトラック全体がサインで覆われたフォトスポットでもある。行列覚悟。"},
+  {id:41,name:"レインボー・ドライブイン",en:"Rainbow Drive-In",emoji:"🍱",area:"waikiki",cat:["food"],
+   lat:21.2732,lng:-157.8177,photo:"https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=600&h=400&fit=crop",
+   tags:["plate-lunch","local","cheap","classic","iconic","comfort"],
+   price:"$8-12",hours:"7:00-21:00",
+   desc:"1961年創業のロコモコ・プレートランチの名店。ボリューム満点で$10前後というコスパの良さ。ロコモコ、BBQチキン、マヒマヒが人気。地元の人も通うローカルの味。"},
+  {id:42,name:"マルカメうどん",en:"Marukame Udon",emoji:"🍜",area:"waikiki",cat:["food"],
+   lat:21.2811,lng:-157.8287,photo:"https://images.unsplash.com/photo-1618841557871-b4664fbf0cb3?w=600&h=400&fit=crop",
+   tags:["udon","japanese","cheap","queue","popular","fast"],
+   price:"$5-10",hours:"10:00-22:00",
+   desc:"ワイキキのクヒオ通りにある讃岐うどん店。目の前で打つ生麺と安さが魅力で常に行列。かけうどん$4から。天ぷらやおむすびのサイドメニューも充実。"},
+  {id:43,name:"ヘレナズ・ハワイアンフード",en:"Helena's Hawaiian Food",emoji:"🥘",area:"honolulu",cat:["food"],
+   lat:21.3200,lng:-157.8665,photo:"https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=600&h=400&fit=crop",
+   tags:["hawaiian","traditional","laulau","poi","authentic","james-beard"],
+   price:"$12-20",hours:"10:00-19:30（日月休）",
+   desc:"ジェームズ・ビアード賞受賞のハワイアン料理の老舗。ラウラウ（豚肉のタロ葉包み蒸し）、ポイ、カルアピッグなど伝統料理を堪能。予約不可・早い者勝ち。"},
+  {id:44,name:"オノ・シーフード（ポケ）",en:"Ono Seafood",emoji:"🐟",area:"honolulu",cat:["food"],
+   lat:21.2819,lng:-157.8153,photo:"https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=600&h=400&fit=crop",
+   tags:["poke","fresh","must-eat","seafood","local","takeout"],
+   price:"$12-16",hours:"9:00-18:00（日曜休）",
+   desc:"ハワイNo.1との呼び声高いポケ専門店。新鮮なアヒ（マグロ）を使った醤油ポケとスパイシーポケが絶品。テイクアウト専門。ビーチで食べるのがベスト。"},
+  {id:45,name:"レナーズ・ベーカリー（マラサダ）",en:"Leonard's Bakery",emoji:"🍩",area:"honolulu",cat:["food","cafe"],
+   lat:21.2852,lng:-157.8115,photo:"https://images.unsplash.com/photo-1551024601-bec78aea704b?w=600&h=400&fit=crop",
+   tags:["malasada","donut","sweet","portuguese","must-eat","famous"],
+   price:"$1.50-3",hours:"5:30-21:00",
+   desc:"1952年創業のマラサダ（ポルトガル風揚げドーナツ）の元祖。揚げたてアツアツのオリジナル、シナモンシュガー、カスタードクリーム入りが定番。朝イチがおすすめ。"},
+  {id:46,name:"テッズベーカリー",en:"Ted's Bakery",emoji:"🥧",area:"northshore",cat:["food","cafe"],
+   lat:21.6678,lng:-158.0350,photo:"https://images.unsplash.com/photo-1519915028121-7d3463d20b13?w=600&h=400&fit=crop",
+   tags:["pie","chocolate","haupia","northshore","bakery","breakfast"],
+   price:"$5-12",hours:"7:00-18:00",
+   desc:"ノースショアの名物ベーカリー。ハウピアチョコレートパイはハワイで最も有名なパイの一つ。朝食プレートやガーリックシュリンプも美味。サンセットビーチの近く。"},
+  {id:47,name:"松本シェイブアイス",en:"Matsumoto Shave Ice",emoji:"🍧",area:"northshore",cat:["food"],
+   lat:21.5913,lng:-158.1033,photo:"https://images.unsplash.com/photo-1501443762994-82bd5dace89a?w=600&h=400&fit=crop",
+   tags:["shaveice","famous","sweet","refreshing","colorful","must-eat"],
+   price:"$4-7",hours:"9:00-18:00",
+   desc:"1951年創業のハワイで最も有名なシェイブアイス。ふわふわの氷にカラフルなシロップをかけた一品は暑い日の救世主。レインボーカラーが定番。行列必至だが回転は早い。"},
+  {id:48,name:"デュークス・ワイキキ",en:"Duke's Waikiki",emoji:"🍹",area:"waikiki",cat:["food"],
+   lat:21.2753,lng:-157.8272,photo:"https://images.unsplash.com/photo-1551024709-8f23befc6f87?w=600&h=400&fit=crop",
+   tags:["beachfront","sunset","cocktail","live-music","steak","seafood"],
+   price:"$20-45",hours:"7:00-22:00",
+   desc:"ワイキキビーチ真横のレストラン&バー。オーシャンビューのテラスで楽しむサンセットカクテルは最高。ライブミュージックも毎日開催。フラパイとマイタイが名物。予約推奨。"},
+  {id:49,name:"サイドストリート・イン",en:"Side Street Inn",emoji:"🍗",area:"honolulu",cat:["food"],
+   lat:21.2946,lng:-157.8400,photo:"https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=600&h=400&fit=crop",
+   tags:["local","fried-rice","pork-chops","late-night","large-portions"],
+   price:"$15-25",hours:"14:00-23:30",
+   desc:"地元シェフが仕事終わりに集う名店。キムチフライドライスとポークチョップはオアフ島最高との評価。ボリューム満点で2-3人でシェアがおすすめ。深夜まで営業。"},
+  {id:50,name:"ブーツ＆キモズ",en:"Boots & Kimo's",emoji:"🥞",area:"kailua",cat:["food","cafe"],
+   lat:21.3954,lng:-157.7410,photo:"https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=600&h=400&fit=crop",
+   tags:["pancake","macadamia","breakfast","famous","queue","morning"],
+   price:"$12-18",hours:"7:30-14:30（火曜休）",
+   desc:"マカダミアナッツソースのパンケーキで全米に名を馳せる朝食の聖地。ふわふわのパンケーキに濃厚なナッツソースが絶品。朝7時半から行列。1時間待ちも覚悟。"},
+  {id:51,name:"リリハ・ベーカリー",en:"Liliha Bakery",emoji:"🧁",area:"honolulu",cat:["food","cafe"],
+   lat:21.3266,lng:-157.8565,photo:"https://images.unsplash.com/photo-1486427944544-d2c246c4df14?w=600&h=400&fit=crop",
+   tags:["cocoa-puff","bakery","local","breakfast","diner","cream-puff"],
+   price:"$3-15",hours:"6:00-20:00",
+   desc:"1950年創業のロコ御用達ベーカリー。名物ココパフ（チョコシュークリーム）は1個$1.75で幸せになれる。ダイナーも併設しオックステールスープやロコモコも人気。"},
+  {id:52,name:"ブルーウォーター・シュリンプ",en:"Blue Water Shrimp",emoji:"🦐",area:"waikiki",cat:["food"],
+   lat:21.2813,lng:-157.8290,photo:"https://images.unsplash.com/photo-1565299585323-38d6b0865b47?w=600&h=400&fit=crop",
+   tags:["shrimp","garlic","waikiki","quick","coconut-shrimp"],
+   price:"$16-20",hours:"10:00-21:00",
+   desc:"ワイキキで手軽にガーリックシュリンプが食べられるフードコート内の人気店。ノースショアまで行かなくてもOK。ココナッツシュリンプも絶品。ロイヤルハワイアンセンター内。"},
 
-  // LANAI
-  { id:24, name:"フロポエ湾", en:"Hulopoe Bay", emoji:"🐬", island:"lanai",
-    cat:["beach","nature"], lat:20.7394, lng:-156.8903,
-    tags:["dolphin","tidepool","clear-water","snorkeling","luxury","couple"],
-    desc:"ラナイ島を代表する海洋保護区。イルカが泳ぐ透明な海と潮だまりの生き物観察が楽しい。フォーシーズンズリゾートの目の前。" },
-  { id:25, name:"神々の庭園", en:"Garden of the Gods", emoji:"🪨", island:"lanai",
-    cat:["scenic","nature"], lat:20.8722, lng:-156.9436,
-    tags:["otherworldly","sunset","4wd","unique","dramatic","instagram"],
-    desc:"赤土の大地に奇岩が林立する異世界的な風景。夕暮れ時のシルエットは特に幻想的。4WD車でのアクセスが必要。" },
+  // ========== CAFES ==========
+  {id:55,name:"アイランド・ヴィンテージ・コーヒー",en:"Island Vintage Coffee",emoji:"☕",area:"waikiki",cat:["cafe"],
+   lat:21.2793,lng:-157.8290,photo:"https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=600&h=400&fit=crop",
+   tags:["coffee","acai","kona","healthy","instagram","breakfast"],
+   price:"$8-16",hours:"6:00-22:00",
+   desc:"100%コナコーヒーとアサイーボウルの人気カフェ。フレッシュフルーツたっぷりのアサイーボウルはインスタ映え抜群。ロイヤルハワイアンセンター内。朝食にも最適。"},
+  {id:56,name:"アロハコーヒーラボ",en:"Aloha Coffee Lab",emoji:"☕",area:"honolulu",cat:["cafe"],
+   lat:21.2900,lng:-157.8430,photo:"https://images.unsplash.com/photo-1442512595331-e89e73853f31?w=600&h=400&fit=crop",
+   tags:["specialty-coffee","pour-over","hipster","local","quiet"],
+   price:"$5-9",hours:"7:00-16:00",
+   desc:"ハワイ産スペシャルティコーヒーにこだわるサードウェーブ系カフェ。丁寧なハンドドリップで一杯ずつ淹れる。コーヒー好きなら外せない。静かな雰囲気でまったり。"},
+  {id:57,name:"Banan（バナン）",en:"Banan",emoji:"🍌",area:"waikiki",cat:["cafe"],
+   lat:21.2655,lng:-157.8070,photo:"https://images.unsplash.com/photo-1501443762994-82bd5dace89a?w=600&h=400&fit=crop",
+   tags:["banana-softserve","healthy","vegan","instagram","beachside"],
+   price:"$7-11",hours:"9:00-18:00",
+   desc:"ハワイ産バナナで作るヴィーガンソフトクリーム。ダイヤモンドヘッド近くのモンサラット通り沿い。アサイーボウルやスムージーも人気。ヘルシー志向の方に。"},
+
+  // ========== SHOPPING ==========
+  {id:60,name:"アラモアナセンター",en:"Ala Moana Center",emoji:"🛍️",area:"honolulu",cat:["shopping","food"],
+   lat:21.2910,lng:-157.8440,photo:"https://images.unsplash.com/photo-1567449303078-57ad995bd329?w=600&h=400&fit=crop",
+   tags:["shopping","brands","food-court","souvenirs","huge","family"],
+   price:"入場無料",hours:"10:00-20:00",
+   desc:"世界最大級のオープンエアモール。350+店舗にハワイ限定ブランドも多数。白木屋やニジヤなど日本語対応店舗も充実。フードコートの充実度もトップクラス。"},
+  {id:61,name:"ロイヤルハワイアンセンター",en:"Royal Hawaiian Center",emoji:"🛍️",area:"waikiki",cat:["shopping"],
+   lat:21.2797,lng:-157.8283,photo:"https://images.unsplash.com/photo-1555529771-122e5d9f2dc3?w=600&h=400&fit=crop",
+   tags:["shopping","waikiki","luxury","culture-class","free-hula"],
+   price:"入場無料",hours:"10:00-22:00",
+   desc:"ワイキキのメインストリート沿いの大型モール。無料のフラレッスンやレイメイキング教室も開催。高級ブランドからお土産ショップまで幅広い品揃え。"},
+  {id:62,name:"ワイケレ・プレミアム・アウトレット",en:"Waikele Premium Outlets",emoji:"🏷️",area:"central",cat:["shopping"],
+   lat:21.3960,lng:-158.0027,photo:"https://images.unsplash.com/photo-1555529771-122e5d9f2dc3?w=600&h=400&fit=crop",
+   tags:["outlet","bargain","brands","coach","nike","shopping"],
+   price:"入場無料",hours:"9:00-21:00",
+   desc:"50+のアウトレット店舗。コーチ、ケイトスペード、ナイキなどが30-70%OFFに。ワイキキからシャトルバス（$20往復）もあり。半日は楽しめる。"},
+  {id:63,name:"ハレイワタウン",en:"Haleiwa Town",emoji:"🎨",area:"northshore",cat:["shopping","food"],
+   lat:21.5942,lng:-158.1044,photo:"https://images.unsplash.com/photo-1505852679233-d9fd70aff56d?w=600&h=400&fit=crop",
+   tags:["surf-shops","art","gallery","boutique","local","nostalgic"],
+   price:"入場無料",hours:"店舗により異なる",
+   desc:"ノースショアの玄関口となるサーフタウン。カラフルなサーフショップ、アートギャラリー、ブティックが並ぶ。ノスタルジックな町並みを散策しながらショッピングを楽しめる。"},
+  {id:64,name:"インターナショナルマーケットプレイス",en:"International Market Place",emoji:"🌳",area:"waikiki",cat:["shopping"],
+   lat:21.2802,lng:-157.8272,photo:"https://images.unsplash.com/photo-1555529771-122e5d9f2dc3?w=600&h=400&fit=crop",
+   tags:["luxury","shopping","dining","banyan-tree","waikiki"],
+   price:"入場無料",hours:"10:00-22:00",
+   desc:"巨大なバニヤンツリーを中心にした高級ショッピングモール。サックスフィフスアベニューやハワイ限定ショップが入る。3階のフードホールも充実。"},
 ];
 
-// ===== SUGGEST KEYWORD MAP =====
-const SUGGEST_MAP = {
-  'のんびり': ['relaxing','beach','quiet','sunset'],
-  'リラックス': ['relaxing','beach','quiet','resort'],
-  'ビーチ': ['beach','clear-water','snorkeling','relaxing'],
-  '映え': ['instagram','panorama','dramatic','unique'],
-  'インスタ': ['instagram','panorama','dramatic','unique'],
-  '写真': ['instagram','panorama','scenic','dramatic'],
-  '絶景': ['panorama','dramatic','cliff','canyon','sunset'],
-  '子連れ': ['family','safe','educational','snorkeling'],
-  '家族': ['family','safe','educational','shopping'],
-  'ファミリー': ['family','safe','educational'],
-  '子ども': ['family','safe','snorkeling','adventure'],
-  '冒険': ['adventure','hiking','zipline','kayak'],
-  'アクティビティ': ['adventure','surfing','snorkeling','diving','zipline'],
-  'スリル': ['adventure','zipline','surfing','helicopter'],
-  'シュノーケリング': ['snorkeling','clear-water','fish','turtle'],
-  'ダイビング': ['diving','snorkeling','clear-water','fish'],
-  '歴史': ['history','museum','educational','culture'],
-  '文化': ['history','educational','culture','sacred'],
-  '学び': ['educational','history','museum','farm-tour'],
-  'グルメ': ['coffee','shrimp','shaveice','restaurant','food-court','tasting'],
-  '美味しい': ['coffee','shrimp','restaurant','tasting','local'],
-  '食べ': ['shrimp','shaveice','restaurant','food-court','coffee'],
-  'カフェ': ['cafe','coffee','relaxing'],
-  'ショッピング': ['shopping','souvenirs','brands','boutique'],
-  '買い物': ['shopping','souvenirs','brands','boutique'],
-  'カップル': ['couple','romantic','sunset','luxury'],
-  'ロマンチック': ['romantic','couple','sunset','stars','luxury'],
-  'デート': ['couple','romantic','sunset','stars'],
-  '恋人': ['couple','romantic','sunset','luxury'],
-  'サンセット': ['sunset','romantic','panorama'],
-  '夕日': ['sunset','romantic','panorama'],
-  '星空': ['stars','night','romantic'],
-  '星': ['stars','night','observatory'],
-  '日の出': ['sunrise','panorama','hiking'],
-  'サーフィン': ['surfing','beach','adventure'],
-  'ハイキング': ['hiking','nature','panorama','exercise'],
-  '自然': ['nature','hiking','waterfall','valley','tropical'],
-  '大自然': ['nature','dramatic','cliff','valley','waterfall','canyon'],
-  '海': ['beach','clear-water','snorkeling','surfing','dolphin'],
-  '山': ['hiking','volcano','panorama','sunrise'],
-  '火山': ['volcano','lava','dramatic','national-park'],
-  '動物': ['turtle','seal','dolphin','fish','whale'],
-  'ウミガメ': ['turtle','nature','snorkeling'],
-  'イルカ': ['dolphin','boat','clear-water'],
-  'クジラ': ['whale','boat','resort'],
-  '静か': ['quiet','secluded','nature','relaxing'],
-  '穴場': ['secluded','quiet','unique'],
-  'ユニーク': ['unique','otherworldly','black-sand'],
-  'ドライブ': ['drive','panorama','scenic'],
-  '映画': ['movie','jurassicpark','adventure'],
+// ===== KEYWORD ENGINE =====
+const KW={
+  'のんびり':['relaxing','calm','peaceful'],'リラックス':['relaxing','calm','beach'],
+  'ビーチ':['beach','clear-water','snorkeling'],'海':['beach','clear-water','surfing','ocean-view'],
+  '映え':['instagram','panorama','colorful'],'インスタ':['instagram','panorama','dramatic'],
+  '写真':['instagram','panorama','photography'],'絶景':['panorama','dramatic','ocean-view'],
+  '子連れ':['family','safe','educational'],'家族':['family','safe','educational'],
+  'ファミリー':['family','safe','educational'],'子ども':['family','safe'],
+  '冒険':['adventure','hiking','zipline'],'アクティビティ':['adventure','surfing','snorkeling','zipline'],
+  'シュノーケリング':['snorkeling','clear-water','fish'],'ダイビング':['diving','snorkeling'],
+  '歴史':['history','museum','educational'],'文化':['history','educational','culture'],
+  'グルメ':['must-eat','famous','local'],'美味しい':['must-eat','famous','local'],
+  '食べ':['must-eat','plate-lunch','shrimp','poke'],'ローカル':['local','authentic','cheap'],
+  'カフェ':['coffee','acai','bakery','breakfast'],'コーヒー':['coffee','kona','pour-over'],
+  'ショッピング':['shopping','brands','souvenirs'],'買い物':['shopping','outlet','bargain'],
+  'カップル':['couple','romantic','sunset'],'ロマンチック':['romantic','couple','sunset','nightview'],
+  'デート':['couple','romantic','sunset'],'サンセット':['sunset','romantic','beachfront'],
+  '夕日':['sunset','panorama','beachfront'],'朝日':['sunrise','hiking'],
+  'サーフィン':['surfing','bigwave','beach'],'ハイキング':['hiking','nature','panorama','exercise'],
+  '自然':['nature','tropical','rainforest'],'大自然':['nature','dramatic','waterfall'],
+  '動物':['turtle','dolphin','whale','fish'],'ウミガメ':['turtle','snorkeling'],
+  'イルカ':['dolphin','marine'],'クジラ':['whale','winter'],
+  '静か':['quiet','secluded','peaceful'],'穴場':['secluded','quiet','local'],
+  'パンケーキ':['pancake','breakfast','macadamia'],'朝食':['breakfast','morning','pancake'],
+  'シュリンプ':['shrimp','garlic','famous'],'ポケ':['poke','fresh','seafood'],
+  'ドーナツ':['malasada','donut','sweet'],'スイーツ':['sweet','pie','shaveice','malasada'],
+  '安い':['cheap','fast','local'],'夜景':['nightview','romantic'],
+  'ドライブ':['panorama','scenic','northshore'],
 };
 
 // ===== STATE =====
-let userLat = null, userLng = null;
-let selectedIsland = 'all';
-let selectedCat = 'all';
-let selectedSpots = [];
-let routeMap = null;
+let userLat=null,userLng=null,selCat='all',selArea='all',selected=[],rMap=null,currentTab='explore';
+const STORAGE_KEY='oahu_explorer_';
 
 // ===== INIT =====
-window.addEventListener('load', () => {
-  setTimeout(() => document.getElementById('loader').classList.add('hide'), 900);
-  renderSpots();
+window.addEventListener('load',()=>{
+  setTimeout(()=>document.getElementById('loader').classList.add('hide'),700);
+  selected=JSON.parse(localStorage.getItem(STORAGE_KEY+'selected')||'[]');
   setupListeners();
+  renderSpots();
+  updateItiBar();
   getLocation();
 });
 
-function setupListeners() {
-  // Island tabs
-  document.querySelectorAll('.island-tab').forEach(tab => {
-    tab.addEventListener('click', () => {
-      document.querySelectorAll('.island-tab').forEach(t => t.classList.remove('active'));
-      tab.classList.add('active');
-      selectedIsland = tab.dataset.island;
-      document.querySelectorAll('.hawaii-svg-wrap path').forEach(p => p.classList.remove('active-island'));
-      if (selectedIsland !== 'all') {
-        const el = document.querySelector(`path[data-island="${selectedIsland}"]`);
-        if (el) el.classList.add('active-island');
-      }
-      renderSpots();
-    });
+function setupListeners(){
+  document.querySelectorAll('.cat').forEach(c=>c.onclick=()=>{
+    document.querySelectorAll('.cat').forEach(x=>x.classList.remove('active'));
+    c.classList.add('active');selCat=c.dataset.c;renderSpots();
   });
-
-  // SVG island click
-  document.querySelectorAll('.hawaii-svg-wrap path').forEach(path => {
-    path.addEventListener('click', () => {
-      const island = path.dataset.island;
-      document.querySelectorAll('.island-tab').forEach(t => {
-        t.classList.toggle('active', t.dataset.island === island);
-      });
-      document.querySelectorAll('.hawaii-svg-wrap path').forEach(p => p.classList.remove('active-island'));
-      path.classList.add('active-island');
-      selectedIsland = island;
-      renderSpots();
-    });
+  document.getElementById('searchInput').addEventListener('input',()=>{
+    renderSpots();
+    const q=document.getElementById('searchInput').value.trim();
+    if(q.length>2)saveSearch(q);
   });
-
-  // Category chips
-  document.querySelectorAll('.cat-chip').forEach(chip => {
-    chip.addEventListener('click', () => {
-      document.querySelectorAll('.cat-chip').forEach(c => c.classList.remove('active'));
-      chip.classList.add('active');
-      selectedCat = chip.dataset.cat;
-      renderSpots();
-    });
+  document.getElementById('areaSelect').addEventListener('change',e=>{selArea=e.target.value;renderSpots()});
+  document.querySelectorAll('.suggest-preset').forEach(b=>{
+    b.onclick=()=>{
+      document.querySelectorAll('.suggest-preset').forEach(x=>x.classList.remove('active'));
+      b.classList.add('active');document.getElementById('suggestInput').value=b.dataset.q;runSuggest();
+    };
   });
-
-  // Search
-  document.getElementById('searchInput').addEventListener('input', () => renderSpots());
-
-  // Suggest presets
-  document.querySelectorAll('.suggest-preset').forEach(btn => {
-    btn.addEventListener('click', () => {
-      document.querySelectorAll('.suggest-preset').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      document.getElementById('suggestInput').value = btn.dataset.q;
-      runSuggest();
-    });
-  });
-
-  // Suggest enter key
-  document.getElementById('suggestInput').addEventListener('keydown', e => {
-    if (e.key === 'Enter') runSuggest();
-  });
+  document.getElementById('suggestInput').addEventListener('keydown',e=>{if(e.key==='Enter')runSuggest()});
 }
 
-// ===== SUGGEST ENGINE =====
-function runSuggest() {
-  const input = document.getElementById('suggestInput').value.trim();
-  if (!input) return;
-
-  const resultsEl = document.getElementById('suggestResults');
-  const cardsEl = document.getElementById('suggestCards');
-  const titleEl = document.getElementById('suggestTitle');
-
-  // Show loading
-  resultsEl.classList.add('show');
-  titleEl.textContent = '';
-  cardsEl.innerHTML = '<div class="suggest-loading">ぴったりのスポットを探しています<span class="dots"></span></div>';
-
-  setTimeout(() => {
-    // Extract matching tags from input
-    let matchedTags = [];
-    for (const [keyword, tags] of Object.entries(SUGGEST_MAP)) {
-      if (input.includes(keyword)) {
-        matchedTags.push(...tags);
-      }
-    }
-
-    // Also match against spot descriptions and categories
-    const inputLower = input.toLowerCase();
-
-    // Score each spot
-    const scored = SPOTS.map(spot => {
-      let score = 0;
-      let reasons = [];
-
-      // Tag matches
-      const tagSet = new Set(matchedTags);
-      spot.tags.forEach(t => {
-        if (tagSet.has(t)) { score += 3; }
-      });
-
-      // Description keyword match
-      const words = input.replace(/[をにがでのはもと、。!！?？]/g, ' ').split(/\s+/).filter(w => w.length > 1);
-      words.forEach(w => {
-        if (spot.desc.includes(w)) { score += 2; }
-        if (spot.name.includes(w)) { score += 4; }
-      });
-
-      // Category match
-      spot.cat.forEach(c => {
-        const catKeywords = {
-          beach: ['ビーチ','海','泳','砂'],
-          nature: ['自然','緑','森','山','渓谷'],
-          culture: ['文化','歴史','伝統'],
-          food: ['グルメ','食','美味','カフェ','レストラン'],
-          activity: ['アクティビティ','冒険','体験','スポーツ'],
-          shopping: ['ショッピング','買い物','お店'],
-          scenic: ['絶景','景色','眺め','パノラマ']
-        };
-        if (catKeywords[c]) {
-          catKeywords[c].forEach(kw => {
-            if (input.includes(kw)) { score += 2; reasons.push(c); }
-          });
-        }
-      });
-
-      // Build reason text
-      let reason = '';
-      if (spot.tags.some(t => tagSet.has(t))) {
-        const matchedSpotTags = spot.tags.filter(t => tagSet.has(t));
-        const tagLabels = {
-          relaxing:'リラックス', beach:'ビーチ', couple:'カップル向け', family:'家族向け',
-          sunset:'夕日', stars:'星空', adventure:'冒険', snorkeling:'シュノーケリング',
-          instagram:'映えスポット', panorama:'パノラマ絶景', hiking:'ハイキング',
-          romantic:'ロマンチック', nature:'自然', history:'歴史', shopping:'ショッピング',
-          surfing:'サーフィン', unique:'ユニーク', dramatic:'ダイナミック',
-          quiet:'静か', dolphin:'イルカ', turtle:'ウミガメ', coffee:'コーヒー',
-          whale:'ホエールウォッチング', luxury:'ラグジュアリー', safe:'安全',
-          educational:'学び', volcano:'火山', 'clear-water':'透明な海',
-        };
-        reason = matchedSpotTags.slice(0, 3).map(t => tagLabels[t] || t).join(' / ');
-      }
-
-      // Distance bonus (closer = slight bonus)
-      if (userLat && score > 0) {
-        const dist = haversine(userLat, userLng, spot.lat, spot.lng);
-        if (dist < 20) score += 1;
-      }
-
-      return { ...spot, score, reason };
-    });
-
-    // Sort and take top 5
-    scored.sort((a, b) => b.score - a.score);
-    const top = scored.filter(s => s.score > 0).slice(0, 5);
-
-    if (top.length === 0) {
-      titleEl.textContent = '🤔 ぴったりのスポットが見つかりませんでした';
-      cardsEl.innerHTML = '<p style="text-align:center;color:#999;font-size:.9rem;">別のキーワードやプリセットを試してみてください</p>';
-      return;
-    }
-
-    const maxScore = top[0].score;
-    titleEl.textContent = `✨ 「${input}」にぴったりの ${top.length} スポット`;
-
-    cardsEl.innerHTML = top.map(s => {
-      const pct = Math.min(100, Math.round(s.score / maxScore * 100));
-      const dist = userLat ? formatDist(haversine(userLat, userLng, s.lat, s.lng)) : '';
-      return `
-        <div class="suggest-result-card" onclick="showRoute(${s.id})">
-          <span class="suggest-result-emoji">${s.emoji}</span>
-          <div class="suggest-result-info">
-            <div class="suggest-result-name">${s.name} <small style="color:#999">${dist}</small></div>
-            <div class="suggest-result-reason">${s.reason || s.desc.substring(0, 50) + '...'}</div>
-          </div>
-          <div class="suggest-result-match">${pct}%</div>
-        </div>
-      `;
-    }).join('');
-  }, 600);
+// ===== TABS =====
+function switchTab(tab){
+  currentTab=tab;
+  document.querySelectorAll('.main-tab').forEach(t=>t.classList.toggle('active',t.dataset.tab===tab));
+  document.getElementById('tab-explore').style.display=tab==='explore'?'':'none';
+  document.getElementById('tab-plan').style.display=tab==='plan'?'':'none';
+  document.getElementById('tab-history').style.display=tab==='history'?'':'none';
+  if(tab==='plan')renderPlan();
+  if(tab==='history')renderHistory();
 }
 
-// ===== GEOLOCATION =====
-function getLocation() {
-  const locText = document.getElementById('locText');
-  const locStatus = document.getElementById('locStatus');
-  locText.textContent = '現在地を取得中...';
-  locStatus.textContent = '取得中';
-  locStatus.classList.add('pending');
-
-  if (!navigator.geolocation) {
-    locText.textContent = '位置情報非対応のブラウザです';
-    locStatus.textContent = 'エラー';
-    return;
-  }
-
-  navigator.geolocation.getCurrentPosition(
-    pos => {
-      userLat = pos.coords.latitude;
-      userLng = pos.coords.longitude;
-      locText.textContent = `${userLat.toFixed(4)}, ${userLng.toFixed(4)}`;
-      locStatus.textContent = '取得済み';
-      locStatus.classList.remove('pending');
-      renderSpots();
-    },
-    () => {
-      userLat = 21.3069;
-      userLng = -157.8583;
-      locText.textContent = 'ホノルル（デモ位置）';
-      locStatus.textContent = 'デモ';
-      locStatus.classList.remove('pending');
-      renderSpots();
-    },
-    { enableHighAccuracy: true, timeout: 8000 }
-  );
+// ===== LOCATION =====
+function getLocation(){
+  const t=document.getElementById('locText'),s=document.getElementById('locStatus');
+  t.textContent='取得中...';s.textContent='取得中';s.classList.add('pending');
+  if(!navigator.geolocation){t.textContent='位置情報非対応';s.textContent='エラー';return}
+  navigator.geolocation.getCurrentPosition(p=>{
+    userLat=p.coords.latitude;userLng=p.coords.longitude;
+    t.textContent=`${userLat.toFixed(4)}, ${userLng.toFixed(4)}`;
+    s.textContent='取得済み';s.classList.remove('pending');renderSpots();
+  },()=>{
+    userLat=21.2866;userLng=-157.8298; // Prince Waikiki area
+    t.textContent='ワイキキ（デモ位置）';s.textContent='デモ';s.classList.remove('pending');renderSpots();
+  },{enableHighAccuracy:true,timeout:8000});
 }
 
 // ===== DISTANCE =====
-function haversine(lat1, lng1, lat2, lng2) {
-  const R = 6371;
-  const dLat = (lat2 - lat1) * Math.PI / 180;
-  const dLng = (lng2 - lng1) * Math.PI / 180;
-  const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLng/2)**2;
-  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+function hav(a1,n1,a2,n2){
+  const R=6371,dL=(a2-a1)*Math.PI/180,dN=(n2-n1)*Math.PI/180;
+  const a=Math.sin(dL/2)**2+Math.cos(a1*Math.PI/180)*Math.cos(a2*Math.PI/180)*Math.sin(dN/2)**2;
+  return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
 }
+function fmtD(km){return km<1?`${Math.round(km*1000)}m`:`${km.toFixed(1)}km`}
+// Oahu driving time estimate (avg 35km/h with road factor 1.4)
+function driveMin(km){return Math.max(3,Math.round(km*1.4/35*60))}
 
-function formatDist(km) {
-  if (km < 1) return `${Math.round(km*1000)}m`;
-  return `${km.toFixed(1)}km`;
-}
-
-// ===== RENDER =====
-function renderSpots() {
-  const grid = document.getElementById('spotsGrid');
-  const countEl = document.getElementById('spotsCount');
-  const query = document.getElementById('searchInput').value.toLowerCase();
-
-  let spots = SPOTS.filter(s => {
-    if (selectedIsland !== 'all' && s.island !== selectedIsland) return false;
-    if (selectedCat !== 'all' && !s.cat.includes(selectedCat)) return false;
-    if (query && !s.name.includes(query) && !s.en.toLowerCase().includes(query) && !s.desc.includes(query)) return false;
+// ===== RENDER SPOTS =====
+function renderSpots(){
+  const grid=document.getElementById('grid'),cnt=document.getElementById('spotsCount');
+  const q=document.getElementById('searchInput').value.toLowerCase();
+  let spots=S.filter(s=>{
+    if(selArea!=='all'&&s.area!==selArea)return false;
+    if(selCat!=='all'&&!s.cat.includes(selCat))return false;
+    if(q&&!s.name.includes(q)&&!s.en.toLowerCase().includes(q)&&!s.desc.includes(q)&&!s.tags.some(t=>t.includes(q)))return false;
     return true;
   });
-
-  if (userLat !== null) {
-    spots.forEach(s => s._dist = haversine(userLat, userLng, s.lat, s.lng));
-    spots.sort((a, b) => a._dist - b._dist);
-  }
-
-  const islandNames = { oahu:'オアフ島', maui:'マウイ島', bigisland:'ハワイ島', kauai:'カウアイ島', molokai:'モロカイ島', lanai:'ラナイ島' };
-  countEl.textContent = `${spots.length} スポット${selectedIsland !== 'all' ? ' / ' + islandNames[selectedIsland] : ''}`;
-
-  grid.innerHTML = spots.map((s, i) => {
-    const dist = s._dist ? formatDist(s._dist) : '---';
-    const isSelected = selectedSpots.includes(s.id);
-    const selIdx = selectedSpots.indexOf(s.id);
-    return `
-      <div class="spot-card sketch-box ${isSelected ? 'selected' : ''}" data-id="${s.id}" onclick="toggleSpot(${s.id})">
-        <div class="spot-num">${i+1}</div>
-        <div class="spot-header">
-          <span class="spot-emoji">${s.emoji}</span>
-          <div>
-            <div class="spot-title">${s.name}</div>
-            <div class="spot-subtitle">${s.en} - ${islandNames[s.island] || s.island}</div>
+  if(userLat){spots.forEach(s=>s._d=hav(userLat,userLng,s.lat,s.lng));spots.sort((a,b)=>a._d-b._d)}
+  const areas={waikiki:'ワイキキ',honolulu:'ホノルル',kailua:'カイルア',northshore:'ノースショア',westside:'西海岸',eastside:'東海岸',central:'中部'};
+  cnt.textContent=`${spots.length} スポット${selArea!=='all'?' / '+areas[selArea]:''}`;
+  grid.innerHTML=spots.map((s,i)=>{
+    const d=s._d?fmtD(s._d):'---';const isSel=selected.includes(s.id);const si=selected.indexOf(s.id);
+    const catL={beach:'🏖️ビーチ',nature:'🌿自然',culture:'🏛️文化',food:'🍽️グルメ',activity:'🏄体験',shopping:'🛍️買い物',scenic:'📸絶景',cafe:'☕カフェ'};
+    return `<div class="card${isSel?' selected':''}" onclick="openDetail(${s.id})">
+      ${s.photo?`<img class="card-img" src="${s.photo}" alt="${s.name}" loading="lazy" onerror="this.outerHTML='<div class=card-img-placeholder>${s.emoji}</div>'">`
+        :`<div class="card-img-placeholder">${s.emoji}</div>`}
+      <div class="card-num">${i+1}</div>
+      ${isSel?`<div class="card-sel">${si+1}</div>`:''}
+      <div class="card-body">
+        <div class="card-top">
+          <span class="card-emoji">${s.emoji}</span>
+          <div><div class="card-title">${s.name}</div><div class="card-en">${s.en}</div>
+          <span class="card-area-tag">${areas[s.area]||s.area}</span></div>
+        </div>
+        <div class="card-desc">${s.desc}</div>
+        <div class="card-tags">${s.cat.map(c=>`<span class="card-tag${c==='food'||c==='cafe'?' food-tag':''}">${catL[c]||c}</span>`).join('')}</div>
+        ${s.price?`<div class="card-price">${s.price}</div>`:''}
+        ${s.hours?`<div class="card-hours">🕐 ${s.hours}</div>`:''}
+        <div class="card-footer">
+          <span class="card-dist">📏 ${d}${s._d?' / 🚗'+driveMin(s._d)+'分':''}</span>
+          <div class="card-actions">
+            <button class="card-btn btn-gmaps" onclick="event.stopPropagation();openGmaps(${s.id})">G Maps</button>
+            <button class="card-btn btn-route" onclick="event.stopPropagation();toggleSelect(${s.id})">
+              ${isSel?'✓ 選択済':'+ 追加'}</button>
           </div>
         </div>
-        <div class="spot-desc">${s.desc}</div>
-        <div class="spot-tags">
-          ${s.cat.map(c => `<span class="spot-tag">${catLabel(c)}</span>`).join('')}
-        </div>
-        <div class="spot-meta">
-          <span class="spot-distance">📏 ${dist}</span>
-          <button class="spot-btn" onclick="event.stopPropagation();showRoute(${s.id})">🗺️ ルート</button>
-        </div>
-        ${isSelected ? `<div class="spot-select-badge">${selIdx+1}</div>` : ''}
       </div>
-    `;
+    </div>`;
   }).join('');
 }
 
-function catLabel(c) {
-  const map = { beach:'🏖️ ビーチ', nature:'🌿 自然', culture:'🏛️ 文化', food:'🍽️ グルメ', activity:'🏄 アクティビティ', shopping:'🛍️ ショッピング', scenic:'📸 絶景' };
-  return map[c] || c;
+// ===== DETAIL MODAL =====
+function openDetail(id){
+  const s=S.find(x=>x.id===id);if(!s)return;
+  saveView(id);
+  const d=userLat?fmtD(hav(userLat,userLng,s.lat,s.lng)):'---';
+  const dm=userLat?driveMin(hav(userLat,userLng,s.lat,s.lng)):'?';
+  const isSel=selected.includes(id);
+  const areas={waikiki:'ワイキキ',honolulu:'ホノルル',kailua:'カイルア',northshore:'ノースショア',westside:'西海岸',eastside:'東海岸',central:'中部'};
+  document.getElementById('detailModal').innerHTML=`
+    ${s.photo?`<img class="detail-img" src="${s.photo}" alt="${s.name}" onerror="this.style.display='none'">`:''}
+    <div class="detail-body">
+      <div class="detail-header">
+        <span class="detail-emoji">${s.emoji}</span>
+        <div><div class="detail-name">${s.name}</div><div class="detail-en">${s.en} - ${areas[s.area]}</div></div>
+      </div>
+      <div class="detail-desc">${s.desc}</div>
+      <div class="detail-meta">
+        <div class="detail-meta-item"><div class="label">距離</div><div class="value">📏 ${d}</div></div>
+        <div class="detail-meta-item"><div class="label">車で</div><div class="value">🚗 約${dm}分</div></div>
+        <div class="detail-meta-item"><div class="label">料金</div><div class="value">${s.price||'---'}</div></div>
+        <div class="detail-meta-item"><div class="label">営業時間</div><div class="value">${s.hours||'---'}</div></div>
+      </div>
+      <div class="detail-btns">
+        <button class="detail-btn detail-btn-gmaps" onclick="openGmaps(${s.id})">🗺️ Googleマップ</button>
+        <button class="detail-btn detail-btn-select" onclick="toggleSelect(${s.id});closeDetail()">
+          ${isSel?'✓ 選択済み':'📌 プランに追加'}</button>
+        <button class="detail-btn detail-btn-close" onclick="closeDetail()">閉じる</button>
+      </div>
+    </div>`;
+  document.getElementById('detailOverlay').classList.add('show');
+}
+function closeDetail(){document.getElementById('detailOverlay').classList.remove('show')}
+
+// ===== GOOGLE MAPS =====
+function openGmaps(id){
+  const s=S.find(x=>x.id===id);if(!s)return;
+  let url=`https://www.google.com/maps/dir/?api=1&destination=${s.lat},${s.lng}&travelmode=driving`;
+  if(userLat)url+=`&origin=${userLat},${userLng}`;
+  window.open(url,'_blank');
+}
+function openGmapsMulti(){
+  if(selected.length===0)return;
+  const spots=selected.map(id=>S.find(x=>x.id===id)).filter(Boolean);
+  const last=spots[spots.length-1];
+  let url=`https://www.google.com/maps/dir/?api=1&destination=${last.lat},${last.lng}&travelmode=driving`;
+  if(userLat)url+=`&origin=${userLat},${userLng}`;
+  if(spots.length>1){
+    const waypoints=spots.slice(0,-1).map(s=>`${s.lat},${s.lng}`).join('|');
+    url+=`&waypoints=${waypoints}`;
+  }
+  window.open(url,'_blank');
 }
 
 // ===== SELECTION =====
-function toggleSpot(id) {
-  const idx = selectedSpots.indexOf(id);
-  if (idx >= 0) selectedSpots.splice(idx, 1);
-  else selectedSpots.push(id);
-  updateItineraryBar();
-  renderSpots();
+function toggleSelect(id){
+  const i=selected.indexOf(id);
+  if(i>=0){selected.splice(i,1);removeSelectedHistory(id)}
+  else{selected.push(id);saveSelected(id)}
+  localStorage.setItem(STORAGE_KEY+'selected',JSON.stringify(selected));
+  updateItiBar();renderSpots();if(currentTab==='plan')renderPlan();
 }
-
-function updateItineraryBar() {
-  const bar = document.getElementById('itineraryBar');
-  document.getElementById('itiCount').textContent = selectedSpots.length;
-
-  if (selectedSpots.length === 0) { bar.classList.remove('show'); return; }
+function clearSelection(){selected=[];localStorage.setItem(STORAGE_KEY+'selected','[]');updateItiBar();renderSpots()}
+function updateItiBar(){
+  const bar=document.getElementById('itiBar');
+  document.getElementById('itiCount').textContent=selected.length;
+  if(!selected.length){bar.classList.remove('show');return}
   bar.classList.add('show');
+  let total=0,prev=userLat?{lat:userLat,lng:userLng}:null;
+  selected.forEach(id=>{const s=S.find(x=>x.id===id);if(prev&&s)total+=hav(prev.lat,prev.lng,s.lat,s.lng);if(s)prev={lat:s.lat,lng:s.lng}});
+  document.getElementById('itiTotal').textContent=userLat?`合計: ${fmtD(total)} / 🚗${driveMin(total)}分`:'合計: ---';
+}
 
-  let total = 0;
-  let prev = userLat ? { lat: userLat, lng: userLng } : null;
-  selectedSpots.forEach(id => {
-    const s = SPOTS.find(sp => sp.id === id);
-    if (prev) total += haversine(prev.lat, prev.lng, s.lat, s.lng);
-    prev = { lat: s.lat, lng: s.lng };
+// ===== PLAN TAB =====
+function renderPlan(){
+  const list=document.getElementById('planList'),empty=document.getElementById('planEmpty'),summary=document.getElementById('planSummary');
+  if(!selected.length){list.innerHTML='';empty.style.display='';summary.style.display='none';return}
+  empty.style.display='none';summary.style.display='';
+  const areas={waikiki:'ワイキキ',honolulu:'ホノルル',kailua:'カイルア',northshore:'ノースショア',westside:'西海岸',eastside:'東海岸',central:'中部'};
+  let totalD=0,legs=[],prev=userLat?{lat:userLat,lng:userLng}:null;
+  const spots=selected.map(id=>S.find(x=>x.id===id)).filter(Boolean);
+  spots.forEach(s=>{
+    const d=prev?hav(prev.lat,prev.lng,s.lat,s.lng):0;totalD+=d;
+    legs.push({spot:s,dist:d,cumD:totalD});prev={lat:s.lat,lng:s.lng};
   });
-  document.getElementById('totalDist').textContent = prev && userLat ? `合計: ${formatDist(total)}` : '合計: ---';
-}
-
-function clearSelection() {
-  selectedSpots = [];
-  updateItineraryBar();
-  renderSpots();
-}
-
-// ===== SINGLE ROUTE =====
-function showRoute(id) {
-  const spot = SPOTS.find(s => s.id === id);
-  if (!spot) return;
-
-  const panel = document.getElementById('routePanel');
-  const content = document.getElementById('routeContent');
-  const stepsEl = document.getElementById('routeSteps');
-
-  const dist = userLat ? formatDist(haversine(userLat, userLng, spot.lat, spot.lng)) : '---';
-  const driveMin = userLat ? Math.round(haversine(userLat, userLng, spot.lat, spot.lng) / 50 * 60) : '?';
-
-  content.innerHTML = `
-    <div class="route-dest-info">
-      <span class="route-dest-emoji">${spot.emoji}</span>
-      <div>
-        <div class="route-dest-name">${spot.name}</div>
-        <div class="route-dest-dist">📏 ${dist}　🚗 約${driveMin}分</div>
+  list.innerHTML=legs.map((l,i)=>`
+    <div style="display:flex;gap:12px;align-items:center;padding:12px;margin-bottom:8px;background:var(--white);border:2px solid #e8e8e8;border-radius:var(--radius);transition:var(--transition)">
+      <div style="width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--pink),var(--orange));color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-family:Caveat,cursive;font-size:1.1rem;flex-shrink:0">${i+1}</div>
+      ${l.spot.photo?`<img src="${l.spot.photo}" style="width:50px;height:50px;border-radius:10px;object-fit:cover" onerror="this.style.display='none'">`:''}
+      <div style="flex:1;min-width:0">
+        <div style="font-weight:700;font-size:.9rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${l.spot.emoji} ${l.spot.name}</div>
+        <div style="font-size:.75rem;color:var(--ink-light)">${areas[l.spot.area]} / ${l.dist>0?'移動 '+fmtD(l.dist)+' (🚗'+driveMin(l.dist)+'分)':'スタート'}</div>
+        <div style="font-size:.72rem;color:var(--ink-muted)">累計: ${fmtD(l.cumD)}</div>
       </div>
+      <button onclick="openGmaps(${l.spot.id})" style="padding:4px 10px;border-radius:var(--radius-full);background:#4285F4;color:#fff;font-size:.7rem;font-weight:700;border:none;cursor:pointer">Maps</button>
+      <button onclick="toggleSelect(${l.spot.id})" style="padding:4px 8px;border-radius:50%;background:#eee;font-size:.85rem;border:none;cursor:pointer">✕</button>
     </div>
+  `).join('');
+  document.getElementById('planStats').innerHTML=`
+    <div>📍 ${spots.length}箇所 / 📏 合計 ${fmtD(totalD)} / 🚗 約${driveMin(totalD)}分</div>
+    <div style="font-size:.78rem;color:var(--ink-light);margin-top:4px">※直線距離×1.4で計算。実際の道路状況により変動します</div>
   `;
-
-  stepsEl.innerHTML = `
-    <li class="route-step">
-      <div class="step-icon start">📍</div>
-      <div><div class="step-text">現在地を出発</div><div class="step-dist">${userLat ? `${userLat.toFixed(4)}, ${userLng.toFixed(4)}` : 'デモ位置'}</div></div>
-    </li>
-    <li class="route-step">
-      <div class="step-icon">→</div>
-      <div><div class="step-text">${spot.name}（${spot.en}）へ</div><div class="step-dist">距離: ${dist} / 車で約${driveMin}分</div></div>
-    </li>
-    <li class="route-step">
-      <div class="step-icon end">🏁</div>
-      <div><div class="step-text">${spot.name}に到着!</div><div class="step-dist">${spot.desc.substring(0, 60)}...</div></div>
-    </li>
-  `;
-
-  panel.classList.add('open');
-
-  setTimeout(() => {
-    if (routeMap) { routeMap.remove(); routeMap = null; }
-    routeMap = L.map('routeMap').setView([spot.lat, spot.lng], 10);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '&copy; OpenStreetMap' }).addTo(routeMap);
-
-    L.marker([spot.lat, spot.lng]).addTo(routeMap).bindPopup(`<b>${spot.emoji} ${spot.name}</b><br>${dist}`).openPopup();
-
-    if (userLat) {
-      L.marker([userLat, userLng], {
-        icon: L.divIcon({ className:'', html:'<div style="font-size:22px">📍</div>', iconSize:[26,26], iconAnchor:[13,26] })
-      }).addTo(routeMap).bindPopup('現在地');
-
-      L.polyline([[userLat, userLng], [spot.lat, spot.lng]], {
-        color:'#F06292', weight:4, dashArray:'10, 8', opacity:0.8
-      }).addTo(routeMap);
-
-      routeMap.fitBounds([[userLat, userLng], [spot.lat, spot.lng]], { padding:[40,40] });
-    }
-  }, 100);
 }
 
-// ===== ITINERARY ROUTE =====
-function showItinerary() {
-  if (selectedSpots.length === 0) return;
-
-  const panel = document.getElementById('routePanel');
-  const content = document.getElementById('routeContent');
-  const stepsEl = document.getElementById('routeSteps');
-
-  const spots = selectedSpots.map(id => SPOTS.find(s => s.id === id));
-  let totalDist = 0;
-  const legs = [];
-
-  let prev = userLat ? { lat:userLat, lng:userLng, name:'現在地', emoji:'📍' } : null;
-  spots.forEach(s => {
-    if (prev) {
-      const d = haversine(prev.lat, prev.lng, s.lat, s.lng);
-      totalDist += d;
-      legs.push({ from:prev, to:s, dist:d, cumulative:totalDist });
-    }
-    prev = s;
-  });
-
-  content.innerHTML = `
-    <div class="route-dest-info">
-      <span class="route-dest-emoji">🗺️</span>
-      <div>
-        <div class="route-dest-name">${spots.length}箇所のルート</div>
-        <div class="route-dest-dist">📏 合計 ${formatDist(totalDist)}　🚗 約${Math.round(totalDist/50*60)}分</div>
-      </div>
-    </div>
-  `;
-
-  let html = '';
-  if (userLat) {
-    html += `<li class="route-step"><div class="step-icon start">📍</div><div><div class="step-text">現在地を出発</div></div></li>`;
-  }
-  legs.forEach((leg, i) => {
-    html += `
-      <li class="route-step">
-        <div class="step-icon">${i+1}</div>
-        <div>
-          <div class="step-text">${leg.to.emoji} ${leg.to.name}</div>
-          <div class="step-dist">移動: ${formatDist(leg.dist)} / 累計: ${formatDist(leg.cumulative)}</div>
-        </div>
-      </li>
-    `;
-  });
-  stepsEl.innerHTML = html;
+// ===== ROUTE PANEL =====
+function showRoutePanel(){
+  if(!selected.length)return;
+  const panel=document.getElementById('routePanel'),content=document.getElementById('routeContent'),steps=document.getElementById('routeSteps'),gmaps=document.getElementById('routeGmaps');
+  const spots=selected.map(id=>S.find(x=>x.id===id)).filter(Boolean);
+  let totalD=0,legs=[];
+  let prev=userLat?{lat:userLat,lng:userLng}:null;
+  spots.forEach(s=>{const d=prev?hav(prev.lat,prev.lng,s.lat,s.lng):0;totalD+=d;legs.push({spot:s,dist:d,cumD:totalD});prev={lat:s.lat,lng:s.lng}});
+  content.innerHTML=`<div class="route-summary"><span class="route-summary-emoji">🗺️</span><div><div class="route-summary-name">${spots.length}箇所のルート</div><div class="route-summary-stats">📏 合計 ${fmtD(totalD)} / 🚗 約${driveMin(totalD)}分</div></div></div>`;
+  let html='';
+  if(userLat)html+=`<li class="route-step"><div class="step-num start">📍</div><div><div class="step-text">現在地を出発</div></div></li>`;
+  legs.forEach((l,i)=>{html+=`<li class="route-step"><div class="step-num">${i+1}</div><div><div class="step-text">${l.spot.emoji} ${l.spot.name}</div><div class="step-sub">移動: ${fmtD(l.dist)} (🚗${driveMin(l.dist)}分) / 累計: ${fmtD(l.cumD)}</div></div></li>`});
+  steps.innerHTML=html;
+  gmaps.innerHTML=`<button class="gmaps-nav-btn" onclick="openGmapsMulti()">🗺️ Googleマップでナビ開始</button>`;
   panel.classList.add('open');
-
-  setTimeout(() => {
-    if (routeMap) { routeMap.remove(); routeMap = null; }
-    const points = spots.map(s => [s.lat, s.lng]);
-    if (userLat) points.unshift([userLat, userLng]);
-
-    routeMap = L.map('routeMap').setView(points[0], 9);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution:'&copy; OpenStreetMap' }).addTo(routeMap);
-
-    if (userLat) {
-      L.marker([userLat, userLng], {
-        icon: L.divIcon({ className:'', html:'<div style="font-size:22px">📍</div>', iconSize:[26,26], iconAnchor:[13,26] })
-      }).addTo(routeMap).bindPopup('現在地');
-    }
-    spots.forEach((s, i) => {
-      L.marker([s.lat, s.lng], {
-        icon: L.divIcon({
-          className: '',
-          html: `<div style="background:linear-gradient(135deg,#F06292,#FF8A65);color:#fff;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;border:2px solid #fff;font-family:Caveat,cursive;font-size:1.1rem;box-shadow:0 2px 8px rgba(0,0,0,.2)">${i+1}</div>`,
-          iconSize:[32,32], iconAnchor:[16,16]
-        })
-      }).addTo(routeMap).bindPopup(`<b>${s.emoji} ${s.name}</b>`);
+  setTimeout(()=>{
+    if(rMap){rMap.remove();rMap=null}
+    const pts=spots.map(s=>[s.lat,s.lng]);if(userLat)pts.unshift([userLat,userLng]);
+    rMap=L.map('routeMap').setView(pts[0],10);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'&copy; OSM'}).addTo(rMap);
+    if(userLat)L.marker([userLat,userLng],{icon:L.divIcon({className:'',html:'<div style="font-size:20px">📍</div>',iconSize:[24,24],iconAnchor:[12,24]})}).addTo(rMap).bindPopup('現在地');
+    spots.forEach((s,i)=>{
+      L.marker([s.lat,s.lng],{icon:L.divIcon({className:'',html:`<div style="background:linear-gradient(135deg,#F06292,#FF8A65);color:#fff;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;border:2px solid #fff;font-family:Caveat,cursive;font-size:1rem;box-shadow:0 2px 8px rgba(0,0,0,.2)">${i+1}</div>`,iconSize:[30,30],iconAnchor:[15,15]})}).addTo(rMap).bindPopup(`<b>${s.emoji} ${s.name}</b>`);
     });
+    L.polyline(pts,{color:'#F06292',weight:4,dashArray:'10,8',opacity:.8}).addTo(rMap);
+    rMap.fitBounds(pts,{padding:[40,40]});
+  },150);
+}
+function closeRoute(){document.getElementById('routePanel').classList.remove('open');if(rMap){rMap.remove();rMap=null}}
 
-    L.polyline(points, { color:'#F06292', weight:4, dashArray:'10, 8', opacity:0.8 }).addTo(routeMap);
-    routeMap.fitBounds(points, { padding:[40,40] });
-  }, 100);
+// ===== SUGGEST ENGINE =====
+function runSuggest(){
+  const input=document.getElementById('suggestInput').value.trim();if(!input)return;
+  saveSearch(input);
+  const res=document.getElementById('suggestResults'),cards=document.getElementById('suggestCards'),title=document.getElementById('suggestTitle');
+  res.classList.add('show');title.textContent='';cards.innerHTML='<div style="text-align:center;padding:16px;font-family:Caveat,cursive;font-size:1.1rem;color:var(--pink)">ぴったりのスポットを探しています...</div>';
+  setTimeout(()=>{
+    let tags=[];
+    for(const[k,v]of Object.entries(KW)){if(input.includes(k))tags.push(...v)}
+    const scored=S.map(s=>{
+      let sc=0;const ts=new Set(tags);
+      s.tags.forEach(t=>{if(ts.has(t))sc+=3});
+      input.replace(/[をにがでのはもと、。!！?？]/g,' ').split(/\s+/).filter(w=>w.length>1).forEach(w=>{
+        if(s.desc.includes(w))sc+=2;if(s.name.includes(w))sc+=4;
+      });
+      const tagLabels={relaxing:'リラックス',beach:'ビーチ',couple:'カップル向け',family:'ファミリー向け',sunset:'サンセット',instagram:'インスタ映え',hiking:'ハイキング',romantic:'ロマンチック',nature:'自然',history:'歴史',shopping:'ショッピング',surfing:'サーフィン',snorkeling:'シュノーケリング',coffee:'コーヒー',must_eat:'必食',famous:'有名',local:'ローカル',poke:'ポケ',shrimp:'シュリンプ',pancake:'パンケーキ',breakfast:'朝食'};
+      const reason=s.tags.filter(t=>ts.has(t)).slice(0,3).map(t=>tagLabels[t]||t).join(' / ');
+      return{...s,sc,reason};
+    }).filter(x=>x.sc>0).sort((a,b)=>b.sc-a.sc).slice(0,6);
+    if(!scored.length){title.textContent='別のキーワードを試してみてください';cards.innerHTML='';return}
+    const mx=scored[0].sc;
+    title.textContent=`「${input}」にぴったりの ${scored.length} スポット`;
+    cards.innerHTML=scored.map(s=>{
+      const pct=Math.min(100,Math.round(s.sc/mx*100));
+      const d=userLat?fmtD(hav(userLat,userLng,s.lat,s.lng)):'';
+      return `<div class="sr-card" onclick="openDetail(${s.id})">
+        ${s.photo?`<img src="${s.photo}" alt="${s.name}" onerror="this.style.display='none'">`:`<span style="font-size:2rem">${s.emoji}</span>`}
+        <div class="sr-info"><div class="sr-name">${s.emoji} ${s.name} <small style="color:var(--ink-muted)">${d}</small></div><div class="sr-reason">${s.reason||s.desc.substring(0,50)+'...'}</div></div>
+        <div class="sr-match">${pct}%</div>
+      </div>`;
+    }).join('');
+  },500);
 }
 
-function closeRoute() {
-  document.getElementById('routePanel').classList.remove('open');
-  if (routeMap) { routeMap.remove(); routeMap = null; }
+// ===== HISTORY (localStorage) =====
+function saveView(id){
+  let h=JSON.parse(localStorage.getItem(STORAGE_KEY+'viewed')||'[]');
+  h=h.filter(x=>x.id!==id);h.unshift({id,ts:Date.now()});h=h.slice(0,30);
+  localStorage.setItem(STORAGE_KEY+'viewed',JSON.stringify(h));
+}
+function saveSelected(id){
+  let h=JSON.parse(localStorage.getItem(STORAGE_KEY+'sel_history')||'[]');
+  h=h.filter(x=>x.id!==id);h.unshift({id,ts:Date.now()});h=h.slice(0,30);
+  localStorage.setItem(STORAGE_KEY+'sel_history',JSON.stringify(h));
+}
+function removeSelectedHistory(id){/* keep in history even if deselected */}
+function saveSearch(q){
+  if(!q||q.length<2)return;
+  let h=JSON.parse(localStorage.getItem(STORAGE_KEY+'searches')||'[]');
+  h=h.filter(x=>x!==q);h.unshift(q);h=h.slice(0,20);
+  localStorage.setItem(STORAGE_KEY+'searches',JSON.stringify(h));
+}
+function clearHistory(type){
+  if(type==='selected')localStorage.removeItem(STORAGE_KEY+'sel_history');
+  else if(type==='viewed')localStorage.removeItem(STORAGE_KEY+'viewed');
+  else if(type==='searches')localStorage.removeItem(STORAGE_KEY+'searches');
+  renderHistory();
+}
+function renderHistory(){
+  const viewed=JSON.parse(localStorage.getItem(STORAGE_KEY+'viewed')||'[]');
+  const selH=JSON.parse(localStorage.getItem(STORAGE_KEY+'sel_history')||'[]');
+  const searches=JSON.parse(localStorage.getItem(STORAGE_KEY+'searches')||'[]');
+  const fmt=ts=>{const d=new Date(ts);return `${d.getMonth()+1}/${d.getDate()} ${d.getHours()}:${String(d.getMinutes()).padStart(2,'0')}`};
+  const renderList=(items,elId)=>{
+    const el=document.getElementById(elId);
+    if(!items.length){el.innerHTML='<div class="history-empty">まだ履歴はありません</div>';return}
+    el.innerHTML=items.map(item=>{
+      const s=S.find(x=>x.id===item.id);if(!s)return '';
+      return `<div class="history-item" onclick="openDetail(${s.id})">
+        ${s.photo?`<img src="${s.photo}" alt="${s.name}" loading="lazy" onerror="this.style.background='var(--blue-bg)'">`
+          :`<div style="width:140px;height:95px;border-radius:12px;background:var(--blue-bg);display:flex;align-items:center;justify-content:center;font-size:2rem">${s.emoji}</div>`}
+        <div class="h-name">${s.emoji} ${s.name}</div>
+        <div class="h-date">${fmt(item.ts)}</div>
+      </div>`;
+    }).join('');
+  };
+  renderList(selH,'historySelected');
+  renderList(viewed,'historyViewed');
+  const searchEl=document.getElementById('historySearches');
+  if(!searches.length){searchEl.innerHTML='<div class="history-empty">まだ検索履歴はありません</div>';return}
+  searchEl.innerHTML=searches.map(q=>`<button style="padding:6px 14px;border-radius:var(--radius-full);border:2px solid #e0e0e0;background:var(--white);font-size:.82rem;cursor:pointer;transition:var(--transition)" onclick="document.getElementById('searchInput').value='${q.replace(/'/g,"\\'")}';switchTab('explore');renderSpots()">${q}</button>`).join('');
 }
 </script>
 </body>
