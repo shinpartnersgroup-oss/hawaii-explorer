@@ -391,6 +391,7 @@ img{display:block;max-width:100%}
   <div class="tool-btn" onclick="openTool('coupon')"><div class="t-icon">🎟️</div><div class="t-label">クーポン</div></div>
   <div class="tool-btn" onclick="openTool('happyhour')"><div class="t-icon">🍸</div><div class="t-label">ハッピーアワー</div></div>
   <div class="tool-btn" onclick="openTool('freeact')"><div class="t-icon">🆓</div><div class="t-label">無料スポット</div></div>
+  <div class="tool-btn" onclick="openTool('packing')"><div class="t-icon">🧳</div><div class="t-label">持ち物</div></div>
   <div class="tool-btn" onclick="openTool('parking')"><div class="t-icon">🅿️</div><div class="t-label">駐車場</div></div>
   <div class="tool-btn" onclick="openTool('sunset')"><div class="t-icon">🌅</div><div class="t-label">日の出入り</div></div>
 </div>
@@ -942,6 +943,7 @@ function openTool(type){
   else if(type==='phrases') m.innerHTML=phrasesHTML();
   else if(type==='firsttime') m.innerHTML=firstTimeHTML();
   else if(type==='trip') m.innerHTML=tripHTML();
+  else if(type==='packing') m.innerHTML=packingHTML();
   else if(type==='happyhour') m.innerHTML=happyHourHTML();
   else if(type==='freeact') m.innerHTML=freeActHTML();
   else if(type==='parking') m.innerHTML=parkingHTML();
@@ -1379,6 +1381,33 @@ function phrasesHTML(){
             <div style="font-size:.72rem;color:var(--c4)">${p.j}</div>
           </div>
         `).join('')}
+      </div>
+    `).join('')}
+    <button class="tool-close" onclick="closeTool()">閉じる</button>`;
+}
+
+function packingHTML(){
+  const items=[
+    {cat:'👗 衣類',list:['水着 3-4枚（毎日乾かす）','軽いワンピース/短パン','ラッシュガード（日焼け防止）','薄手のカーディガン（冷房対策）','レインジャケット（突然の雨）','ビーチサンダル','歩きやすいスニーカー（ハイキング用）','ウォーターシューズ（岩場用）']},
+    {cat:'☀️ 日焼け対策',list:['リーフセーフ日焼け止め SPF50+（法律で義務）','サングラス（偏光レンズ推奨）','帽子・キャップ','アフターサンジェル/アロエ']},
+    {cat:'📱 電子機器',list:['スマホ＋充電器（変圧器不要）','モバイルバッテリー','防水ケース/ドライバッグ','eSIM（出発前にインストール）','イヤホン（ビーチ・移動中）']},
+    {cat:'💊 健康',list:['常備薬','酔い止め（ボートツアー用）','虫除けスプレー','バンドエイド','胃腸薬（食べ過ぎ対策）']},
+    {cat:'📄 書類',list:['パスポート（有効期限6ヶ月以上）','ESTA承認画面','航空券・ホテル予約確認','海外旅行保険証','クレジットカード2枚以上','現金$100-200程度','運転免許証（レンタカー用）']},
+    {cat:'❌ 持って行かないもの',list:['普通の日焼け止め（リーフセーフのみ）','ビーフジャーキー（持ち帰り不可）','大量の現金（カード社会）','高価なジュエリー（盗難リスク）']},
+  ];
+  return `<h3>🧳 パッキングリスト</h3>
+    <p style="font-size:.78rem;color:var(--c4);text-align:center;margin-bottom:12px">チェックしながらパッキング!</p>
+    ${items.map(c=>`
+      <div style="margin-bottom:12px">
+        <div style="font-weight:700;font-size:.88rem;margin-bottom:6px">${c.cat}</div>
+        ${c.list.map((item,i)=>{
+          const key='pack_'+c.cat.slice(0,2)+'_'+i;
+          const checked=localStorage.getItem(key)==='1';
+          return `<label style="display:flex;align-items:center;gap:8px;padding:6px 8px;background:${checked?'var(--success-light)':'var(--c9)'};border-radius:6px;margin-bottom:3px;cursor:pointer;font-size:.78rem;transition:var(--ease)">
+            <input type="checkbox" ${checked?'checked':''} onchange="localStorage.setItem('${key}',this.checked?'1':'0');this.parentElement.style.background=this.checked?'var(--success-light)':'var(--c9)'" style="width:16px;height:16px;accent-color:var(--success)">
+            ${item}
+          </label>`;
+        }).join('')}
       </div>
     `).join('')}
     <button class="tool-close" onclick="closeTool()">閉じる</button>`;
