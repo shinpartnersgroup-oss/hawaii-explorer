@@ -463,8 +463,16 @@ img{display:block;max-width:100%}
     <button class="cat" data-c="shopping">🛍️ 買い物</button>
   </div>
 
-  <div class="spots">
+  <div style="padding:4px 16px;display:flex;justify-content:space-between;align-items:center">
     <div class="spots-count" id="spotsCount"></div>
+    <select id="sortSelect" onchange="renderSpots()" style="padding:6px 10px;border-radius:var(--r4);border:1.5px solid var(--c7);font-size:.75rem;font-family:inherit;background:var(--white);color:var(--c3)">
+      <option value="distance">📍 近い順</option>
+      <option value="rating">⭐ 評価順</option>
+      <option value="name">あ 名前順</option>
+      <option value="price">💰 無料優先</option>
+    </select>
+  </div>
+  <div class="spots" style="padding-top:0">
     <div class="grid" id="grid"></div>
   </div>
 </div>
@@ -1367,7 +1375,12 @@ function renderSpots(){
     if(q&&!s.name.includes(q)&&!s.en.toLowerCase().includes(q)&&!s.desc.includes(q)&&!s.tags.some(t=>t.includes(q)))return false;
     return true;
   });
-  if(userLat){spots.forEach(s=>s._d=hav(userLat,userLng,s.lat,s.lng));spots.sort((a,b)=>a._d-b._d)}
+  if(userLat)spots.forEach(s=>s._d=hav(userLat,userLng,s.lat,s.lng));
+  const sort=document.getElementById('sortSelect')?.value||'distance';
+  if(sort==='distance'&&userLat)spots.sort((a,b)=>(a._d||999)-(b._d||999));
+  else if(sort==='rating')spots.sort((a,b)=>(b.rating||4)-(a.rating||4));
+  else if(sort==='name')spots.sort((a,b)=>a.name.localeCompare(b.name,'ja'));
+  else if(sort==='price')spots.sort((a,b)=>{const fa=a.price&&a.price.includes('無料')?0:1;const fb=b.price&&b.price.includes('無料')?0:1;return fa-fb});
   const areas={waikiki:'ワイキキ',honolulu:'ホノルル',kailua:'カイルア',northshore:'ノースショア',westside:'西海岸',eastside:'東海岸',central:'中部'};
   cnt.textContent=`${spots.length} スポット${selArea!=='all'?' / '+areas[selArea]:''}`;
   grid.innerHTML=spots.map((s,i)=>{
@@ -1378,8 +1391,9 @@ function renderSpots(){
       ${s.photo?`<img class="card-img" src="${s.photo}" alt="${spotName}" loading="lazy" onerror="this.outerHTML='<div class=card-img-placeholder>${s.emoji}</div>'">`
         :`<div class="card-img-placeholder">${s.emoji}</div>`}
       <div class="card-num">${i+1}</div>
-      ${s.featured?'<div class="badge-featured">★ Featured</div>':''}
+      ${s.featured&&!isSel?'<div class="badge-featured">★ Featured</div>':''}
       ${isSel?`<div class="card-sel">${si+1}</div>`:''}
+      <button style="position:absolute;top:${isSel?'48':'12'}px;right:${s.featured&&!isSel?'12':'12'}px;${s.featured&&!isSel?'top:42px;':''}width:32px;height:32px;border-radius:50%;background:rgba(0,0,0,.4);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;font-size:.9rem;border:none;cursor:pointer;z-index:2" onclick="event.stopPropagation();toggleFav(${s.id})" aria-label="Favorite">${isFav(s.id)?'❤️':'🤍'}</button>
       <div class="card-body">
         <div class="card-top">
           <span class="card-emoji">${s.emoji}</span>
@@ -1402,6 +1416,16 @@ function renderSpots(){
       </div>
     </div>`;
   }).join('');
+}
+
+// ===== FAVORITES =====
+function getFavs(){return JSON.parse(localStorage.getItem(STORAGE_KEY+'favs')||'[]')}
+function isFav(id){return getFavs().includes(id)}
+function toggleFav(id){
+  let f=getFavs();
+  if(f.includes(id))f=f.filter(x=>x!==id);else f.push(id);
+  localStorage.setItem(STORAGE_KEY+'favs',JSON.stringify(f));
+  renderSpots();track('favorite',{id});
 }
 
 // ===== DETAIL MODAL =====
