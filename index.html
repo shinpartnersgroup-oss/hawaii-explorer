@@ -7,6 +7,22 @@
 <meta name="theme-color" content="#F06292">
 <meta property="og:title" content="Oahu Explorer - オアフ島観光ガイド">
 <meta property="og:description" content="50以上のスポット＆グルメを写真付きで。Googleマップ連携ルート案内付き。">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🌺%3C/text%3E%3C/svg%3E">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="keywords" content="ハワイ,オアフ島,観光,グルメ,ビーチ,Hawaii,Oahu,travel,guide,restaurant">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://images.unsplash.com/photo-1507876466758-bc54f384809c?w=1200&h=630&fit=crop">
+<meta property="og:url" content="https://shinpartnersgroup-oss.github.io/hawaii-explorer/">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://images.unsplash.com">
+<link rel="canonical" href="https://shinpartnersgroup-oss.github.io/hawaii-explorer/">
+<meta name="twitter:title" content="Oahu Explorer - オアフ島観光ガイド">
+<meta name="twitter:description" content="50+スポット＆グルメを写真付き。Googleマップ連携ルート案内。">
+<meta name="twitter:image" content="https://images.unsplash.com/photo-1507876466758-bc54f384809c?w=1200&h=630&fit=crop">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Oahu Explorer","description":"オアフ島の観光スポット・グルメを写真付きで探せるガイドアプリ","url":"https://shinpartnersgroup-oss.github.io/hawaii-explorer/","applicationCategory":"TravelApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"author":{"@type":"Organization","name":"Shin Partners Inc."}}</script>
 <title>Oahu Explorer - オアフ島完全観光ガイド</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&family=Zen+Maru+Gothic:wght@400;500;700&family=Patrick+Hand&display=swap" rel="stylesheet">
@@ -251,6 +267,51 @@ img{display:block;max-width:100%}
 @keyframes bounce{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-15px) scale(1.1)}}
 .loader-text{font-family:'Caveat',cursive;font-size:1.6rem;color:var(--pink);margin-top:10px}
 
+/* ===== Star Rating ===== */
+.card-rating{color:#FFB300;font-size:.82rem;font-weight:700}
+.card-rating span{color:var(--ink-muted);font-weight:500;margin-left:2px}
+
+/* ===== Featured Badge ===== */
+.badge-featured{position:absolute;top:12px;right:12px;padding:3px 10px;border-radius:var(--radius-full);background:linear-gradient(135deg,#FFD54F,#FFB300);color:#5D4037;font-size:.68rem;font-weight:700;z-index:2;box-shadow:0 2px 6px rgba(0,0,0,.15)}
+.badge-sponsored{font-size:.6rem;color:var(--ink-muted);margin-left:4px}
+
+/* ===== Featured Section ===== */
+.featured-section{padding:8px 16px}
+.featured-title{font-family:'Caveat',cursive;font-size:1.2rem;color:var(--orange);margin-bottom:8px}
+.featured-scroll{display:flex;gap:12px;overflow-x:auto;padding-bottom:8px;scrollbar-width:none}
+.featured-scroll::-webkit-scrollbar{display:none}
+.featured-card{flex-shrink:0;width:200px;border-radius:var(--radius);overflow:hidden;border:2px solid var(--orange-light);background:var(--white);cursor:pointer;transition:var(--transition)}
+.featured-card:hover{transform:translateY(-3px);box-shadow:var(--shadow-lg)}
+.featured-card img{width:200px;height:120px;object-fit:cover}
+.featured-card-body{padding:8px 10px}
+.featured-card-name{font-size:.85rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.featured-card-sub{font-size:.7rem;color:var(--ink-light)}
+
+/* ===== Scroll Top ===== */
+.scroll-top{position:fixed;bottom:80px;right:16px;width:44px;height:44px;border-radius:50%;background:var(--pink);color:#fff;font-size:1.2rem;display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow-lg);z-index:998;opacity:0;pointer-events:none;transition:var(--transition);border:2px solid #fff}
+.scroll-top.show{opacity:1;pointer-events:auto}
+.scroll-top:hover{transform:scale(1.1)}
+
+/* ===== Language Toggle ===== */
+.lang-toggle{position:absolute;top:10px;right:12px;z-index:2;display:flex;border-radius:var(--radius-full);overflow:hidden;border:2px solid rgba(255,255,255,.5);font-size:.72rem;font-weight:700}
+.lang-btn{padding:4px 10px;background:rgba(255,255,255,.2);color:var(--ink);transition:var(--transition);backdrop-filter:blur(4px)}
+.lang-btn.active{background:#fff;color:var(--pink)}
+
+/* ===== Cookie Banner ===== */
+.cookie-banner{position:fixed;bottom:0;left:0;right:0;background:var(--ink);color:#fff;padding:14px 16px;display:flex;align-items:center;gap:12px;z-index:9998;font-size:.82rem;transform:translateY(100%);transition:transform .3s}
+.cookie-banner.show{transform:translateY(0)}
+.cookie-banner button{padding:8px 18px;border-radius:var(--radius-full);background:var(--pink);color:#fff;font-weight:700;font-size:.82rem;border:none;cursor:pointer;flex-shrink:0}
+
+/* ===== Affiliate Button ===== */
+.affiliate-btn{display:block;width:100%;padding:14px;border-radius:var(--radius);background:linear-gradient(135deg,#FF5722,#FF9800);color:#fff;font-size:1rem;font-weight:700;text-align:center;margin-top:8px;transition:var(--transition);text-decoration:none}
+.affiliate-btn:hover{transform:scale(1.02);box-shadow:0 4px 20px rgba(255,87,34,.3)}
+
+/* ===== Footer ===== */
+.app-footer{text-align:center;padding:30px 16px 50px;font-size:.78rem;color:var(--ink-muted)}
+.app-footer a{color:var(--ink-light);margin:0 8px}
+.app-footer .biz-cta{display:inline-block;margin-top:10px;padding:10px 24px;border-radius:var(--radius-full);background:var(--pink);color:#fff;font-weight:700;font-size:.85rem;transition:var(--transition)}
+.app-footer .biz-cta:hover{transform:scale(1.05);box-shadow:0 4px 15px rgba(240,98,146,.3)}
+
 /* ===== Responsive ===== */
 @media(max-width:600px){
   .header h1{font-size:1.8rem}
@@ -273,8 +334,12 @@ img{display:block;max-width:100%}
 
 <header class="header">
   <div class="header-icons"><span>🌺</span><span>🏝️</span><span>🐠</span><span>🌴</span></div>
+  <div class="lang-toggle">
+    <button class="lang-btn active" onclick="setLang('ja')">JP</button>
+    <button class="lang-btn" onclick="setLang('en')">EN</button>
+  </div>
   <h1>Oahu Explorer</h1>
-  <p>~ オアフ島 完全観光ガイド ~</p>
+  <p id="headerSub">~ オアフ島 完全観光ガイド ~</p>
 </header>
 
 <div class="loc-bar" onclick="getLocation()">
@@ -292,6 +357,12 @@ img{display:block;max-width:100%}
 
 <!-- Explore Tab -->
 <div id="tab-explore">
+  <!-- Featured Section -->
+  <div class="featured-section">
+    <div class="featured-title" id="featuredTitle">🔥 おすすめスポット <span class="badge-sponsored">Sponsored</span></div>
+    <div class="featured-scroll" id="featuredScroll"></div>
+  </div>
+
   <div class="suggest">
     <h2>✨ イメージから探す ✨</h2>
     <div class="suggest-presets">
@@ -412,6 +483,22 @@ img{display:block;max-width:100%}
   <div id="routeGmaps"></div>
 </div>
 
+<!-- Footer -->
+<footer class="app-footer">
+  <div><a href="mailto:contact@shinpartners.com">Contact</a><a href="#">Privacy</a><a href="#">About</a></div>
+  <div style="margin-top:6px">&copy; 2026 Shin Partners Inc. All rights reserved.</div>
+  <a href="mailto:contact@shinpartners.com?subject=Oahu Explorer Business Listing" class="biz-cta">🏪 Are you a local business? Get listed!</a>
+</footer>
+
+<!-- Scroll Top -->
+<button class="scroll-top" id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Scroll to top">↑</button>
+
+<!-- Cookie Banner -->
+<div class="cookie-banner" id="cookieBanner">
+  <div style="flex:1">🍪 This app uses cookies to improve your experience and save preferences.</div>
+  <button onclick="acceptCookies()">Accept</button>
+</div>
+
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
 // ===== OAHU SPOT DATABASE =====
@@ -420,41 +507,49 @@ const S = [
   {id:1,name:"ワイキキビーチ",en:"Waikiki Beach",emoji:"🏖️",area:"waikiki",cat:["beach","activity"],
    lat:21.2766,lng:-157.8278,photo:"https://images.unsplash.com/photo-1542259009477-d625272157b7?w=600&h=400&fit=crop",
    tags:["relaxing","couple","family","sunset","surfing","beginner","instagram"],
+   rating:4.8,featured:true,
    price:"無料",hours:"24時間",
    desc:"世界で最も有名なビーチ。穏やかな波はサーフィン初心者に最適で、ダイヤモンドヘッドを背景にした夕日は格別。夕方のフラショーも無料で楽しめる。レンタルサーフボードやSUPも豊富。"},
   {id:2,name:"ラニカイビーチ",en:"Lanikai Beach",emoji:"🏝️",area:"kailua",cat:["beach","scenic"],
    lat:21.3922,lng:-157.7148,photo:"https://images.unsplash.com/photo-1559339352-11d035aa65de?w=600&h=400&fit=crop",
    tags:["crystal-clear","secluded","instagram","romantic","couple","sunrise"],
+   rating:4.9,
    price:"無料",hours:"24時間",
    desc:"全米No.1ビーチに選出された天国のビーチ。エメラルドグリーンの海と白砂、沖合に浮かぶモクルア島が絵画のような美しさ。シャワー・トイレなし、住宅街を抜けてアクセス。"},
   {id:3,name:"カイルアビーチ",en:"Kailua Beach Park",emoji:"🌊",area:"kailua",cat:["beach","activity"],
    lat:21.3962,lng:-157.7265,photo:"https://images.unsplash.com/photo-1505852679233-d9fd70aff56d?w=600&h=400&fit=crop",
    tags:["family","kayak","windsurf","safe","relaxing","spacious"],
+   rating:4.6,
    price:"無料",hours:"5:00-22:00",
    desc:"約4kmの白砂ビーチ。設備が充実しシャワー・トイレ・BBQ台完備。カヤックでモクルア島へ渡るのが人気。ウインドサーフィンやSUPも盛ん。子連れファミリーにも安心。"},
   {id:4,name:"ノースショア（サンセットビーチ）",en:"Sunset Beach",emoji:"🏄",area:"northshore",cat:["beach","activity","scenic"],
    lat:21.6786,lng:-158.0425,photo:"https://images.unsplash.com/photo-1502933691298-84fc14542831?w=600&h=400&fit=crop",
    tags:["surfing","bigwave","sunset","dramatic","winter","professional"],
+   rating:4.0,
    price:"無料",hours:"24時間",
    desc:"冬季は10m超のビッグウェーブが押し寄せるサーファーの聖地。夏は穏やかでシュノーケリングも可能。名前の通りサンセットが壮観。Triple Crown of Surfingの舞台。"},
   {id:5,name:"ハナウマ湾",en:"Hanauma Bay",emoji:"🐠",area:"eastside",cat:["beach","nature","activity"],
    lat:21.2690,lng:-157.6938,photo:"https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=600&h=400&fit=crop",
    tags:["snorkeling","fish","turtle","family","nature","clear-water","reservation"],
+   rating:4.3,featured:true,affiliate:"https://www.viator.com/tours/Oahu/Hanauma-Bay-Snorkeling/d672-5038HANAUMABAY",
    price:"$25/人",hours:"6:45-16:00（水曜休）",
    desc:"火山クレーターが海とつながった自然保護区。450種以上の魚が棲む透明な海で最高のシュノーケリング体験。ウミガメ遭遇率も高い。要オンライン事前予約。入場教育ビデオの視聴必須。"},
   {id:6,name:"アラモアナビーチパーク",en:"Ala Moana Beach Park",emoji:"🌅",area:"honolulu",cat:["beach"],
    lat:21.2887,lng:-157.8460,photo:"https://images.unsplash.com/photo-1471922694854-ff1b63b20054?w=600&h=400&fit=crop",
    tags:["local","family","sunset","jogging","safe","free"],
+   rating:4.2,
    price:"無料",hours:"4:00-22:00",
    desc:"ロコに愛される穏やかなビーチ。リーフに守られた海は波が静かで子連れも安心。マジックアイランドから見るワイキキ方面のサンセットが絶景。週末はBBQで賑わう。"},
   {id:7,name:"コオリナ・ラグーン",en:"Ko Olina Lagoons",emoji:"🏖️",area:"westside",cat:["beach"],
    lat:21.3397,lng:-158.1233,photo:"https://images.unsplash.com/photo-1510414842594-a61c69b5ae57?w=600&h=400&fit=crop",
    tags:["resort","family","safe","calm","luxury","couple"],
+   rating:4.7,
    price:"無料（駐車場あり）",hours:"24時間",
    desc:"人工のラグーン4つが並ぶリゾートビーチ。波がほぼ無く幼児連れでも安全。ディズニーリゾートAulagiが隣接。夕日も美しくハネムーナーにも人気。"},
   {id:8,name:"ワイマナロビーチ",en:"Waimanalo Beach",emoji:"🏖️",area:"eastside",cat:["beach","scenic"],
    lat:21.3340,lng:-157.6960,photo:"https://images.unsplash.com/photo-1509233725247-49e657c54213?w=600&h=400&fit=crop",
    tags:["local","long-beach","quiet","authentic","nature","turquoise"],
+   rating:4.7,
    price:"無料",hours:"7:00-19:45",
    desc:"約8.5kmの長大なターコイズブルーのビーチ。観光客が少なくローカル感たっぷり。マカプウ側から見るコバルトブルーの海は息を呑む美しさ。"},
 
@@ -462,36 +557,43 @@ const S = [
   {id:10,name:"ダイヤモンドヘッド",en:"Diamond Head",emoji:"🌋",area:"waikiki",cat:["nature","scenic","activity"],
    lat:21.2620,lng:-157.8055,photo:"https://images.unsplash.com/photo-1565371557106-c2abcc1f86db?w=600&h=400&fit=crop",
    tags:["hiking","panorama","sunrise","exercise","instagram","must-see"],
+   rating:4.9,featured:true,affiliate:"https://www.viator.com/tours/Oahu/Diamond-Head-Hike/d672-47009P1",
    price:"$5/人（要予約）",hours:"6:00-18:00",
    desc:"ホノルルのシンボル。片道30-40分のトレイルで山頂からワイキキ〜カハラのパノラマビュー。早朝予約が取りにくいほど人気。帽子・水・スニーカー必須。"},
   {id:11,name:"マノアの滝",en:"Manoa Falls",emoji:"🌿",area:"honolulu",cat:["nature"],
    lat:21.3330,lng:-157.8025,photo:"https://images.unsplash.com/photo-1559128010-7c1ad6e1b6a5?w=600&h=400&fit=crop",
    tags:["waterfall","rainforest","hiking","easy","nature","cool"],
+   rating:4.1,
    price:"$5（駐車場）",hours:"日の出-日没",
    desc:"ワイキキから車15分で行ける熱帯雨林ハイク。片道30分の平坦なトレイルの先に高さ45mの滝が出現。ジュラシックパークのロケ地にもなった鬱蒼とした森。雨上がりがベスト。"},
   {id:12,name:"ココヘッド",en:"Koko Head",emoji:"⛰️",area:"eastside",cat:["nature","activity"],
    lat:21.2782,lng:-157.6902,photo:"https://images.unsplash.com/photo-1542259009477-d625272157b7?w=600&h=400&fit=crop",
    tags:["hiking","hardcore","stairs","exercise","challenge","panorama"],
+   rating:4.4,
    price:"無料",hours:"日の出-日没",
    desc:"旧軍用鉄道の線路跡を登る1,048段の階段トレイル。急勾配でかなりハードだが山頂からの360度パノラマは圧巻。朝の涼しい時間帯推奨。水を十分に持参。"},
   {id:13,name:"マカプウ灯台トレイル",en:"Makapuu Lighthouse Trail",emoji:"🐳",area:"eastside",cat:["nature","scenic"],
    lat:21.3108,lng:-157.6504,photo:"https://images.unsplash.com/photo-1519046904884-53103b34b206?w=600&h=400&fit=crop",
    tags:["whale","lighthouse","ocean-view","easy","winter","panorama"],
+   rating:4.0,
    price:"無料",hours:"日の出-日没",
    desc:"舗装路で歩きやすい絶景トレイル。冬季（12-4月）はザトウクジラのブリーチングを高確率で目撃可能。灯台と断崖の海岸線は息を呑む美しさ。"},
   {id:14,name:"タンタラスの丘",en:"Tantalus Lookout",emoji:"🌃",area:"honolulu",cat:["scenic"],
    lat:21.3280,lng:-157.8180,photo:"https://images.unsplash.com/photo-1542259009477-d625272157b7?w=600&h=400&fit=crop",
    tags:["nightview","panorama","honolulu","couple","romantic","sunset"],
+   rating:4.2,
    price:"無料",hours:"日の出-日没",
    desc:"ホノルル市街とダイヤモンドヘッドを一望する展望台。夕暮れから夜景への移り変わりが特に美しい。カップルに人気のドライブスポット。"},
   {id:15,name:"ホオマルヒア植物園",en:"Hoomaluhia Botanical Garden",emoji:"🌺",area:"kailua",cat:["nature","scenic"],
    lat:21.3889,lng:-157.8047,photo:"https://images.unsplash.com/photo-1547036967-23d11aacaee0?w=600&h=400&fit=crop",
    tags:["garden","instagram","peaceful","free","mountains","tropical"],
+   rating:4.5,
    price:"無料",hours:"9:00-16:00",
    desc:"コオラウ山脈を背景にした壮大な植物園。入口のフォトスポットはInstagramで大人気。世界中の熱帯植物が400エーカーに広がる。釣りやキャンプも可能。"},
   {id:16,name:"ラニカイ・ピルボックス",en:"Lanikai Pillbox Trail",emoji:"🥾",area:"kailua",cat:["nature","scenic"],
    lat:21.3853,lng:-157.7141,photo:"https://images.unsplash.com/photo-1518173946687-a7ecbc8b8f52?w=600&h=400&fit=crop",
    tags:["hiking","sunrise","instagram","panorama","pillbox","easy-moderate"],
+   rating:4.0,
    price:"無料",hours:"日の出-日没",
    desc:"片道30分で到達するWWII時代の監視壕跡。カラフルにペイントされたピルボックスとラニカイの絶景が広がる。サンライズハイクの定番。滑りやすい箇所あり。"},
 
@@ -499,26 +601,31 @@ const S = [
   {id:20,name:"パールハーバー（真珠湾）",en:"Pearl Harbor",emoji:"🏛️",area:"central",cat:["culture"],
    lat:21.3649,lng:-157.9507,photo:"https://images.unsplash.com/photo-1568402102990-bc541580b59f?w=600&h=400&fit=crop",
    tags:["history","wwii","museum","educational","must-see","reservation"],
+   rating:4.2,affiliate:"https://www.viator.com/tours/Oahu/Pearl-Harbor-Tour/d672-3165PEARL",
    price:"無料（ミズーリ$35）",hours:"7:00-17:00",
    desc:"1941年日本軍の攻撃を受けた歴史的軍港。USSアリゾナ記念館（無料・要予約）、戦艦ミズーリ、航空博物館など。半日はかかる見応え。事前のオンライン予約が必須。"},
   {id:21,name:"イオラニ宮殿",en:"Iolani Palace",emoji:"👑",area:"honolulu",cat:["culture"],
    lat:21.3068,lng:-157.8583,photo:"https://images.unsplash.com/photo-1578469550956-0e16b69c6a3d?w=600&h=400&fit=crop",
    tags:["history","royalty","hawaii-kingdom","educational","architecture"],
+   rating:4.6,
    price:"$28（ガイド付）",hours:"9:00-16:00（月曜休）",
    desc:"アメリカ唯一の王宮。ハワイ王朝最後の二人の王が暮らした建物で、リリウオカラニ女王の幽閉の間も見学可能。日本語オーディオガイドあり。"},
   {id:22,name:"ビショップ・ミュージアム",en:"Bishop Museum",emoji:"🏛️",area:"honolulu",cat:["culture"],
    lat:21.3333,lng:-157.8710,photo:"https://images.unsplash.com/photo-1575505586569-646b2ca898fc?w=600&h=400&fit=crop",
    tags:["museum","polynesian","educational","family","science","planetarium"],
+   rating:4.5,
    price:"$27.95",hours:"9:00-17:00",
    desc:"ハワイ・ポリネシア文化の世界最大級の博物館。250万点以上のコレクション、プラネタリウム、サイエンスセンターも併設。家族連れにもおすすめ。"},
   {id:23,name:"ポリネシア文化センター",en:"Polynesian Cultural Center",emoji:"🎭",area:"northshore",cat:["culture","activity"],
    lat:21.6399,lng:-157.9225,photo:"https://images.unsplash.com/photo-1542259009477-d625272157b7?w=600&h=400&fit=crop",
    tags:["culture","show","luau","family","educational","evening"],
+   rating:4.2,affiliate:"https://www.viator.com/tours/Oahu/Polynesian-Cultural-Center/d672-5205CIRCLE",
    price:"$69.95〜",hours:"12:00-21:00（日曜休）",
    desc:"ポリネシア6つの島の文化を体験できるテーマパーク。カヌーショー、ルアウディナー、イブニングショー「HA:Breath of Life」は圧巻。丸一日楽しめる。"},
   {id:24,name:"平等院テンプル",en:"Byodo-In Temple",emoji:"⛩️",area:"eastside",cat:["culture","scenic"],
    lat:21.4308,lng:-157.8325,photo:"https://images.unsplash.com/photo-1545569341-9eb8b30979d9?w=600&h=400&fit=crop",
    tags:["temple","peaceful","japanese","garden","koi","photography"],
+   rating:4.6,
    price:"$5",hours:"9:00-17:00",
    desc:"京都の平等院鳳凰堂を模した寺院。コオラウ山脈を背景に立つ朱色の建物と日本庭園は圧巻。鯉に餌やりも可能。心が洗われる静寂な空間。"},
 
@@ -526,21 +633,25 @@ const S = [
   {id:30,name:"クアロア・ランチ",en:"Kualoa Ranch",emoji:"🎬",area:"eastside",cat:["activity","nature"],
    lat:21.5207,lng:-157.8373,photo:"https://images.unsplash.com/photo-1533587851505-d119e13fa0d7?w=600&h=400&fit=crop",
    tags:["movie","jurassicpark","horseback","zipline","atv","adventure","family"],
+   rating:4.8,affiliate:"https://www.viator.com/tours/Oahu/Kualoa-Ranch-Tour/d672-3165KUALOA",
    price:"$53〜",hours:"7:30-17:30",
    desc:"映画『ジュラシック・パーク』『LOST』のロケ地。乗馬、ATV、ジップライン、映画ロケ地ツアーなど多彩。1日では回りきれないほど充実。弁当持参OK。"},
   {id:31,name:"シャークスコーブ",en:"Shark's Cove",emoji:"🤿",area:"northshore",cat:["activity","beach"],
    lat:21.6519,lng:-158.0635,photo:"https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=600&h=400&fit=crop",
    tags:["snorkeling","diving","fish","clear-water","summer","tidepool"],
+   rating:4.0,affiliate:"https://www.viator.com/tours/Oahu/North-Shore-Snorkeling/d672-47009P3",
    price:"無料",hours:"24時間",
    desc:"名前に反してサメはいない安全なシュノーケリングスポット。夏季の透明度は抜群で熱帯魚やウミガメに高確率で出会える。冬は波が高く遊泳禁止。"},
   {id:32,name:"ドール・プランテーション",en:"Dole Plantation",emoji:"🍍",area:"central",cat:["activity"],
    lat:21.5263,lng:-158.0352,photo:"https://images.unsplash.com/photo-1490885578174-acda8905c2c6?w=600&h=400&fit=crop",
    tags:["pineapple","family","maze","train","ice-cream","souvenir"],
+   rating:4.8,affiliate:"https://www.viator.com/tours/Oahu/North-Shore-Dole-Plantation/d672-5038NORTHSHORE",
    price:"入場無料（体験有料）",hours:"9:30-17:30",
    desc:"パイナップル農園のテーマパーク。ギネス認定の巨大迷路（$8）、パイナップル列車（$14）が人気。名物ドールホイップ（パイナップルソフト）は必食。"},
   {id:33,name:"シーライフパーク",en:"Sea Life Park",emoji:"🐬",area:"eastside",cat:["activity"],
    lat:21.3122,lng:-157.6594,photo:"https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=600&h=400&fit=crop",
    tags:["dolphin","family","marine","interaction","educational"],
+   rating:4.7,affiliate:"https://www.viator.com/tours/Oahu/Sea-Life-Park/d672-3634SLP",
    price:"$44.99",hours:"10:00-17:00",
    desc:"イルカやアシカとの触れ合い体験ができる水族館。ドルフィンスイムやシャークダイブなどのプログラムが人気。マカプウ岬のすぐ近くにあり景色も抜群。"},
 
@@ -548,66 +659,79 @@ const S = [
   {id:40,name:"ジョバンニ（ガーリックシュリンプ）",en:"Giovanni's Shrimp Truck",emoji:"🦐",area:"northshore",cat:["food"],
    lat:21.5801,lng:-158.1044,photo:"https://images.unsplash.com/photo-1565299585323-38d6b0865b47?w=600&h=400&fit=crop",
    tags:["shrimp","garlic","famous","truck","must-eat","local","lunch"],
+   rating:4.3,featured:true,
    price:"$15-18",hours:"10:30-17:00",
    desc:"ノースショアで最も有名なガーリックシュリンプトラック。バターとガーリックたっぷりのスキャンピーが名物。白いトラック全体がサインで覆われたフォトスポットでもある。行列覚悟。"},
   {id:41,name:"レインボー・ドライブイン",en:"Rainbow Drive-In",emoji:"🍱",area:"waikiki",cat:["food"],
    lat:21.2732,lng:-157.8177,photo:"https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=600&h=400&fit=crop",
    tags:["plate-lunch","local","cheap","classic","iconic","comfort"],
+   rating:4.2,
    price:"$8-12",hours:"7:00-21:00",
    desc:"1961年創業のロコモコ・プレートランチの名店。ボリューム満点で$10前後というコスパの良さ。ロコモコ、BBQチキン、マヒマヒが人気。地元の人も通うローカルの味。"},
   {id:42,name:"マルカメうどん",en:"Marukame Udon",emoji:"🍜",area:"waikiki",cat:["food"],
    lat:21.2811,lng:-157.8287,photo:"https://images.unsplash.com/photo-1618841557871-b4664fbf0cb3?w=600&h=400&fit=crop",
    tags:["udon","japanese","cheap","queue","popular","fast"],
+   rating:5.0,
    price:"$5-10",hours:"10:00-22:00",
    desc:"ワイキキのクヒオ通りにある讃岐うどん店。目の前で打つ生麺と安さが魅力で常に行列。かけうどん$4から。天ぷらやおむすびのサイドメニューも充実。"},
   {id:43,name:"ヘレナズ・ハワイアンフード",en:"Helena's Hawaiian Food",emoji:"🥘",area:"honolulu",cat:["food"],
    lat:21.3200,lng:-157.8665,photo:"https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=600&h=400&fit=crop",
    tags:["hawaiian","traditional","laulau","poi","authentic","james-beard"],
+   rating:4.3,
    price:"$12-20",hours:"10:00-19:30（日月休）",
    desc:"ジェームズ・ビアード賞受賞のハワイアン料理の老舗。ラウラウ（豚肉のタロ葉包み蒸し）、ポイ、カルアピッグなど伝統料理を堪能。予約不可・早い者勝ち。"},
   {id:44,name:"オノ・シーフード（ポケ）",en:"Ono Seafood",emoji:"🐟",area:"honolulu",cat:["food"],
    lat:21.2819,lng:-157.8153,photo:"https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=600&h=400&fit=crop",
    tags:["poke","fresh","must-eat","seafood","local","takeout"],
+   rating:4.1,
    price:"$12-16",hours:"9:00-18:00（日曜休）",
    desc:"ハワイNo.1との呼び声高いポケ専門店。新鮮なアヒ（マグロ）を使った醤油ポケとスパイシーポケが絶品。テイクアウト専門。ビーチで食べるのがベスト。"},
   {id:45,name:"レナーズ・ベーカリー（マラサダ）",en:"Leonard's Bakery",emoji:"🍩",area:"honolulu",cat:["food","cafe"],
    lat:21.2852,lng:-157.8115,photo:"https://images.unsplash.com/photo-1551024601-bec78aea704b?w=600&h=400&fit=crop",
    tags:["malasada","donut","sweet","portuguese","must-eat","famous"],
+   rating:4.1,featured:true,
    price:"$1.50-3",hours:"5:30-21:00",
    desc:"1952年創業のマラサダ（ポルトガル風揚げドーナツ）の元祖。揚げたてアツアツのオリジナル、シナモンシュガー、カスタードクリーム入りが定番。朝イチがおすすめ。"},
   {id:46,name:"テッズベーカリー",en:"Ted's Bakery",emoji:"🥧",area:"northshore",cat:["food","cafe"],
    lat:21.6678,lng:-158.0350,photo:"https://images.unsplash.com/photo-1519915028121-7d3463d20b13?w=600&h=400&fit=crop",
    tags:["pie","chocolate","haupia","northshore","bakery","breakfast"],
+   rating:4.8,
    price:"$5-12",hours:"7:00-18:00",
    desc:"ノースショアの名物ベーカリー。ハウピアチョコレートパイはハワイで最も有名なパイの一つ。朝食プレートやガーリックシュリンプも美味。サンセットビーチの近く。"},
   {id:47,name:"松本シェイブアイス",en:"Matsumoto Shave Ice",emoji:"🍧",area:"northshore",cat:["food"],
    lat:21.5913,lng:-158.1033,photo:"https://images.unsplash.com/photo-1501443762994-82bd5dace89a?w=600&h=400&fit=crop",
    tags:["shaveice","famous","sweet","refreshing","colorful","must-eat"],
+   rating:4.6,featured:true,
    price:"$4-7",hours:"9:00-18:00",
    desc:"1951年創業のハワイで最も有名なシェイブアイス。ふわふわの氷にカラフルなシロップをかけた一品は暑い日の救世主。レインボーカラーが定番。行列必至だが回転は早い。"},
   {id:48,name:"デュークス・ワイキキ",en:"Duke's Waikiki",emoji:"🍹",area:"waikiki",cat:["food"],
    lat:21.2753,lng:-157.8272,photo:"https://images.unsplash.com/photo-1551024709-8f23befc6f87?w=600&h=400&fit=crop",
    tags:["beachfront","sunset","cocktail","live-music","steak","seafood"],
+   rating:4.8,
    price:"$20-45",hours:"7:00-22:00",
    desc:"ワイキキビーチ真横のレストラン&バー。オーシャンビューのテラスで楽しむサンセットカクテルは最高。ライブミュージックも毎日開催。フラパイとマイタイが名物。予約推奨。"},
   {id:49,name:"サイドストリート・イン",en:"Side Street Inn",emoji:"🍗",area:"honolulu",cat:["food"],
    lat:21.2946,lng:-157.8400,photo:"https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=600&h=400&fit=crop",
    tags:["local","fried-rice","pork-chops","late-night","large-portions"],
+   rating:4.7,
    price:"$15-25",hours:"14:00-23:30",
    desc:"地元シェフが仕事終わりに集う名店。キムチフライドライスとポークチョップはオアフ島最高との評価。ボリューム満点で2-3人でシェアがおすすめ。深夜まで営業。"},
   {id:50,name:"ブーツ＆キモズ",en:"Boots & Kimo's",emoji:"🥞",area:"kailua",cat:["food","cafe"],
    lat:21.3954,lng:-157.7410,photo:"https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=600&h=400&fit=crop",
    tags:["pancake","macadamia","breakfast","famous","queue","morning"],
+   rating:4.5,
    price:"$12-18",hours:"7:30-14:30（火曜休）",
    desc:"マカダミアナッツソースのパンケーキで全米に名を馳せる朝食の聖地。ふわふわのパンケーキに濃厚なナッツソースが絶品。朝7時半から行列。1時間待ちも覚悟。"},
   {id:51,name:"リリハ・ベーカリー",en:"Liliha Bakery",emoji:"🧁",area:"honolulu",cat:["food","cafe"],
    lat:21.3266,lng:-157.8565,photo:"https://images.unsplash.com/photo-1486427944544-d2c246c4df14?w=600&h=400&fit=crop",
    tags:["cocoa-puff","bakery","local","breakfast","diner","cream-puff"],
+   rating:5.0,
    price:"$3-15",hours:"6:00-20:00",
    desc:"1950年創業のロコ御用達ベーカリー。名物ココパフ（チョコシュークリーム）は1個$1.75で幸せになれる。ダイナーも併設しオックステールスープやロコモコも人気。"},
   {id:52,name:"ブルーウォーター・シュリンプ",en:"Blue Water Shrimp",emoji:"🦐",area:"waikiki",cat:["food"],
    lat:21.2813,lng:-157.8290,photo:"https://images.unsplash.com/photo-1565299585323-38d6b0865b47?w=600&h=400&fit=crop",
    tags:["shrimp","garlic","waikiki","quick","coconut-shrimp"],
+   rating:4.4,
    price:"$16-20",hours:"10:00-21:00",
    desc:"ワイキキで手軽にガーリックシュリンプが食べられるフードコート内の人気店。ノースショアまで行かなくてもOK。ココナッツシュリンプも絶品。ロイヤルハワイアンセンター内。"},
 
@@ -615,16 +739,19 @@ const S = [
   {id:55,name:"アイランド・ヴィンテージ・コーヒー",en:"Island Vintage Coffee",emoji:"☕",area:"waikiki",cat:["cafe"],
    lat:21.2793,lng:-157.8290,photo:"https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=600&h=400&fit=crop",
    tags:["coffee","acai","kona","healthy","instagram","breakfast"],
+   rating:4.6,
    price:"$8-16",hours:"6:00-22:00",
    desc:"100%コナコーヒーとアサイーボウルの人気カフェ。フレッシュフルーツたっぷりのアサイーボウルはインスタ映え抜群。ロイヤルハワイアンセンター内。朝食にも最適。"},
   {id:56,name:"アロハコーヒーラボ",en:"Aloha Coffee Lab",emoji:"☕",area:"honolulu",cat:["cafe"],
    lat:21.2900,lng:-157.8430,photo:"https://images.unsplash.com/photo-1442512595331-e89e73853f31?w=600&h=400&fit=crop",
    tags:["specialty-coffee","pour-over","hipster","local","quiet"],
+   rating:4.8,
    price:"$5-9",hours:"7:00-16:00",
    desc:"ハワイ産スペシャルティコーヒーにこだわるサードウェーブ系カフェ。丁寧なハンドドリップで一杯ずつ淹れる。コーヒー好きなら外せない。静かな雰囲気でまったり。"},
   {id:57,name:"Banan（バナン）",en:"Banan",emoji:"🍌",area:"waikiki",cat:["cafe"],
    lat:21.2655,lng:-157.8070,photo:"https://images.unsplash.com/photo-1501443762994-82bd5dace89a?w=600&h=400&fit=crop",
    tags:["banana-softserve","healthy","vegan","instagram","beachside"],
+   rating:4.6,
    price:"$7-11",hours:"9:00-18:00",
    desc:"ハワイ産バナナで作るヴィーガンソフトクリーム。ダイヤモンドヘッド近くのモンサラット通り沿い。アサイーボウルやスムージーも人気。ヘルシー志向の方に。"},
 
@@ -632,26 +759,31 @@ const S = [
   {id:60,name:"アラモアナセンター",en:"Ala Moana Center",emoji:"🛍️",area:"honolulu",cat:["shopping","food"],
    lat:21.2910,lng:-157.8440,photo:"https://images.unsplash.com/photo-1567449303078-57ad995bd329?w=600&h=400&fit=crop",
    tags:["shopping","brands","food-court","souvenirs","huge","family"],
+   rating:4.9,
    price:"入場無料",hours:"10:00-20:00",
    desc:"世界最大級のオープンエアモール。350+店舗にハワイ限定ブランドも多数。白木屋やニジヤなど日本語対応店舗も充実。フードコートの充実度もトップクラス。"},
   {id:61,name:"ロイヤルハワイアンセンター",en:"Royal Hawaiian Center",emoji:"🛍️",area:"waikiki",cat:["shopping"],
    lat:21.2797,lng:-157.8283,photo:"https://images.unsplash.com/photo-1555529771-122e5d9f2dc3?w=600&h=400&fit=crop",
    tags:["shopping","waikiki","luxury","culture-class","free-hula"],
+   rating:4.6,
    price:"入場無料",hours:"10:00-22:00",
    desc:"ワイキキのメインストリート沿いの大型モール。無料のフラレッスンやレイメイキング教室も開催。高級ブランドからお土産ショップまで幅広い品揃え。"},
   {id:62,name:"ワイケレ・プレミアム・アウトレット",en:"Waikele Premium Outlets",emoji:"🏷️",area:"central",cat:["shopping"],
    lat:21.3960,lng:-158.0027,photo:"https://images.unsplash.com/photo-1555529771-122e5d9f2dc3?w=600&h=400&fit=crop",
    tags:["outlet","bargain","brands","coach","nike","shopping"],
+   rating:4.7,
    price:"入場無料",hours:"9:00-21:00",
    desc:"50+のアウトレット店舗。コーチ、ケイトスペード、ナイキなどが30-70%OFFに。ワイキキからシャトルバス（$20往復）もあり。半日は楽しめる。"},
   {id:63,name:"ハレイワタウン",en:"Haleiwa Town",emoji:"🎨",area:"northshore",cat:["shopping","food"],
    lat:21.5942,lng:-158.1044,photo:"https://images.unsplash.com/photo-1505852679233-d9fd70aff56d?w=600&h=400&fit=crop",
    tags:["surf-shops","art","gallery","boutique","local","nostalgic"],
+   rating:4.0,
    price:"入場無料",hours:"店舗により異なる",
    desc:"ノースショアの玄関口となるサーフタウン。カラフルなサーフショップ、アートギャラリー、ブティックが並ぶ。ノスタルジックな町並みを散策しながらショッピングを楽しめる。"},
   {id:64,name:"インターナショナルマーケットプレイス",en:"International Market Place",emoji:"🌳",area:"waikiki",cat:["shopping"],
    lat:21.2802,lng:-157.8272,photo:"https://images.unsplash.com/photo-1555529771-122e5d9f2dc3?w=600&h=400&fit=crop",
    tags:["luxury","shopping","dining","banyan-tree","waikiki"],
+   rating:4.2,
    price:"入場無料",hours:"10:00-22:00",
    desc:"巨大なバニヤンツリーを中心にした高級ショッピングモール。サックスフィフスアベニューやハワイ限定ショップが入る。3階のフードホールも充実。"},
 ];
@@ -686,6 +818,37 @@ const KW={
   'ドライブ':['panorama','scenic','northshore'],
 };
 
+// ===== ANALYTICS =====
+function track(event,data={}){
+  try{
+    let a=JSON.parse(localStorage.getItem('oahu_analytics')||'[]');
+    a.push({e:event,d:data,t:Date.now()});
+    if(a.length>500)a=a.slice(-500);
+    localStorage.setItem('oahu_analytics',JSON.stringify(a));
+  }catch(e){}
+}
+
+// ===== i18n =====
+let lang=localStorage.getItem('oahu_lang')||'ja';
+const I18N={
+  ja:{sub:'~ オアフ島 完全観光ガイド ~',explore:'🗺️ 探す',plan:'📋 プラン',history:'🕐 履歴',suggest:'✨ イメージから探す ✨',suggestPh:'例: 海がきれいでのんびりできるところ...',suggestBtn:'提案して!',searchPh:'スポット名・キーワードで検索...',allArea:'全エリア',allCat:'🌈 すべて',featured:'🔥 おすすめスポット',locTap:'タップして現在地を取得',locGetting:'取得中...',book:'予約する',addPlan:'📌 プランに追加',selected:'✓ 選択済み',share:'共有',close:'閉じる',gmaps:'🗺️ Googleマップ',dist:'距離',drive:'車で',price:'料金',hours:'営業時間'},
+  en:{sub:'~ Your Complete Oahu Guide ~',explore:'🗺️ Explore',plan:'📋 Plan',history:'🕐 History',suggest:'✨ Find by mood ✨',suggestPh:'e.g. relaxing beach, family friendly...',suggestBtn:'Suggest!',searchPh:'Search spots...',allArea:'All Areas',allCat:'🌈 All',featured:'🔥 Featured Spots',locTap:'Tap to get location',locGetting:'Getting location...',book:'Book Now',addPlan:'📌 Add to Plan',selected:'✓ Selected',share:'Share',close:'Close',gmaps:'🗺️ Google Maps',dist:'Distance',drive:'Drive',price:'Price',hours:'Hours'}
+};
+function t(key){return I18N[lang][key]||I18N.ja[key]||key}
+function setLang(l){
+  lang=l;localStorage.setItem('oahu_lang',l);
+  document.querySelectorAll('.lang-btn').forEach(b=>b.classList.toggle('active',b.textContent===l.toUpperCase()));
+  document.getElementById('headerSub').textContent=t('sub');
+  document.querySelectorAll('.main-tab').forEach((tab,i)=>{
+    const keys=['explore','plan','history'];tab.textContent=t(keys[i]);
+  });
+  document.getElementById('featuredTitle').innerHTML=t('featured')+' <span class="badge-sponsored">Sponsored</span>';
+  document.getElementById('suggestInput').placeholder=t('suggestPh');
+  document.getElementById('searchInput').placeholder=t('searchPh');
+  renderFeatured();renderSpots();
+  track('language_change',{lang:l});
+}
+
 // ===== STATE =====
 let userLat=null,userLng=null,selCat='all',selArea='all',selected=[],rMap=null,currentTab='explore';
 const STORAGE_KEY='oahu_explorer_';
@@ -695,10 +858,35 @@ window.addEventListener('load',()=>{
   setTimeout(()=>document.getElementById('loader').classList.add('hide'),700);
   selected=JSON.parse(localStorage.getItem(STORAGE_KEY+'selected')||'[]');
   setupListeners();
+  renderFeatured();
   renderSpots();
   updateItiBar();
   getLocation();
+  setLang(lang);
+  track('page_view');
+  // Cookie banner
+  if(!localStorage.getItem(STORAGE_KEY+'cookie_ok'))setTimeout(()=>document.getElementById('cookieBanner').classList.add('show'),1500);
+  // Scroll top
+  window.addEventListener('scroll',()=>{document.getElementById('scrollTop').classList.toggle('show',window.scrollY>300)});
+  // Service Worker
+  if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
 });
+function acceptCookies(){localStorage.setItem(STORAGE_KEY+'cookie_ok','1');document.getElementById('cookieBanner').classList.remove('show')}
+
+// ===== FEATURED =====
+function renderFeatured(){
+  const el=document.getElementById('featuredScroll');
+  const feat=S.filter(s=>s.featured);
+  el.innerHTML=feat.map(s=>`
+    <div class="featured-card" onclick="openDetail(${s.id})">
+      ${s.photo?`<img src="${s.photo}" alt="${s.name}" loading="lazy" onerror="this.style.display='none'">`:''}
+      <div class="featured-card-body">
+        <div class="featured-card-name">${s.emoji} ${lang==='en'?s.en:s.name}</div>
+        <div class="featured-card-sub">★ ${s.rating||4.5} ${s.price||''}</div>
+      </div>
+    </div>
+  `).join('');
+}
 
 function setupListeners(){
   document.querySelectorAll('.cat').forEach(c=>c.onclick=()=>{
@@ -772,17 +960,20 @@ function renderSpots(){
   grid.innerHTML=spots.map((s,i)=>{
     const d=s._d?fmtD(s._d):'---';const isSel=selected.includes(s.id);const si=selected.indexOf(s.id);
     const catL={beach:'🏖️ビーチ',nature:'🌿自然',culture:'🏛️文化',food:'🍽️グルメ',activity:'🏄体験',shopping:'🛍️買い物',scenic:'📸絶景',cafe:'☕カフェ'};
+    const spotName=lang==='en'?s.en:s.name;
     return `<div class="card${isSel?' selected':''}" onclick="openDetail(${s.id})">
-      ${s.photo?`<img class="card-img" src="${s.photo}" alt="${s.name}" loading="lazy" onerror="this.outerHTML='<div class=card-img-placeholder>${s.emoji}</div>'">`
+      ${s.photo?`<img class="card-img" src="${s.photo}" alt="${spotName}" loading="lazy" onerror="this.outerHTML='<div class=card-img-placeholder>${s.emoji}</div>'">`
         :`<div class="card-img-placeholder">${s.emoji}</div>`}
       <div class="card-num">${i+1}</div>
+      ${s.featured?'<div class="badge-featured">★ Featured</div>':''}
       ${isSel?`<div class="card-sel">${si+1}</div>`:''}
       <div class="card-body">
         <div class="card-top">
           <span class="card-emoji">${s.emoji}</span>
-          <div><div class="card-title">${s.name}</div><div class="card-en">${s.en}</div>
+          <div><div class="card-title">${spotName}</div><div class="card-en">${lang==='en'?s.name:s.en}</div>
           <span class="card-area-tag">${areas[s.area]||s.area}</span></div>
         </div>
+        <div class="card-rating">★ ${s.rating||'4.5'} <span>${s.cat.includes('food')||s.cat.includes('cafe')?'Food':'Spot'}</span></div>
         <div class="card-desc">${s.desc}</div>
         <div class="card-tags">${s.cat.map(c=>`<span class="card-tag${c==='food'||c==='cafe'?' food-tag':''}">${catL[c]||c}</span>`).join('')}</div>
         ${s.price?`<div class="card-price">${s.price}</div>`:''}
@@ -808,30 +999,47 @@ function openDetail(id){
   const dm=userLat?driveMin(hav(userLat,userLng,s.lat,s.lng)):'?';
   const isSel=selected.includes(id);
   const areas={waikiki:'ワイキキ',honolulu:'ホノルル',kailua:'カイルア',northshore:'ノースショア',westside:'西海岸',eastside:'東海岸',central:'中部'};
+  const spotName=lang==='en'?s.en:s.name;
   document.getElementById('detailModal').innerHTML=`
-    ${s.photo?`<img class="detail-img" src="${s.photo}" alt="${s.name}" onerror="this.style.display='none'">`:''}
+    ${s.photo?`<img class="detail-img" src="${s.photo}" alt="${spotName}" onerror="this.style.display='none'">`:''}
     <div class="detail-body">
       <div class="detail-header">
         <span class="detail-emoji">${s.emoji}</span>
-        <div><div class="detail-name">${s.name}</div><div class="detail-en">${s.en} - ${areas[s.area]}</div></div>
+        <div>
+          <div class="detail-name">${spotName}</div>
+          <div class="detail-en">${lang==='en'?s.name:s.en} - ${areas[s.area]}</div>
+          <div class="card-rating" style="margin-top:4px">★ ${s.rating||'4.5'}</div>
+        </div>
       </div>
       <div class="detail-desc">${s.desc}</div>
       <div class="detail-meta">
-        <div class="detail-meta-item"><div class="label">距離</div><div class="value">📏 ${d}</div></div>
-        <div class="detail-meta-item"><div class="label">車で</div><div class="value">🚗 約${dm}分</div></div>
-        <div class="detail-meta-item"><div class="label">料金</div><div class="value">${s.price||'---'}</div></div>
-        <div class="detail-meta-item"><div class="label">営業時間</div><div class="value">${s.hours||'---'}</div></div>
+        <div class="detail-meta-item"><div class="label">${t('dist')}</div><div class="value">📏 ${d}</div></div>
+        <div class="detail-meta-item"><div class="label">${t('drive')}</div><div class="value">🚗 約${dm}分</div></div>
+        <div class="detail-meta-item"><div class="label">${t('price')}</div><div class="value">${s.price||'---'}</div></div>
+        <div class="detail-meta-item"><div class="label">${t('hours')}</div><div class="value">${s.hours||'---'}</div></div>
       </div>
+      ${s.affiliate?`<a href="${s.affiliate}" target="_blank" rel="noopener" class="affiliate-btn" onclick="track('affiliate_click',{id:${s.id},name:'${s.en}'})">${t('book')} on Viator →</a>`:''}
       <div class="detail-btns">
-        <button class="detail-btn detail-btn-gmaps" onclick="openGmaps(${s.id})">🗺️ Googleマップ</button>
+        <button class="detail-btn detail-btn-gmaps" onclick="openGmaps(${s.id})">${t('gmaps')}</button>
         <button class="detail-btn detail-btn-select" onclick="toggleSelect(${s.id});closeDetail()">
-          ${isSel?'✓ 選択済み':'📌 プランに追加'}</button>
-        <button class="detail-btn detail-btn-close" onclick="closeDetail()">閉じる</button>
+          ${isSel?t('selected'):t('addPlan')}</button>
+        <button class="detail-btn" style="background:#E8EAF6;color:var(--ink)" onclick="shareSpot(${s.id})">${t('share')}</button>
+        <button class="detail-btn detail-btn-close" onclick="closeDetail()">${t('close')}</button>
       </div>
     </div>`;
   document.getElementById('detailOverlay').classList.add('show');
 }
 function closeDetail(){document.getElementById('detailOverlay').classList.remove('show')}
+
+// ===== SHARE =====
+function shareSpot(id){
+  const s=S.find(x=>x.id===id);if(!s)return;
+  const text=`${s.emoji} ${s.name} (${s.en}) - Oahu Explorer`;
+  const url='https://shinpartnersgroup-oss.github.io/hawaii-explorer/';
+  if(navigator.share){navigator.share({title:s.name,text:text,url:url}).catch(()=>{})}
+  else{navigator.clipboard.writeText(text+' '+url).then(()=>alert('Copied to clipboard!')).catch(()=>{})}
+  track('share',{id:id});
+}
 
 // ===== GOOGLE MAPS =====
 function openGmaps(id){
