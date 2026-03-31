@@ -322,6 +322,48 @@ img{display:block;max-width:100%}
   .detail-meta{grid-template-columns:1fr}
 }
 
+/* ===== Tools Section ===== */
+.tools-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:10px 16px}
+@media(max-width:600px){.tools-grid{grid-template-columns:repeat(2,1fr)}}
+.tool-btn{padding:14px 8px;border-radius:var(--radius);background:var(--white);box-shadow:0 1px 6px rgba(0,0,0,.05);text-align:center;transition:var(--transition);cursor:pointer}
+.tool-btn:hover{transform:translateY(-3px);box-shadow:var(--shadow-lg)}
+.tool-btn:active{transform:scale(.97)}
+.tool-btn .t-icon{font-size:1.6rem;margin-bottom:4px}
+.tool-btn .t-label{font-size:.72rem;font-weight:600;color:var(--ink)}
+
+/* ===== Tool Modal ===== */
+.tool-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:1200;display:none;align-items:center;justify-content:center;backdrop-filter:blur(3px)}
+.tool-overlay.show{display:flex}
+.tool-modal{background:var(--white);border-radius:var(--radius-lg);width:92%;max-width:400px;max-height:85vh;overflow-y:auto;padding:24px;animation:slideUp .3s ease-out}
+.tool-modal h3{font-family:'Caveat',cursive;font-size:1.5rem;margin-bottom:14px;text-align:center}
+.tool-input{width:100%;padding:12px 16px;border-radius:var(--radius);border:2px solid #e0e0e0;font-size:1.1rem;font-family:inherit;outline:none;text-align:center;margin-bottom:10px;transition:var(--transition)}
+.tool-input:focus{border-color:var(--pink);box-shadow:0 0 0 3px rgba(240,98,146,.1)}
+.tool-result{text-align:center;padding:16px;background:#f8f8f8;border-radius:var(--radius);margin:10px 0;font-size:1.2rem;font-weight:700}
+.tool-close{display:block;width:100%;padding:12px;border-radius:var(--radius);background:#f0f0f0;color:var(--ink);font-weight:700;text-align:center;margin-top:10px;font-size:.9rem;transition:var(--transition)}
+.tool-close:hover{background:#e0e0e0}
+.tip-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:10px 0}
+.tip-btn{padding:10px;border-radius:var(--radius);border:2px solid #e0e0e0;text-align:center;font-weight:700;cursor:pointer;transition:var(--transition)}
+.tip-btn:hover,.tip-btn.active{border-color:var(--pink);background:var(--pink-bg);color:var(--pink)}
+
+/* ===== Booking CTAs ===== */
+.booking-section{padding:8px 16px}
+.booking-banner{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding-bottom:4px}
+.booking-banner::-webkit-scrollbar{display:none}
+.booking-card{flex-shrink:0;padding:12px 18px;border-radius:var(--radius);background:var(--white);box-shadow:0 1px 6px rgba(0,0,0,.05);text-align:center;cursor:pointer;transition:var(--transition);min-width:120px}
+.booking-card:hover{transform:translateY(-3px);box-shadow:var(--shadow)}
+.booking-card .b-icon{font-size:1.4rem}
+.booking-card .b-label{font-size:.75rem;font-weight:700;margin-top:4px}
+.booking-card .b-sub{font-size:.65rem;color:var(--ink-light)}
+
+/* ===== Coupon Section ===== */
+.coupon-card{display:flex;gap:10px;align-items:center;padding:12px;background:linear-gradient(135deg,#FFF8E1,#fff);border:2px dashed var(--yellow);border-radius:var(--radius);margin-bottom:8px;cursor:pointer;transition:var(--transition)}
+.coupon-card:hover{transform:translateX(4px);box-shadow:var(--shadow)}
+.coupon-pct{font-size:1.3rem;font-weight:700;color:#E65100;font-family:'Caveat',cursive;min-width:50px;text-align:center}
+.coupon-info{flex:1}
+.coupon-name{font-weight:700;font-size:.88rem}
+.coupon-desc{font-size:.72rem;color:var(--ink-light)}
+.coupon-tag{padding:3px 10px;border-radius:var(--radius-full);background:var(--orange);color:#fff;font-size:.65rem;font-weight:700;flex-shrink:0}
+
 /* ===== Leaflet ===== */
 .leaflet-popup-content-wrapper{border-radius:14px!important;font-family:'Zen Maru Gothic',sans-serif!important;box-shadow:var(--shadow-lg)!important}
 </style>
@@ -347,6 +389,38 @@ img{display:block;max-width:100%}
   <span class="pin">📍</span>
   <div class="text"><div id="locText">タップして現在地を取得</div></div>
   <span class="status pending" id="locStatus">取得中</span>
+</div>
+
+<!-- Quick Tools -->
+<div class="tools-grid">
+  <div class="tool-btn" onclick="openTool('tip')"><div class="t-icon">💰</div><div class="t-label">チップ計算</div></div>
+  <div class="tool-btn" onclick="openTool('currency')"><div class="t-icon">💱</div><div class="t-label">通貨換算</div></div>
+  <div class="tool-btn" onclick="openTool('weather')"><div class="t-icon">🌤️</div><div class="t-label">今日の天気</div></div>
+  <div class="tool-btn" onclick="openTool('bus')"><div class="t-icon">🚌</div><div class="t-label">バス案内</div></div>
+</div>
+
+<!-- Booking Quick Links -->
+<div class="booking-section">
+  <div class="booking-banner">
+    <a class="booking-card" href="https://www.booking.com/searchresults.html?ss=Honolulu&aid=2397601" target="_blank" rel="noopener" onclick="track('affiliate_click',{type:'hotel'})">
+      <div class="b-icon">🏨</div><div class="b-label">ホテル予約</div><div class="b-sub">Booking.com</div>
+    </a>
+    <a class="booking-card" href="https://www.viator.com/Oahu/d672-ttd" target="_blank" rel="noopener" onclick="track('affiliate_click',{type:'tour'})">
+      <div class="b-icon">🎫</div><div class="b-label">ツアー予約</div><div class="b-sub">Viator</div>
+    </a>
+    <a class="booking-card" href="https://www.rentalcars.com/SearchResults.do?country=United+States&city=Honolulu" target="_blank" rel="noopener" onclick="track('affiliate_click',{type:'car'})">
+      <div class="b-icon">🚗</div><div class="b-label">レンタカー</div><div class="b-sub">RentalCars</div>
+    </a>
+    <a class="booking-card" href="https://www.klook.com/en-US/city/58-oahu-things-to-do/" target="_blank" rel="noopener" onclick="track('affiliate_click',{type:'activity'})">
+      <div class="b-icon">🏄</div><div class="b-label">アクティビティ</div><div class="b-sub">Klook</div>
+    </a>
+    <div class="booking-card" onclick="switchTab('ranking');renderRanking('food')">
+      <div class="b-icon">🍽️</div><div class="b-label">グルメ検索</div><div class="b-sub">TOP20</div>
+    </div>
+    <div class="booking-card" onclick="openTool('coupon')">
+      <div class="b-icon">🎟️</div><div class="b-label">クーポン</div><div class="b-sub">お得情報</div>
+    </div>
+  </div>
 </div>
 
 <!-- Main Tabs -->
@@ -501,6 +575,11 @@ img{display:block;max-width:100%}
   <div id="routeMap"></div>
   <ul class="route-steps" id="routeSteps"></ul>
   <div id="routeGmaps"></div>
+</div>
+
+<!-- Tool Modal -->
+<div class="tool-overlay" id="toolOverlay" onclick="if(event.target===this)closeTool()">
+  <div class="tool-modal" id="toolModal"></div>
 </div>
 
 <!-- Footer -->
@@ -837,6 +916,151 @@ const KW={
   '安い':['cheap','fast','local'],'夜景':['nightview','romantic'],
   'ドライブ':['panorama','scenic','northshore'],
 };
+
+// ===== TOOLS =====
+function openTool(type){
+  const m=document.getElementById('toolModal');
+  if(type==='tip') m.innerHTML=tipCalcHTML();
+  else if(type==='currency') m.innerHTML=currencyHTML();
+  else if(type==='weather') m.innerHTML=weatherHTML();
+  else if(type==='bus') m.innerHTML=busHTML();
+  else if(type==='coupon') m.innerHTML=couponHTML();
+  document.getElementById('toolOverlay').classList.add('show');
+  track('tool_open',{type});
+}
+function closeTool(){document.getElementById('toolOverlay').classList.remove('show')}
+
+function tipCalcHTML(){
+  return `<h3>💰 チップ計算機</h3>
+    <p style="font-size:.82rem;color:var(--ink-light);text-align:center;margin-bottom:12px">お会計金額を入力してください</p>
+    <input type="number" class="tool-input" id="tipAmount" placeholder="$0.00" oninput="calcTip()">
+    <div class="tip-grid">
+      <div class="tip-btn active" onclick="setTipPct(15,this)">15%<br><small>普通</small></div>
+      <div class="tip-btn" onclick="setTipPct(18,this)">18%<br><small>良い</small></div>
+      <div class="tip-btn" onclick="setTipPct(20,this)">20%<br><small>最高</small></div>
+    </div>
+    <div class="tool-result" id="tipResult">チップ: $0.00<br>合計: $0.00<br><small style="color:var(--ink-light)">≈ ¥0</small></div>
+    <p style="font-size:.72rem;color:var(--ink-muted);text-align:center;margin-top:8px">
+      🍽️ レストラン: 15-20% / ☕ カフェ: $1-2 / 🚕 タクシー: 15% / 💇 美容: 15-20%
+    </p>
+    <button class="tool-close" onclick="closeTool()">閉じる</button>`;
+}
+let tipPct=15;
+function setTipPct(p,el){tipPct=p;document.querySelectorAll('.tip-btn').forEach(b=>b.classList.remove('active'));el.classList.add('active');calcTip()}
+function calcTip(){
+  const amt=parseFloat(document.getElementById('tipAmount').value)||0;
+  const tip=amt*tipPct/100;const total=amt+tip;const yen=Math.round(total*150);
+  document.getElementById('tipResult').innerHTML=`チップ: $${tip.toFixed(2)}<br>合計: <b>$${total.toFixed(2)}</b><br><small style="color:var(--ink-light)">≈ ¥${yen.toLocaleString()}</small>`;
+}
+
+function currencyHTML(){
+  return `<h3>💱 通貨換算</h3>
+    <p style="font-size:.82rem;color:var(--ink-light);text-align:center;margin-bottom:12px">USD ↔ JPY（レート: 1$ ≈ ¥150）</p>
+    <div style="display:flex;gap:8px;align-items:center">
+      <div style="flex:1;text-align:center"><div style="font-size:.75rem;color:var(--ink-light);margin-bottom:4px">USD ($)</div>
+        <input type="number" class="tool-input" id="usdInput" placeholder="0" oninput="convertCurrency('usd')"></div>
+      <div style="font-size:1.5rem">⇄</div>
+      <div style="flex:1;text-align:center"><div style="font-size:.75rem;color:var(--ink-light);margin-bottom:4px">JPY (¥)</div>
+        <input type="number" class="tool-input" id="jpyInput" placeholder="0" oninput="convertCurrency('jpy')"></div>
+    </div>
+    <div style="margin-top:12px;font-size:.78rem;color:var(--ink-light)">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;text-align:center">
+        <div style="padding:8px;background:#f8f8f8;border-radius:8px">$10 = ¥1,500</div>
+        <div style="padding:8px;background:#f8f8f8;border-radius:8px">$50 = ¥7,500</div>
+        <div style="padding:8px;background:#f8f8f8;border-radius:8px">$100 = ¥15,000</div>
+        <div style="padding:8px;background:#f8f8f8;border-radius:8px">$500 = ¥75,000</div>
+      </div>
+    </div>
+    <button class="tool-close" onclick="closeTool()">閉じる</button>`;
+}
+function convertCurrency(from){
+  const rate=150;
+  if(from==='usd'){const v=parseFloat(document.getElementById('usdInput').value)||0;document.getElementById('jpyInput').value=Math.round(v*rate)}
+  else{const v=parseFloat(document.getElementById('jpyInput').value)||0;document.getElementById('usdInput').value=(v/rate).toFixed(2)}
+}
+
+function weatherHTML(){
+  const hour=new Date().getHours();
+  const isDay=hour>=6&&hour<18;
+  const weatherIcon=isDay?'☀️':'🌙';
+  return `<h3>🌤️ オアフ島の天気</h3>
+    <div class="tool-result" style="font-size:1rem">
+      <div style="font-size:2.5rem;margin-bottom:8px">${weatherIcon}</div>
+      <div style="font-size:1.3rem;font-weight:700">27°C / 81°F</div>
+      <div style="color:var(--ink-light);font-size:.85rem;margin-top:4px">湿度: 65% / 風: 15km/h</div>
+      <div style="color:var(--blue-deep);font-size:.85rem;margin-top:4px">🌊 波: 1-2ft（穏やか）</div>
+    </div>
+    <div style="margin-top:12px">
+      <div style="font-weight:700;font-size:.85rem;margin-bottom:8px">📅 今日のおすすめ</div>
+      <div style="display:flex;flex-direction:column;gap:6px">
+        ${isDay?`
+          <div style="padding:10px;background:var(--blue-bg);border-radius:8px;font-size:.82rem" onclick="closeTool();renderRanking('beach')">🏖️ <b>ビーチ日和！</b> 波が穏やかでシュノーケリングに最適</div>
+          <div style="padding:10px;background:var(--green-bg);border-radius:8px;font-size:.82rem" onclick="closeTool();renderRanking('nature')">🥾 <b>ハイキング推奨</b> 朝の涼しいうちにダイヤモンドヘッドへ</div>
+        `:`
+          <div style="padding:10px;background:var(--purple-light);border-radius:8px;font-size:.82rem" onclick="closeTool();openDetail(14)">🌃 <b>夜景スポット</b> タンタラスの丘からホノルルを一望</div>
+          <div style="padding:10px;background:var(--orange-light);border-radius:8px;font-size:.82rem" onclick="closeTool();openDetail(48)">🍹 <b>ディナータイム</b> デュークスでサンセットカクテル</div>
+        `}
+      </div>
+    </div>
+    <a href="https://www.viator.com/Oahu/d672-ttd" target="_blank" rel="noopener" class="affiliate-btn" style="margin-top:12px" onclick="track('affiliate_click',{type:'weather_tour'})">🎫 今日のおすすめツアーを予約</a>
+    <button class="tool-close" onclick="closeTool()">閉じる</button>`;
+}
+
+function busHTML(){
+  return `<h3>🚌 TheBus 路線ガイド</h3>
+    <p style="font-size:.82rem;color:var(--ink-light);text-align:center;margin-bottom:12px">オアフ島の主要バス路線</p>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <div style="padding:12px;background:#E3F2FD;border-radius:8px">
+        <div style="font-weight:700;font-size:.88rem">🔵 Route 2 / 13 — ワイキキ ↔ アラモアナ</div>
+        <div style="font-size:.75rem;color:var(--ink-light)">5-10分間隔 / 所要15分 / $3.00</div>
+      </div>
+      <div style="padding:12px;background:#E8F5E9;border-radius:8px">
+        <div style="font-weight:700;font-size:.88rem">🟢 Route 20 — ワイキキ → ノースショア</div>
+        <div style="font-size:.75rem;color:var(--ink-light)">30分間隔 / 所要2時間 / $3.00</div>
+      </div>
+      <div style="padding:12px;background:#FFF3E0;border-radius:8px">
+        <div style="font-weight:700;font-size:.88rem">🟠 Route 22 — ワイキキ → ハナウマ湾</div>
+        <div style="font-size:.75rem;color:var(--ink-light)">30分間隔 / 所要45分 / $3.00</div>
+      </div>
+      <div style="padding:12px;background:#F3E5F5;border-radius:8px">
+        <div style="font-weight:700;font-size:.88rem">🟣 Route 42 — ワイキキ → カイルア</div>
+        <div style="font-size:.75rem;color:var(--ink-light)">20分間隔 / 所要50分 / $3.00</div>
+      </div>
+      <div style="padding:12px;background:#FCE4EC;border-radius:8px">
+        <div style="font-weight:700;font-size:.88rem">🔴 W Line — ワイキキ → 空港</div>
+        <div style="font-size:.75rem;color:var(--ink-light)">10分間隔 / 所要40分 / $3.00</div>
+      </div>
+    </div>
+    <div style="margin-top:12px;padding:10px;background:#f8f8f8;border-radius:8px;font-size:.78rem">
+      <b>💡 Tips:</b> HOLOカード($2)で乗り放題2.5時間。大きなスーツケースは持込不可。
+    </div>
+    <a href="https://www.rentalcars.com/SearchResults.do?country=United+States&city=Honolulu" target="_blank" rel="noopener" class="affiliate-btn" style="margin-top:10px;background:linear-gradient(135deg,#4285F4,#34A853)" onclick="track('affiliate_click',{type:'bus_to_car'})">🚗 やっぱりレンタカーで自由に！</a>
+    <button class="tool-close" onclick="closeTool()">閉じる</button>`;
+}
+
+function couponHTML(){
+  const coupons=[
+    {name:'アラモアナセンター',desc:'ゲストパスで割引クーポンブック',pct:'無料',tag:'ショッピング'},
+    {name:'ハナウマ湾',desc:'オンライン事前予約で確実に入場',pct:'要予約',tag:'自然'},
+    {name:'ワイケレアウトレット',desc:'VIPクーポンブック（インフォメーション）',pct:'最大70%OFF',tag:'ショッピング'},
+    {name:'ドールプランテーション',desc:'パイナップル列車+迷路セット割',pct:'$2 OFF',tag:'体験'},
+    {name:'ポリネシア文化センター',desc:'公式サイト事前購入で割引',pct:'最大$30 OFF',tag:'文化'},
+    {name:'クアロア・ランチ',desc:'コンボパッケージで体験をまとめて',pct:'パック割',tag:'体験'},
+    {name:'シーライフパーク',desc:'オンライン事前購入で割引',pct:'最大20%OFF',tag:'体験'},
+  ];
+  return `<h3>🎟️ クーポン & お得情報</h3>
+    <p style="font-size:.82rem;color:var(--ink-light);text-align:center;margin-bottom:14px">知ってる人だけ得する！</p>
+    ${coupons.map(c=>`<div class="coupon-card">
+      <div class="coupon-pct">${c.pct}</div>
+      <div class="coupon-info"><div class="coupon-name">${c.name}</div><div class="coupon-desc">${c.desc}</div></div>
+      <span class="coupon-tag">${c.tag}</span>
+    </div>`).join('')}
+    <div style="margin-top:12px;padding:12px;background:var(--pink-bg);border-radius:var(--radius);text-align:center;font-size:.82rem">
+      💡 <b>アプリ限定クーポン</b>は近日公開予定！<br>通知をオンにしてお待ちください。
+    </div>
+    <a href="https://www.klook.com/en-US/city/58-oahu-things-to-do/" target="_blank" rel="noopener" class="affiliate-btn" style="margin-top:10px" onclick="track('affiliate_click',{type:'coupon_klook'})">🎫 Klookで割引ツアーを探す</a>
+    <button class="tool-close" onclick="closeTool()">閉じる</button>`;
+}
 
 // ===== ANALYTICS =====
 function track(event,data={}){
