@@ -402,16 +402,16 @@ img{display:block;max-width:100%}
 <!-- Booking Quick Links -->
 <div class="booking-section">
   <div class="booking-banner">
-    <a class="booking-card" href="https://www.booking.com/searchresults.html?ss=Honolulu&aid=2397601" target="_blank" rel="noopener" onclick="track('affiliate_click',{type:'hotel'})">
+    <a class="booking-card" href="https://www.booking.com/city/us/honolulu.html" target="_blank" rel="noopener" onclick="track('affiliate_click',{type:'hotel'})">
       <div class="b-icon">🏨</div><div class="b-label">ホテル予約</div><div class="b-sub">Booking.com</div>
     </a>
     <a class="booking-card" href="https://www.viator.com/Oahu/d672-ttd" target="_blank" rel="noopener" onclick="track('affiliate_click',{type:'tour'})">
       <div class="b-icon">🎫</div><div class="b-label">ツアー予約</div><div class="b-sub">Viator</div>
     </a>
-    <a class="booking-card" href="https://www.rentalcars.com/SearchResults.do?country=United+States&city=Honolulu" target="_blank" rel="noopener" onclick="track('affiliate_click',{type:'car'})">
+    <a class="booking-card" href="https://www.rentalcars.com/en/city/us/honolulu/" target="_blank" rel="noopener" onclick="track('affiliate_click',{type:'car'})">
       <div class="b-icon">🚗</div><div class="b-label">レンタカー</div><div class="b-sub">RentalCars</div>
     </a>
-    <a class="booking-card" href="https://www.klook.com/en-US/city/58-oahu-things-to-do/" target="_blank" rel="noopener" onclick="track('affiliate_click',{type:'activity'})">
+    <a class="booking-card" href="https://www.klook.com/en-US/city/703335-honolulu-things-to-do/" target="_blank" rel="noopener" onclick="track('affiliate_click',{type:'activity'})">
       <div class="b-icon">🏄</div><div class="b-label">アクティビティ</div><div class="b-sub">Klook</div>
     </a>
     <div class="booking-card" onclick="switchTab('ranking');renderRanking('food')">
@@ -630,7 +630,7 @@ const S = [
   {id:5,name:"ハナウマ湾",en:"Hanauma Bay",emoji:"🐠",area:"eastside",cat:["beach","nature","activity"],
    lat:21.2690,lng:-157.6938,photo:"https://upload.wikimedia.org/wikipedia/commons/e/ec/Hanauma_Bay.JPG",
    tags:["snorkeling","fish","turtle","family","nature","clear-water","reservation"],
-   rating:4.3,featured:true,affiliate:"https://www.viator.com/tours/Oahu/Hanauma-Bay-Snorkeling/d672-5038HANAUMABAY",
+   rating:4.3,featured:true,affiliate:"https://www.viator.com/Oahu-attractions/Hanauma-Bay/d672-a1204",
    price:"$25/人",hours:"6:45-16:00（水曜休）",
    desc:"火山クレーターが海とつながった自然保護区。450種以上の魚が棲む透明な海で最高のシュノーケリング体験。ウミガメ遭遇率も高い。要オンライン事前予約。入場教育ビデオの視聴必須。"},
   {id:6,name:"アラモアナビーチパーク",en:"Ala Moana Beach Park",emoji:"🌅",area:"honolulu",cat:["beach"],
@@ -656,7 +656,7 @@ const S = [
   {id:10,name:"ダイヤモンドヘッド",en:"Diamond Head",emoji:"🌋",area:"waikiki",cat:["nature","scenic","activity"],
    lat:21.2620,lng:-157.8055,photo:"https://upload.wikimedia.org/wikipedia/commons/9/93/Diamond_Head_Hawaii_From_Round_Top_Rd.JPG",
    tags:["hiking","panorama","sunrise","exercise","instagram","must-see"],
-   rating:4.9,featured:true,affiliate:"https://www.viator.com/tours/Oahu/Diamond-Head-Hike/d672-47009P1",
+   rating:4.9,featured:true,affiliate:"https://www.viator.com/Oahu-attractions/Diamond-Head/d672-a1202",
    price:"$5/人（要予約）",hours:"6:00-18:00",
    desc:"ホノルルのシンボル。片道30-40分のトレイルで山頂からワイキキ〜カハラのパノラマビュー。早朝予約が取りにくいほど人気。帽子・水・スニーカー必須。"},
   {id:11,name:"マノアの滝",en:"Manoa Falls",emoji:"🌿",area:"honolulu",cat:["nature"],
@@ -700,7 +700,7 @@ const S = [
   {id:20,name:"パールハーバー（真珠湾）",en:"Pearl Harbor",emoji:"🏛️",area:"central",cat:["culture"],
    lat:21.3649,lng:-157.9507,photo:"https://upload.wikimedia.org/wikipedia/commons/c/c3/USS_Arizona_Memorial_%28aerial_view%29.jpg",
    tags:["history","wwii","museum","educational","must-see","reservation"],
-   rating:4.2,affiliate:"https://www.viator.com/tours/Oahu/Pearl-Harbor-Tour/d672-3165PEARL",
+   rating:4.2,affiliate:"https://www.viator.com/Oahu-attractions/Pearl-Harbor-National-Memorial/d672-a1189",
    price:"無料（ミズーリ$35）",hours:"7:00-17:00",
    desc:"1941年日本軍の攻撃を受けた歴史的軍港。USSアリゾナ記念館（無料・要予約）、戦艦ミズーリ、航空博物館など。半日はかかる見応え。事前のオンライン予約が必須。"},
   {id:21,name:"イオラニ宮殿",en:"Iolani Palace",emoji:"👑",area:"honolulu",cat:["culture"],
@@ -718,7 +718,7 @@ const S = [
   {id:23,name:"ポリネシア文化センター",en:"Polynesian Cultural Center",emoji:"🎭",area:"northshore",cat:["culture","activity"],
    lat:21.6399,lng:-157.9225,photo:"https://images.unsplash.com/photo-1590523277543-a94d2e4eb00b?w=600&h=400&fit=crop&q=80",
    tags:["culture","show","luau","family","educational","evening"],
-   rating:4.2,affiliate:"https://www.viator.com/tours/Oahu/Polynesian-Cultural-Center/d672-5205CIRCLE",
+   rating:4.2,affiliate:"https://www.viator.com/Oahu/d672-ttd",
    price:"$69.95〜",hours:"12:00-21:00（日曜休）",
    desc:"ポリネシア6つの島の文化を体験できるテーマパーク。カヌーショー、ルアウディナー、イブニングショー「HA:Breath of Life」は圧巻。丸一日楽しめる。"},
   {id:24,name:"平等院テンプル",en:"Byodo-In Temple",emoji:"⛩️",area:"eastside",cat:["culture","scenic"],
@@ -732,25 +732,25 @@ const S = [
   {id:30,name:"クアロア・ランチ",en:"Kualoa Ranch",emoji:"🎬",area:"eastside",cat:["activity","nature"],
    lat:21.5207,lng:-157.8373,photo:"https://images.unsplash.com/photo-1536323760109-ca8c07450053?w=600&h=400&fit=crop&q=80",
    tags:["movie","jurassicpark","horseback","zipline","atv","adventure","family"],
-   rating:4.8,affiliate:"https://www.viator.com/tours/Oahu/Kualoa-Ranch-Tour/d672-3165KUALOA",
+   rating:4.8,affiliate:"https://www.viator.com/Oahu-attractions/Kualoa-Ranch/d672-a1187",
    price:"$53〜",hours:"7:30-17:30",
    desc:"映画『ジュラシック・パーク』『LOST』のロケ地。乗馬、ATV、ジップライン、映画ロケ地ツアーなど多彩。1日では回りきれないほど充実。弁当持参OK。"},
   {id:31,name:"シャークスコーブ",en:"Shark's Cove",emoji:"🤿",area:"northshore",cat:["activity","beach"],
    lat:21.6519,lng:-158.0635,photo:"https://images.unsplash.com/photo-1560275619-4662e36fa65c?w=600&h=400&fit=crop&q=80",
    tags:["snorkeling","diving","fish","clear-water","summer","tidepool"],
-   rating:4.0,affiliate:"https://www.viator.com/tours/Oahu/North-Shore-Snorkeling/d672-47009P3",
+   rating:4.0,affiliate:"https://www.viator.com/Oahu/d672-ttd",
    price:"無料",hours:"24時間",
    desc:"名前に反してサメはいない安全なシュノーケリングスポット。夏季の透明度は抜群で熱帯魚やウミガメに高確率で出会える。冬は波が高く遊泳禁止。"},
   {id:32,name:"ドール・プランテーション",en:"Dole Plantation",emoji:"🍍",area:"central",cat:["activity"],
    lat:21.5263,lng:-158.0352,photo:"https://images.unsplash.com/photo-1490885578174-acda8905c2c6?w=600&h=400&fit=crop&q=80",
    tags:["pineapple","family","maze","train","ice-cream","souvenir"],
-   rating:4.8,affiliate:"https://www.viator.com/tours/Oahu/North-Shore-Dole-Plantation/d672-5038NORTHSHORE",
+   rating:4.8,affiliate:"https://www.viator.com/Oahu/d672-ttd",
    price:"入場無料（体験有料）",hours:"9:30-17:30",
    desc:"パイナップル農園のテーマパーク。ギネス認定の巨大迷路（$8）、パイナップル列車（$14）が人気。名物ドールホイップ（パイナップルソフト）は必食。"},
   {id:33,name:"シーライフパーク",en:"Sea Life Park",emoji:"🐬",area:"eastside",cat:["activity"],
    lat:21.3122,lng:-157.6594,photo:"https://upload.wikimedia.org/wikipedia/commons/b/bc/Sea_Life_Park_Hawaii_%2816102122019%29.jpg",
    tags:["dolphin","family","marine","interaction","educational"],
-   rating:4.7,affiliate:"https://www.viator.com/tours/Oahu/Sea-Life-Park/d672-3634SLP",
+   rating:4.7,affiliate:"https://www.viator.com/Oahu/d672-ttd",
    price:"$44.99",hours:"10:00-17:00",
    desc:"イルカやアシカとの触れ合い体験ができる水族館。ドルフィンスイムやシャークダイブなどのプログラムが人気。マカプウ岬のすぐ近くにあり景色も抜群。"},
 
@@ -1034,7 +1034,7 @@ function busHTML(){
     <div style="margin-top:12px;padding:10px;background:#f8f8f8;border-radius:8px;font-size:.78rem">
       <b>💡 Tips:</b> HOLOカード($2)で乗り放題2.5時間。大きなスーツケースは持込不可。
     </div>
-    <a href="https://www.rentalcars.com/SearchResults.do?country=United+States&city=Honolulu" target="_blank" rel="noopener" class="affiliate-btn" style="margin-top:10px;background:linear-gradient(135deg,#4285F4,#34A853)" onclick="track('affiliate_click',{type:'bus_to_car'})">🚗 やっぱりレンタカーで自由に！</a>
+    <a href="https://www.rentalcars.com/en/city/us/honolulu/" target="_blank" rel="noopener" class="affiliate-btn" style="margin-top:10px;background:linear-gradient(135deg,#4285F4,#34A853)" onclick="track('affiliate_click',{type:'bus_to_car'})">🚗 やっぱりレンタカーで自由に！</a>
     <button class="tool-close" onclick="closeTool()">閉じる</button>`;
 }
 
@@ -1058,7 +1058,7 @@ function couponHTML(){
     <div style="margin-top:12px;padding:12px;background:var(--pink-bg);border-radius:var(--radius);text-align:center;font-size:.82rem">
       💡 <b>アプリ限定クーポン</b>は近日公開予定！<br>通知をオンにしてお待ちください。
     </div>
-    <a href="https://www.klook.com/en-US/city/58-oahu-things-to-do/" target="_blank" rel="noopener" class="affiliate-btn" style="margin-top:10px" onclick="track('affiliate_click',{type:'coupon_klook'})">🎫 Klookで割引ツアーを探す</a>
+    <a href="https://www.klook.com/en-US/city/703335-honolulu-things-to-do/" target="_blank" rel="noopener" class="affiliate-btn" style="margin-top:10px" onclick="track('affiliate_click',{type:'coupon_klook'})">🎫 Klookで割引ツアーを探す</a>
     <button class="tool-close" onclick="closeTool()">閉じる</button>`;
 }
 
