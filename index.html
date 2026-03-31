@@ -352,6 +352,7 @@ img{display:block;max-width:100%}
 <!-- Main Tabs -->
 <div class="main-tabs">
   <div class="main-tab active" data-tab="explore" onclick="switchTab('explore')">🗺️ 探す</div>
+  <div class="main-tab" data-tab="ranking" onclick="switchTab('ranking')">🏆 ランキング</div>
   <div class="main-tab" data-tab="plan" onclick="switchTab('plan')">📋 プラン</div>
   <div class="main-tab" data-tab="history" onclick="switchTab('history')">🕐 履歴</div>
 </div>
@@ -435,6 +436,24 @@ img{display:block;max-width:100%}
       <button class="gmaps-nav-btn" onclick="openGmapsMulti()" style="margin-top:10px">🗺️ Googleマップでナビ開始</button>
     </div>
   </div>
+</div>
+
+<!-- Ranking Tab -->
+<div id="tab-ranking" style="display:none;padding:16px">
+  <h3 style="font-family:Caveat,cursive;font-size:1.5rem;margin-bottom:4px">🏆 オアフ島ランキング</h3>
+  <p style="font-size:.8rem;color:var(--ink-light);margin-bottom:14px">評価・人気度でランク付け</p>
+  <div style="display:flex;gap:6px;margin-bottom:14px;overflow-x:auto;scrollbar-width:none" id="rankCats">
+    <button class="cat active" data-rc="all" onclick="renderRanking('all')">🌈 総合</button>
+    <button class="cat" data-rc="beach" onclick="renderRanking('beach')">🏖️ ビーチ</button>
+    <button class="cat" data-rc="food" onclick="renderRanking('food')">🍽️ グルメ</button>
+    <button class="cat" data-rc="nature" onclick="renderRanking('nature')">🌿 自然</button>
+    <button class="cat" data-rc="activity" onclick="renderRanking('activity')">🏄 体験</button>
+    <button class="cat" data-rc="culture" onclick="renderRanking('culture')">🏛️ 文化</button>
+    <button class="cat" data-rc="cafe" onclick="renderRanking('cafe')">☕ カフェ</button>
+    <button class="cat" data-rc="shopping" onclick="renderRanking('shopping')">🛍️ 買い物</button>
+    <button class="cat" data-rc="near" onclick="renderRanking('near')">📍 近い順</button>
+  </div>
+  <div id="rankingList"></div>
 </div>
 
 <!-- History Tab -->
@@ -832,8 +851,8 @@ function track(event,data={}){
 // ===== i18n =====
 let lang=localStorage.getItem('oahu_lang')||'ja';
 const I18N={
-  ja:{sub:'~ オアフ島 完全観光ガイド ~',explore:'🗺️ 探す',plan:'📋 プラン',history:'🕐 履歴',suggest:'✨ イメージから探す ✨',suggestPh:'例: 海がきれいでのんびりできるところ...',suggestBtn:'提案して!',searchPh:'スポット名・キーワードで検索...',allArea:'全エリア',allCat:'🌈 すべて',featured:'🔥 おすすめスポット',locTap:'タップして現在地を取得',locGetting:'取得中...',book:'予約する',addPlan:'📌 プランに追加',selected:'✓ 選択済み',share:'共有',close:'閉じる',gmaps:'🗺️ Googleマップ',dist:'距離',drive:'車で',price:'料金',hours:'営業時間'},
-  en:{sub:'~ Your Complete Oahu Guide ~',explore:'🗺️ Explore',plan:'📋 Plan',history:'🕐 History',suggest:'✨ Find by mood ✨',suggestPh:'e.g. relaxing beach, family friendly...',suggestBtn:'Suggest!',searchPh:'Search spots...',allArea:'All Areas',allCat:'🌈 All',featured:'🔥 Featured Spots',locTap:'Tap to get location',locGetting:'Getting location...',book:'Book Now',addPlan:'📌 Add to Plan',selected:'✓ Selected',share:'Share',close:'Close',gmaps:'🗺️ Google Maps',dist:'Distance',drive:'Drive',price:'Price',hours:'Hours'}
+  ja:{sub:'~ オアフ島 完全観光ガイド ~',explore:'🗺️ 探す',ranking:'🏆 ランキング',plan:'📋 プラン',history:'🕐 履歴',suggest:'✨ イメージから探す ✨',suggestPh:'例: 海がきれいでのんびりできるところ...',suggestBtn:'提案して!',searchPh:'スポット名・キーワードで検索...',allArea:'全エリア',allCat:'🌈 すべて',featured:'🔥 おすすめスポット',locTap:'タップして現在地を取得',locGetting:'取得中...',book:'予約する',addPlan:'📌 プランに追加',selected:'✓ 選択済み',share:'共有',close:'閉じる',gmaps:'🗺️ Googleマップ',dist:'距離',drive:'車で',price:'料金',hours:'営業時間'},
+  en:{sub:'~ Your Complete Oahu Guide ~',explore:'🗺️ Explore',ranking:'🏆 Ranking',plan:'📋 Plan',history:'🕐 History',suggest:'✨ Find by mood ✨',suggestPh:'e.g. relaxing beach, family friendly...',suggestBtn:'Suggest!',searchPh:'Search spots...',allArea:'All Areas',allCat:'🌈 All',featured:'🔥 Featured Spots',locTap:'Tap to get location',locGetting:'Getting location...',book:'Book Now',addPlan:'📌 Add to Plan',selected:'✓ Selected',share:'Share',close:'Close',gmaps:'🗺️ Google Maps',dist:'Distance',drive:'Drive',price:'Price',hours:'Hours'}
 };
 function t(key){return I18N[lang][key]||I18N.ja[key]||key}
 function setLang(l){
@@ -841,7 +860,7 @@ function setLang(l){
   document.querySelectorAll('.lang-btn').forEach(b=>b.classList.toggle('active',b.textContent===l.toUpperCase()));
   document.getElementById('headerSub').textContent=t('sub');
   document.querySelectorAll('.main-tab').forEach((tab,i)=>{
-    const keys=['explore','plan','history'];tab.textContent=t(keys[i]);
+    const keys=['explore','ranking','plan','history'];tab.textContent=t(keys[i]);
   });
   document.getElementById('featuredTitle').innerHTML=t('featured')+' <span class="badge-sponsored">Sponsored</span>';
   document.getElementById('suggestInput').placeholder=t('suggestPh');
@@ -913,11 +932,51 @@ function setupListeners(){
 function switchTab(tab){
   currentTab=tab;
   document.querySelectorAll('.main-tab').forEach(t=>t.classList.toggle('active',t.dataset.tab===tab));
-  document.getElementById('tab-explore').style.display=tab==='explore'?'':'none';
-  document.getElementById('tab-plan').style.display=tab==='plan'?'':'none';
-  document.getElementById('tab-history').style.display=tab==='history'?'':'none';
+  ['explore','ranking','plan','history'].forEach(t=>{
+    const el=document.getElementById('tab-'+t);
+    if(el)el.style.display=tab===t?'':'none';
+  });
   if(tab==='plan')renderPlan();
   if(tab==='history')renderHistory();
+  if(tab==='ranking')renderRanking('all');
+}
+
+// ===== RANKING =====
+function renderRanking(cat){
+  document.querySelectorAll('#rankCats .cat').forEach(c=>c.classList.toggle('active',c.dataset.rc===cat));
+  let spots=[...S];
+  if(cat==='near'&&userLat){
+    spots.forEach(s=>s._d=hav(userLat,userLng,s.lat,s.lng));
+    spots.sort((a,b)=>a._d-b._d);
+  } else if(cat!=='all'){
+    spots=spots.filter(s=>s.cat.includes(cat));
+    spots.sort((a,b)=>(b.rating||4.5)-(a.rating||4.5));
+  } else {
+    spots.sort((a,b)=>(b.rating||4.5)-(a.rating||4.5));
+  }
+  const areas={waikiki:'ワイキキ',honolulu:'ホノルル',kailua:'カイルア',northshore:'ノースショア',westside:'西海岸',eastside:'東海岸',central:'中部'};
+  const medals=['🥇','🥈','🥉'];
+  document.getElementById('rankingList').innerHTML=spots.slice(0,20).map((s,i)=>{
+    const d=userLat?fmtD(hav(userLat,userLng,s.lat,s.lng)):'';
+    const dm=userLat?driveMin(hav(userLat,userLng,s.lat,s.lng))+'分':'';
+    const medal=i<3?medals[i]:`<span style="color:var(--ink-muted);font-size:.85rem">${i+1}</span>`;
+    const spotName=lang==='en'?s.en:s.name;
+    return `<div style="display:flex;gap:12px;align-items:center;padding:12px;margin-bottom:8px;background:var(--white);border-radius:var(--radius);box-shadow:0 1px 6px rgba(0,0,0,.05);cursor:pointer;transition:var(--transition)" onclick="openDetail(${s.id})" onmouseover="this.style.transform='translateX(4px)'" onmouseout="this.style.transform=''">
+      <div style="font-size:1.4rem;width:32px;text-align:center;flex-shrink:0">${medal}</div>
+      ${s.photo?`<img src="${s.photo}" style="width:64px;height:64px;border-radius:12px;object-fit:cover;flex-shrink:0" loading="lazy" onerror="this.outerHTML='<div style=\\'width:64px;height:64px;border-radius:12px;background:#f0f0f0;display:flex;align-items:center;justify-content:center;font-size:1.5rem;flex-shrink:0\\'>${s.emoji}</div>'">`
+        :`<div style="width:64px;height:64px;border-radius:12px;background:#f0f0f0;display:flex;align-items:center;justify-content:center;font-size:1.5rem;flex-shrink:0">${s.emoji}</div>`}
+      <div style="flex:1;min-width:0">
+        <div style="font-weight:700;font-size:.92rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${s.emoji} ${spotName}</div>
+        <div style="font-size:.75rem;color:var(--ink-light)">${areas[s.area]||s.area}${d?' / '+d:''}${dm?' / 🚗'+dm:''}</div>
+        <div style="display:flex;gap:6px;align-items:center;margin-top:2px">
+          <span style="color:#FFB300;font-size:.8rem;font-weight:700">★ ${s.rating||4.5}</span>
+          ${s.price?`<span style="font-size:.7rem;color:var(--orange)">${s.price}</span>`:''}
+        </div>
+      </div>
+      <button class="card-btn btn-gmaps" style="flex-shrink:0" onclick="event.stopPropagation();openGmaps(${s.id})">Maps</button>
+    </div>`;
+  }).join('');
+  track('ranking_view',{cat});
 }
 
 // ===== LOCATION =====
