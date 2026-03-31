@@ -372,6 +372,10 @@ img{display:block;max-width:100%}
   <div class="tool-btn" onclick="openTool('emergency')"><div class="t-icon">🆘</div><div class="t-label">緊急連絡</div></div>
   <div class="tool-btn" onclick="openTool('model')"><div class="t-icon">🗓️</div><div class="t-label">モデルコース</div></div>
   <div class="tool-btn" onclick="openTool('souvenir')"><div class="t-icon">🎁</div><div class="t-label">お土産</div></div>
+  <div class="tool-btn" onclick="openTool('events')"><div class="t-icon">🎉</div><div class="t-label">イベント</div></div>
+  <div class="tool-btn" onclick="openTool('ocean')"><div class="t-icon">🌊</div><div class="t-label">海況情報</div></div>
+  <div class="tool-btn" onclick="openTool('budget')"><div class="t-icon">📊</div><div class="t-label">予算計算</div></div>
+  <div class="tool-btn" onclick="openTool('phrases')"><div class="t-icon">💬</div><div class="t-label">英会話</div></div>
 </div>
 
 <!-- Booking Quick Links -->
@@ -912,6 +916,10 @@ function openTool(type){
   else if(type==='emergency') m.innerHTML=emergencyHTML();
   else if(type==='model') m.innerHTML=modelHTML();
   else if(type==='souvenir') m.innerHTML=souvenirHTML();
+  else if(type==='events') m.innerHTML=eventsHTML();
+  else if(type==='ocean') m.innerHTML=oceanHTML();
+  else if(type==='budget') m.innerHTML=budgetHTML();
+  else if(type==='phrases') m.innerHTML=phrasesHTML();
   document.getElementById('toolOverlay').classList.add('show');
   track('tool_open',{type});
 }
@@ -1196,6 +1204,157 @@ function souvenirHTML(){
     <div style="margin-top:10px;padding:10px;background:var(--warn-light);border-radius:var(--r);font-size:.75rem">
       <b>⚠️ 注意:</b> ビーフジャーキー・生フルーツは日本に持ち込めません！
     </div>
+    <button class="tool-close" onclick="closeTool()">閉じる</button>`;
+}
+
+function eventsHTML(){
+  const events=[
+    {m:'4月',items:[
+      {d:'4/1〜',n:'ハワイ州フェア',v:'アロハスタジアム',t:'乗り物・ゲーム・フード'},
+    ]},
+    {m:'5月',items:[
+      {d:'5/1',n:'レイデー（Lei Day）',v:'カピオラニ公園',t:'レイ作り・フラ・ライブ'},
+      {d:'5月中旬',n:'ランタンフェスティバル',v:'平等院テンプル',t:'約1,000のランタンが灯る'},
+    ]},
+    {m:'6月',items:[
+      {d:'6/11',n:'カメハメハデー・パレード',v:'ワイキキ〜ダウンタウン',t:'花飾りのフロート・馬上パレード'},
+      {d:'6月中',n:'パンパシフィックフェスティバル',v:'ワイキキ',t:'日本文化×ハワイ・フードフェスも'},
+    ]},
+    {m:'7月',items:[
+      {d:'7/4',n:'独立記念日花火',v:'アラモアナ/コオリナ',t:'ビーチから花火鑑賞'},
+    ]},
+    {m:'11-12月',items:[
+      {d:'11月下旬',n:'トリプルクラウン・オブ・サーフィン',v:'ノースショア',t:'世界最高峰のサーフィン大会'},
+      {d:'12/7',n:'パールハーバー追悼式典',v:'パールハーバー',t:'真珠湾攻撃記念日'},
+    ]},
+  ];
+  return `<h3>🎉 オアフ島イベントカレンダー</h3>
+    ${events.map(e=>`
+      <div style="margin-bottom:12px">
+        <div style="font-weight:700;font-size:.88rem;color:var(--brand);margin-bottom:6px">${e.m}</div>
+        ${e.items.map(i=>`
+          <div style="padding:8px 10px;background:var(--c9);border-radius:var(--r);margin-bottom:4px;border-left:3px solid var(--brand)">
+            <div style="display:flex;justify-content:space-between;align-items:baseline">
+              <span style="font-weight:700;font-size:.82rem">${i.n}</span>
+              <span style="font-size:.68rem;color:var(--c5)">${i.d}</span>
+            </div>
+            <div style="font-size:.72rem;color:var(--c4)">📍 ${i.v} — ${i.t}</div>
+          </div>
+        `).join('')}
+      </div>
+    `).join('')}
+    <button class="tool-close" onclick="closeTool()">閉じる</button>`;
+}
+
+function oceanHTML(){
+  return `<h3>🌊 海況 & ビーチ安全情報</h3>
+    <div style="display:flex;flex-direction:column;gap:8px;margin-top:10px">
+      <div style="padding:12px;background:var(--blue-light);border-radius:var(--r)">
+        <div style="font-weight:700;font-size:.88rem">🏖️ サウスショア（ワイキキ側）</div>
+        <div style="font-size:.8rem;color:var(--c2);margin-top:4px">波: 1-3ft / 水温: 26°C<br>状態: <span style="color:var(--success);font-weight:700">穏やか — 初心者OK</span></div>
+      </div>
+      <div style="padding:12px;background:var(--warn-light);border-radius:var(--r)">
+        <div style="font-weight:700;font-size:.88rem">🏄 ノースショア</div>
+        <div style="font-size:.8rem;color:var(--c2);margin-top:4px">波: 3-8ft（季節による） / 水温: 25°C<br>状態: <span style="color:var(--warn);font-weight:700">注意 — 冬季はエキスパート向け</span></div>
+      </div>
+      <div style="padding:12px;background:var(--success-light);border-radius:var(--r)">
+        <div style="font-weight:700;font-size:.88rem">🐠 イーストサイド（カイルア）</div>
+        <div style="font-size:.8rem;color:var(--c2);margin-top:4px">波: 1-2ft / 水温: 26°C<br>状態: <span style="color:var(--success);font-weight:700">穏やか — 家族向け</span></div>
+      </div>
+    </div>
+    <div style="margin-top:12px;padding:10px;background:var(--c9);border-radius:var(--r);font-size:.75rem">
+      <b>🏊 安全Tips:</b><br>
+      • ライフガードのいるビーチで泳ぐ<br>
+      • 赤旗🚩= 遊泳禁止。黄旗= 注意<br>
+      • 離岸流に流されたら横に泳いで脱出<br>
+      • ウニ・クラゲに注意（特に満月後8-10日）<br>
+      • サンゴの上を歩かない
+    </div>
+    <a href="https://www.surfline.com/surf-reports-forecasts-cams/united-states/hawaii/o-ahu/5851609" target="_blank" rel="noopener" style="display:block;text-align:center;padding:12px;margin-top:10px;background:var(--blue);color:#fff;border-radius:var(--r);font-weight:700;font-size:.88rem;text-decoration:none">🌊 Surflineでリアルタイム波情報を見る</a>
+    <button class="tool-close" onclick="closeTool()">閉じる</button>`;
+}
+
+function budgetHTML(){
+  return `<h3>📊 ハワイ旅行 予算計算機</h3>
+    <p style="font-size:.78rem;color:var(--c4);text-align:center;margin-bottom:12px">1人あたりの目安（4泊6日）</p>
+    <div style="display:flex;flex-direction:column;gap:6px" id="budgetItems">
+      ${[
+        {n:'✈️ 航空券（往復）',min:80000,max:150000},
+        {n:'🏨 ホテル（4泊）',min:60000,max:200000},
+        {n:'🍽️ 食事（6日間）',min:30000,max:80000},
+        {n:'🚗 レンタカー（3日）',min:15000,max:30000},
+        {n:'🎫 アクティビティ',min:10000,max:50000},
+        {n:'🛍️ ショッピング',min:10000,max:50000},
+        {n:'💰 チップ・雑費',min:5000,max:15000},
+      ].map((i,idx)=>`
+        <div style="padding:10px;background:var(--c9);border-radius:var(--r);display:flex;justify-content:space-between;align-items:center">
+          <span style="font-size:.82rem;font-weight:600">${i.n}</span>
+          <div style="display:flex;gap:4px;align-items:center">
+            <span style="font-size:.72rem;color:var(--c5)">¥</span>
+            <input type="number" value="${Math.round((i.min+i.max)/2)}" style="width:80px;padding:6px;border-radius:6px;border:1.5px solid var(--c7);text-align:right;font-size:.85rem;font-family:inherit" oninput="calcBudget()">
+          </div>
+        </div>
+      `).join('')}
+    </div>
+    <div class="tool-result" id="budgetResult" style="margin-top:12px">
+      合計: ¥0 / 1人<br><small style="color:var(--c4)">≈ $0</small>
+    </div>
+    <div style="margin-top:8px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;text-align:center;font-size:.72rem">
+      <div style="padding:8px;background:var(--success-light);border-radius:var(--r)"><div style="font-weight:700">節約プラン</div>¥21万〜</div>
+      <div style="padding:8px;background:var(--warn-light);border-radius:var(--r)"><div style="font-weight:700">標準プラン</div>¥35万〜</div>
+      <div style="padding:8px;background:var(--accent-light);border-radius:var(--r)"><div style="font-weight:700">贅沢プラン</div>¥55万〜</div>
+    </div>
+    <button class="tool-close" onclick="closeTool()">閉じる</button>`;
+}
+function calcBudget(){
+  const inputs=document.querySelectorAll('#budgetItems input');
+  let total=0;inputs.forEach(i=>total+=parseInt(i.value)||0);
+  document.getElementById('budgetResult').innerHTML=`合計: <b>¥${total.toLocaleString()}</b> / 1人<br><small style="color:var(--c4)">≈ $${Math.round(total/150).toLocaleString()}</small>`;
+}
+
+function phrasesHTML(){
+  const cats=[
+    {t:'🛬 空港・入国',phrases:[
+      {e:'I\'m here for vacation.',j:'バケーションで来ました'},
+      {e:'I\'m staying for 5 days.',j:'5日間滞在します'},
+      {e:'Where is baggage claim?',j:'荷物受取りはどこですか？'},
+    ]},
+    {t:'🍽️ レストラン',phrases:[
+      {e:'Table for two, please.',j:'2名です'},
+      {e:'Can I see the menu?',j:'メニューを見せてください'},
+      {e:'Check, please.',j:'お会計お願いします'},
+      {e:'Can I pay by card?',j:'カードで払えますか？'},
+      {e:'No ice, please.',j:'氷なしでお願いします'},
+    ]},
+    {t:'🛍️ ショッピング',phrases:[
+      {e:'Do you have this in a smaller size?',j:'もっと小さいサイズはありますか？'},
+      {e:'Can I try this on?',j:'試着できますか？'},
+      {e:'Is this tax-free?',j:'免税ですか？'},
+    ]},
+    {t:'🚗 移動',phrases:[
+      {e:'How do I get to Waikiki?',j:'ワイキキへはどう行けばいいですか？'},
+      {e:'How long does it take?',j:'どのくらい時間がかかりますか？'},
+      {e:'Can you take me to this address?',j:'この住所まで連れて行ってください'},
+    ]},
+    {t:'🆘 緊急',phrases:[
+      {e:'I need help!',j:'助けてください！'},
+      {e:'Where is the nearest hospital?',j:'一番近い病院はどこですか？'},
+      {e:'I lost my passport.',j:'パスポートをなくしました'},
+    ]},
+  ];
+  return `<h3>💬 ハワイで使える英会話</h3>
+    <p style="font-size:.78rem;color:var(--c4);text-align:center;margin-bottom:12px">タップでコピー</p>
+    ${cats.map(c=>`
+      <div style="margin-bottom:12px">
+        <div style="font-weight:700;font-size:.85rem;margin-bottom:6px">${c.t}</div>
+        ${c.phrases.map(p=>`
+          <div style="padding:8px 10px;background:var(--c9);border-radius:var(--r);margin-bottom:4px;cursor:pointer;transition:var(--ease)" onclick="navigator.clipboard.writeText('${p.e.replace(/'/g,"\\'")}');this.style.background='var(--success-light)';setTimeout(()=>this.style.background='var(--c9)',1000)">
+            <div style="font-size:.85rem;font-weight:600;color:var(--c1)">${p.e}</div>
+            <div style="font-size:.72rem;color:var(--c4)">${p.j}</div>
+          </div>
+        `).join('')}
+      </div>
+    `).join('')}
     <button class="tool-close" onclick="closeTool()">閉じる</button>`;
 }
 
