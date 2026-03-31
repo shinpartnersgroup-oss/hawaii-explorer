@@ -72,8 +72,8 @@ img{display:block;max-width:100%}
 .loc-bar .status.pending{background:var(--warn)}
 
 /* ===== Tools Grid ===== */
-.tools-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:8px 16px}
-@media(max-width:600px){.tools-grid{grid-template-columns:repeat(4,1fr)}}
+.tools-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;padding:8px 16px}
+@media(max-width:360px){.tools-grid{grid-template-columns:repeat(3,1fr)}}
 .tool-btn{padding:12px 6px;border-radius:var(--r2);background:var(--white);box-shadow:var(--s1);text-align:center;transition:var(--ease)}
 .tool-btn:active{transform:scale(.95)}
 .tool-btn .t-icon{font-size:1.4rem;margin-bottom:2px}
@@ -376,6 +376,8 @@ img{display:block;max-width:100%}
   <div class="tool-btn" onclick="openTool('ocean')"><div class="t-icon">🌊</div><div class="t-label">海況情報</div></div>
   <div class="tool-btn" onclick="openTool('budget')"><div class="t-icon">📊</div><div class="t-label">予算計算</div></div>
   <div class="tool-btn" onclick="openTool('phrases')"><div class="t-icon">💬</div><div class="t-label">英会話</div></div>
+  <div class="tool-btn" onclick="openTool('firsttime')"><div class="t-icon">🔰</div><div class="t-label">初ハワイ</div></div>
+  <div class="tool-btn" onclick="openTool('coupon')"><div class="t-icon">🎟️</div><div class="t-label">クーポン</div></div>
 </div>
 
 <!-- Booking Quick Links -->
@@ -920,6 +922,7 @@ function openTool(type){
   else if(type==='ocean') m.innerHTML=oceanHTML();
   else if(type==='budget') m.innerHTML=budgetHTML();
   else if(type==='phrases') m.innerHTML=phrasesHTML();
+  else if(type==='firsttime') m.innerHTML=firstTimeHTML();
   document.getElementById('toolOverlay').classList.add('show');
   track('tool_open',{type});
 }
@@ -1353,6 +1356,30 @@ function phrasesHTML(){
             <div style="font-size:.72rem;color:var(--c4)">${p.j}</div>
           </div>
         `).join('')}
+      </div>
+    `).join('')}
+    <button class="tool-close" onclick="closeTool()">閉じる</button>`;
+}
+
+function firstTimeHTML(){
+  const tips=[
+    {icon:'💵',title:'チップは必須（任意ではない）',desc:'レストラン15-20%、カフェ$1-2、タクシー15%。払わないと非常に失礼。最近はタブレットで25%を勧められるが18-20%で十分。'},
+    {icon:'🔌',title:'変圧器・変換プラグ不要',desc:'ハワイは日本と同じAタイプ。電圧は120V（日本は100V）でほぼ同じ。スマホ充電器はそのまま使えます。'},
+    {icon:'🚗',title:'右側通行に注意',desc:'レンタカーは右側通行。特に左折時と駐車場出口で要注意。赤信号でも右折OKの場所が多い（一時停止後）。'},
+    {icon:'☀️',title:'日焼けは想像の3倍',desc:'ハワイの紫外線は日本の2-3倍。SPF50+を2時間おきに塗り直し。リーフセーフの日焼け止めのみ使用可（法律）。'},
+    {icon:'💧',title:'水道水は飲める',desc:'ハワイの水道水は安全に飲めます。ペットボトル($3-5)を毎回買うのはもったいない。マイボトル持参推奨。'},
+    {icon:'🏨',title:'リゾートフィーに注意',desc:'ホテル料金とは別にリゾートフィー($45-55/泊)が加算。予約時に表示されないことも。税金(約19%)も別。'},
+    {icon:'🥩',title:'ビーフジャーキーは持ち帰れない',desc:'アメリカの牛肉加工品は日本に持ち込み禁止。空港の免税店で買っても没収されます。'},
+    {icon:'🌴',title:'1島に最低3日は必要',desc:'2島以上回るなら各3日以上。ハワイは意外と広く、移動だけで時間を使うとリラックスできない。'},
+    {icon:'🅿️',title:'駐車は要注意',desc:'ワイキキの駐車場は$30-50/日。路上駐車のメーターは時間厳守。車上荒らし多発→車内に荷物を絶対に残さない。'},
+    {icon:'📱',title:'eSIMがコスパ最強',desc:'空港でSIM買うより、出発前にeSIMをインストールするのが安くて便利。着いた瞬間からネット使える。'},
+  ];
+  return `<h3>🔰 初めてのハワイ 必読Tips</h3>
+    <p style="font-size:.78rem;color:var(--c4);text-align:center;margin-bottom:12px">経験者が「先に知りたかった」情報</p>
+    ${tips.map(t=>`
+      <div style="display:flex;gap:10px;padding:10px;background:var(--c9);border-radius:var(--r);margin-bottom:6px">
+        <span style="font-size:1.3rem;flex-shrink:0">${t.icon}</span>
+        <div><div style="font-weight:700;font-size:.85rem">${t.title}</div><div style="font-size:.72rem;color:var(--c3);margin-top:2px;line-height:1.5">${t.desc}</div></div>
       </div>
     `).join('')}
     <button class="tool-close" onclick="closeTool()">閉じる</button>`;
