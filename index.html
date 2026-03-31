@@ -356,6 +356,14 @@ img{display:block;max-width:100%}
   <p id="headerSub">~ オアフ島 完全観光ガイド ~</p>
 </header>
 
+<!-- Trip countdown -->
+<div id="tripBanner" style="display:none;margin:12px 16px 0;padding:12px 16px;background:linear-gradient(135deg,var(--brand-light),#fff);border-radius:var(--r2);cursor:pointer" onclick="openTool('trip')">
+  <div style="display:flex;align-items:center;justify-content:space-between">
+    <div><span style="font-size:.82rem;font-weight:700;color:var(--brand)" id="tripText">旅行まであと X日</span></div>
+    <span style="font-size:.72rem;color:var(--c4)">タップで設定</span>
+  </div>
+</div>
+
 <div class="loc-bar" onclick="getLocation()">
   <span class="pin">📍</span>
   <div class="text"><div id="locText">タップして現在地を取得</div></div>
@@ -925,6 +933,7 @@ function openTool(type){
   else if(type==='budget') m.innerHTML=budgetHTML();
   else if(type==='phrases') m.innerHTML=phrasesHTML();
   else if(type==='firsttime') m.innerHTML=firstTimeHTML();
+  else if(type==='trip') m.innerHTML=tripHTML();
   else if(type==='parking') m.innerHTML=parkingHTML();
   else if(type==='sunset') m.innerHTML=sunsetHTML();
   document.getElementById('toolOverlay').classList.add('show');
@@ -1365,6 +1374,38 @@ function phrasesHTML(){
     <button class="tool-close" onclick="closeTool()">閉じる</button>`;
 }
 
+function tripHTML(){
+  const saved=localStorage.getItem(STORAGE_KEY+'trip_date')||'';
+  return `<h3>✈️ 旅行日程を設定</h3>
+    <p style="font-size:.78rem;color:var(--c4);text-align:center;margin-bottom:14px">出発日を設定するとカウントダウン表示&最適な準備リマインダーをお届け</p>
+    <input type="date" class="tool-input" id="tripDateInput" value="${saved}" style="font-size:1rem">
+    <button onclick="saveTripDate()" style="display:block;width:100%;padding:12px;border-radius:var(--r);background:var(--brand);color:#fff;font-weight:700;font-size:.9rem;margin-top:8px;border:none;cursor:pointer">設定する</button>
+    ${saved?`<div style="margin-top:14px;padding:14px;background:var(--brand-light);border-radius:var(--r);text-align:center">
+      <div style="font-size:2rem;margin-bottom:4px">✈️</div>
+      <div style="font-size:1.2rem;font-weight:700;color:var(--brand)" id="tripCountdown"></div>
+      <div style="font-size:.75rem;color:var(--c4);margin-top:4px" id="tripAdvice"></div>
+    </div>`:''}
+    <button class="tool-close" onclick="closeTool()">閉じる</button>`;
+}
+function saveTripDate(){
+  const d=document.getElementById('tripDateInput').value;
+  if(!d)return;
+  localStorage.setItem(STORAGE_KEY+'trip_date',d);
+  closeTool();updateTripBanner();
+  track('trip_set',{date:d});
+}
+function updateTripBanner(){
+  const d=localStorage.getItem(STORAGE_KEY+'trip_date');
+  const banner=document.getElementById('tripBanner');
+  if(!d){banner.style.display='none';return}
+  banner.style.display='';
+  const diff=Math.ceil((new Date(d)-new Date())/(1000*60*60*24));
+  const txt=document.getElementById('tripText');
+  if(diff>0)txt.textContent=`✈️ ハワイ旅行まであと ${diff}日！`;
+  else if(diff===0)txt.textContent='🌺 今日がハワイ旅行当日！Aloha!';
+  else txt.textContent='🌴 ハワイ旅行中！楽しんで！';
+}
+
 function parkingHTML(){
   const spots=[
     {n:'カピオラニ公園',price:'無料',note:'ワイキキ最寄りの無料駐車場。Zoo横。24h OK',icon:'🟢'},
@@ -1512,6 +1553,7 @@ window.addEventListener('load',()=>{
   window.addEventListener('scroll',()=>{document.getElementById('scrollTop').classList.toggle('show',window.scrollY>300)});
   // Service Worker
   if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
+  updateTripBanner();
 });
 function acceptCookies(){localStorage.setItem(STORAGE_KEY+'cookie_ok','1');document.getElementById('cookieBanner').classList.remove('show')}
 
