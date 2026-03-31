@@ -1,0 +1,20 @@
+{
+  "name": "oahu-explorer",
+  "version": "1.0.0",
+  "description": "Oahu Explorer - Hawaii Tourism Guide App",
+  "main": "index.html",
+  "scripts": {
+    "build": "echo 'Static app - no build needed'",
+    "cap:init": "npx cap init 'Oahu Explorer' com.shinpartners.oahuexplorer --web-dir .",
+    "cap:add": "npx cap add ios",
+    "cap:sync": "npx cap sync ios",
+    "cap:open": "npx cap open ios"
+  },
+  "author": "Shin Partners Inc.",
+  "license": "MIT",
+  "dependencies": {
+    "@capacitor/cli": "^8.3.0",
+    "@capacitor/core": "^8.3.0",
+    "@capacitor/ios": "^8.3.0"
+  }
+}

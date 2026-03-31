@@ -1,0 +1,1497 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="description" content="オアフ島の観光スポット・グルメを写真付きで探せるガイドアプリ。現在地からのルート案内、複数スポットの巡回プランも作成可能。">
+<meta name="theme-color" content="#F06292">
+<meta property="og:title" content="Oahu Explorer - オアフ島観光ガイド">
+<meta property="og:description" content="50以上のスポット＆グルメを写真付きで。Googleマップ連携ルート案内付き。">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🌺%3C/text%3E%3C/svg%3E">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="keywords" content="ハワイ,オアフ島,観光,グルメ,ビーチ,Hawaii,Oahu,travel,guide,restaurant">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://images.unsplash.com/photo-1507876466758-bc54f384809c?w=1200&h=630&fit=crop">
+<meta property="og:url" content="https://shinpartnersgroup-oss.github.io/hawaii-explorer/">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://images.unsplash.com">
+<link rel="canonical" href="https://shinpartnersgroup-oss.github.io/hawaii-explorer/">
+<meta name="twitter:title" content="Oahu Explorer - オアフ島観光ガイド">
+<meta name="twitter:description" content="50+スポット＆グルメを写真付き。Googleマップ連携ルート案内。">
+<meta name="twitter:image" content="https://images.unsplash.com/photo-1507876466758-bc54f384809c?w=1200&h=630&fit=crop">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Oahu Explorer","description":"オアフ島の観光スポット・グルメを写真付きで探せるガイドアプリ","url":"https://shinpartnersgroup-oss.github.io/hawaii-explorer/","applicationCategory":"TravelApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"author":{"@type":"Organization","name":"Shin Partners Inc."}}</script>
+<title>Oahu Explorer - オアフ島完全観光ガイド</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&family=Zen+Maru+Gothic:wght@400;500;700&family=Patrick+Hand&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --c1:#0f172a;--c2:#1e293b;--c3:#334155;--c4:#64748b;--c5:#94a3b8;--c6:#cbd5e1;--c7:#e2e8f0;--c8:#f1f5f9;--c9:#f8fafc;
+  --white:#fff;--bg:#f8fafc;
+  --brand:#6366f1;--brand2:#818cf8;--brand-light:#eef2ff;
+  --accent:#ec4899;--accent2:#f472b6;--accent-light:#fce7f3;
+  --success:#10b981;--success-light:#d1fae5;
+  --warn:#f59e0b;--warn-light:#fef3c7;
+  --blue:#3b82f6;--blue-light:#dbeafe;
+  --orange:#f97316;--orange-light:#ffedd5;
+  --r:12px;--r2:16px;--r3:24px;--r4:9999px;
+  --s1:0 1px 2px rgba(0,0,0,.05);--s2:0 4px 16px rgba(0,0,0,.08);--s3:0 12px 40px rgba(0,0,0,.12);
+  --ease:all .2s cubic-bezier(.4,0,.2,1);
+  --font:'Zen Maru Gothic',system-ui,-apple-system,sans-serif;
+  --font2:'Caveat',cursive;
+}
+body{font-family:var(--font);color:var(--c1);background:var(--bg);min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-thumb{background:var(--c6);border-radius:4px}
+a{color:var(--brand);text-decoration:none}
+button{cursor:pointer;font-family:inherit;border:none;background:none;-webkit-tap-highlight-color:transparent}
+img{display:block;max-width:100%}
+
+/* ===== Header ===== */
+.header{background:linear-gradient(135deg,#667eea 0%,#764ba2 50%,#ec4899 100%);padding:clamp(32px,6vw,48px) 20px clamp(36px,6vw,52px);text-align:center;position:relative;overflow:hidden}
+.header::before{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg width='60' height='60' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='30' cy='30' r='1.5' fill='rgba(255,255,255,.08)'/%3E%3C/svg%3E");pointer-events:none}
+.header::after{content:'';position:absolute;bottom:-1px;left:0;right:0;height:32px;background:var(--bg);border-radius:32px 32px 0 0}
+.header h1{font-family:var(--font2);font-size:clamp(2rem,7vw,3rem);color:#fff;text-shadow:0 2px 16px rgba(0,0,0,.15);position:relative;z-index:1;letter-spacing:.5px}
+.header p{font-family:var(--font2);color:rgba(255,255,255,.8);font-size:1.1rem;position:relative;z-index:1;margin-top:2px}
+.header-icons{position:absolute;inset:0;pointer-events:none;z-index:0}
+.header-icons span{position:absolute;font-size:1.6rem;opacity:.2;animation:hf 5s ease-in-out infinite}
+.header-icons span:nth-child(1){top:12px;left:8%;animation-delay:0s}
+.header-icons span:nth-child(2){top:16px;right:6%;animation-delay:1s}
+.header-icons span:nth-child(3){bottom:40px;left:18%;animation-delay:2s}
+.header-icons span:nth-child(4){bottom:36px;right:14%;animation-delay:3s}
+@keyframes hf{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+
+/* ===== Location ===== */
+.loc-bar{display:flex;align-items:center;gap:10px;padding:12px 18px;margin:16px 16px 10px;border-radius:var(--r2);background:var(--white);box-shadow:var(--s2);cursor:pointer;transition:var(--ease)}
+.loc-bar:active{transform:scale(.98)}
+.loc-bar .pin{font-size:1.2rem}
+.loc-bar .text{flex:1;font-size:.85rem;color:var(--c3)}
+.loc-bar .status{font-size:.68rem;padding:3px 10px;border-radius:var(--r4);background:var(--success);color:#fff;font-weight:600}
+.loc-bar .status.pending{background:var(--warn)}
+
+/* ===== Tools Grid ===== */
+.tools-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:8px 16px}
+@media(max-width:600px){.tools-grid{grid-template-columns:repeat(4,1fr)}}
+.tool-btn{padding:12px 6px;border-radius:var(--r2);background:var(--white);box-shadow:var(--s1);text-align:center;transition:var(--ease)}
+.tool-btn:active{transform:scale(.95)}
+.tool-btn .t-icon{font-size:1.4rem;margin-bottom:2px}
+.tool-btn .t-label{font-size:.65rem;font-weight:600;color:var(--c3)}
+
+/* ===== Booking Banner ===== */
+.booking-section{padding:6px 16px}
+.booking-banner{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding:2px 0}
+.booking-banner::-webkit-scrollbar{display:none}
+.booking-card{flex-shrink:0;padding:10px 16px;border-radius:var(--r2);background:var(--white);box-shadow:var(--s1);text-align:center;transition:var(--ease);min-width:100px;text-decoration:none;color:var(--c1)}
+.booking-card:active{transform:scale(.95)}
+.booking-card .b-icon{font-size:1.2rem}
+.booking-card .b-label{font-size:.7rem;font-weight:700;margin-top:2px}
+.booking-card .b-sub{font-size:.58rem;color:var(--c5)}
+
+/* ===== Tabs ===== */
+.main-tabs{display:flex;gap:2px;margin:10px 16px;border-radius:var(--r);background:var(--c8);padding:3px}
+.main-tab{flex:1;padding:9px 4px;text-align:center;font-size:.78rem;font-weight:700;transition:var(--ease);border-radius:10px;color:var(--c4)}
+.main-tab.active{background:var(--white);color:var(--c1);box-shadow:var(--s1)}
+
+/* ===== Suggest ===== */
+.suggest{margin:8px 16px;padding:18px;border-radius:var(--r3);background:var(--white);box-shadow:var(--s2)}
+.suggest h2{font-family:var(--font2);font-size:1.3rem;color:var(--accent);text-align:center;margin-bottom:10px}
+.suggest-presets{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-bottom:12px}
+.suggest-preset{padding:7px 13px;border-radius:var(--r4);background:var(--c8);font-size:.75rem;font-weight:600;transition:var(--ease);color:var(--c3)}
+.suggest-preset:active{transform:scale(.95)}
+.suggest-preset.active{background:var(--brand);color:#fff}
+.suggest-row{display:flex;gap:8px}
+.suggest-input{flex:1;padding:11px 16px;border-radius:var(--r4);border:1.5px solid var(--c7);font-size:.88rem;font-family:inherit;outline:none;transition:var(--ease);background:var(--c9)}
+.suggest-input:focus{border-color:var(--brand);box-shadow:0 0 0 3px rgba(99,102,241,.1)}
+.suggest-btn{padding:11px 22px;border-radius:var(--r4);background:var(--brand);color:#fff;font-weight:700;font-size:.88rem;transition:var(--ease)}
+.suggest-btn:active{transform:scale(.95)}
+.suggest-results{margin-top:14px;display:none}
+.suggest-results.show{display:block}
+.suggest-results-title{font-family:var(--font2);font-size:1.1rem;color:var(--accent);margin-bottom:8px}
+.sr-card{display:flex;gap:12px;align-items:center;padding:10px;background:var(--c9);border-radius:var(--r);margin-bottom:6px;cursor:pointer;transition:var(--ease)}
+.sr-card:active{transform:scale(.98)}
+.sr-card img{width:52px;height:52px;border-radius:10px;object-fit:cover}
+.sr-info{flex:1}.sr-name{font-weight:700;font-size:.85rem}.sr-reason{font-size:.72rem;color:var(--c4);margin-top:1px}
+.sr-match{font-family:var(--font2);font-size:1.1rem;font-weight:700;color:var(--accent);padding:2px 8px;background:var(--accent-light);border-radius:8px}
+
+/* ===== Search ===== */
+.search-area{padding:6px 16px;display:flex;gap:8px}
+.search-box{flex:1;position:relative}
+.search-box input{width:100%;padding:10px 14px 10px 38px;border-radius:var(--r);border:1.5px solid var(--c7);font-size:.88rem;font-family:inherit;outline:none;background:var(--white);transition:var(--ease)}
+.search-box input:focus{border-color:var(--brand);box-shadow:0 0 0 3px rgba(99,102,241,.08)}
+.search-box::before{content:'🔍';position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:.85rem;pointer-events:none}
+.area-select{padding:10px 12px;border-radius:var(--r);border:1.5px solid var(--c7);font-family:inherit;font-size:.82rem;background:var(--white);outline:none;cursor:pointer;min-width:90px}
+
+/* ===== Category Chips ===== */
+.cats{padding:6px 16px;display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.cats::-webkit-scrollbar{display:none}
+.cat{flex-shrink:0;padding:7px 14px;border-radius:var(--r4);background:var(--c8);font-size:.78rem;font-weight:600;transition:var(--ease);color:var(--c3)}
+.cat:active{transform:scale(.95)}
+.cat.active{color:#fff;box-shadow:0 2px 8px rgba(0,0,0,.1)}
+.cat[data-c="all"].active{background:var(--c1)}
+.cat[data-c="beach"].active{background:var(--blue)}
+.cat[data-c="nature"].active{background:var(--success)}
+.cat[data-c="culture"].active{background:#78716c}
+.cat[data-c="food"].active{background:var(--orange)}
+.cat[data-c="activity"].active{background:var(--accent)}
+.cat[data-c="shopping"].active{background:var(--warn);color:var(--c1)}
+.cat[data-c="scenic"].active{background:var(--brand)}
+.cat[data-c="cafe"].active{background:#92400e}
+.cat[data-rc="all"].active{background:var(--c1)}
+.cat[data-rc="beach"].active{background:var(--blue)}
+.cat[data-rc="nature"].active{background:var(--success)}
+.cat[data-rc="culture"].active{background:#78716c}
+.cat[data-rc="food"].active{background:var(--orange)}
+.cat[data-rc="activity"].active{background:var(--accent)}
+.cat[data-rc="cafe"].active{background:#92400e}
+.cat[data-rc="shopping"].active{background:var(--warn);color:var(--c1)}
+.cat[data-rc="near"].active{background:var(--brand)}
+
+/* ===== Spots ===== */
+.spots{padding:6px 16px 120px}
+.spots-count{font-size:.82rem;color:var(--c4);padding:4px 0 8px;font-weight:500}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
+@media(max-width:700px){.grid{grid-template-columns:1fr}}
+
+/* ===== Card ===== */
+.card{border-radius:var(--r2);background:var(--white);overflow:hidden;cursor:pointer;transition:var(--ease);position:relative;box-shadow:var(--s1)}
+.card:hover{box-shadow:var(--s3);transform:translateY(-4px)}
+.card:active{transform:scale(.985)}
+.card.selected{ring:3px solid var(--accent);box-shadow:0 0 0 3px var(--accent),var(--s2)}
+.card-img{width:100%;height:180px;object-fit:cover;background:var(--c8)}
+.card-img-placeholder{width:100%;height:180px;display:flex;align-items:center;justify-content:center;font-size:3.5rem;background:linear-gradient(135deg,var(--blue-light),var(--success-light))}
+.card-num{position:absolute;top:10px;left:10px;min-width:28px;height:28px;padding:0 6px;border-radius:var(--r4);background:rgba(15,23,42,.7);color:#fff;font-size:.75rem;font-weight:700;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+.card-sel{position:absolute;top:10px;right:10px;width:28px;height:28px;border-radius:50%;background:var(--accent);color:#fff;font-size:.75rem;font-weight:700;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(236,72,153,.4);animation:pop .3s cubic-bezier(.22,1,.36,1)}
+@keyframes pop{0%{transform:scale(0)}100%{transform:scale(1)}}
+.card-body{padding:12px 14px}
+.card-top{display:flex;align-items:flex-start;gap:8px;margin-bottom:4px}
+.card-emoji{font-size:1.4rem;flex-shrink:0;margin-top:2px}
+.card-title{font-size:.95rem;font-weight:700;line-height:1.3;color:var(--c1)}
+.card-en{font-size:.68rem;color:var(--c5);font-family:'Patrick Hand',cursive}
+.card-area-tag{font-size:.6rem;padding:2px 7px;border-radius:var(--r4);background:var(--brand-light);color:var(--brand);font-weight:600;display:inline-block;margin-top:2px}
+.card-rating{color:var(--warn);font-size:.78rem;font-weight:700;margin:4px 0}
+.card-rating span{color:var(--c5);font-weight:500;margin-left:2px;font-size:.72rem}
+.card-desc{font-size:.8rem;line-height:1.6;color:var(--c4);margin:6px 0;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.card-tags{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px}
+.card-tag{font-size:.62rem;padding:2px 8px;border-radius:var(--r4);background:var(--c8);color:var(--c3);font-weight:600}
+.card-tag.food-tag{background:var(--orange-light);color:#c2410c}
+.card-footer{display:flex;justify-content:space-between;align-items:center}
+.card-dist{font-size:.82rem;font-weight:700;color:var(--brand)}
+.card-actions{display:flex;gap:4px}
+.card-btn{padding:6px 12px;border-radius:var(--r4);font-size:.72rem;font-weight:700;transition:var(--ease)}
+.btn-route{background:var(--c8);color:var(--c2)}
+.btn-route:active{background:var(--accent);color:#fff}
+.btn-gmaps{background:var(--blue);color:#fff}
+.btn-gmaps:active{opacity:.8}
+.card-hours{font-size:.68rem;color:var(--c5);margin-top:2px}
+.card-price{font-size:.72rem;color:var(--orange);font-weight:700}
+.badge-featured{position:absolute;top:10px;right:10px;padding:3px 8px;border-radius:var(--r4);background:var(--warn);color:#fff;font-size:.62rem;font-weight:700;z-index:2;box-shadow:0 2px 8px rgba(245,158,11,.3)}
+.badge-sponsored{font-size:.58rem;color:var(--c5);margin-left:4px}
+
+/* ===== Featured ===== */
+.featured-section{padding:6px 16px}
+.featured-title{font-size:.88rem;font-weight:700;color:var(--c2);margin-bottom:8px}
+.featured-scroll{display:flex;gap:10px;overflow-x:auto;scrollbar-width:none;padding:2px 0}
+.featured-scroll::-webkit-scrollbar{display:none}
+.featured-card{flex-shrink:0;width:200px;border-radius:var(--r2);overflow:hidden;background:var(--white);cursor:pointer;transition:var(--ease);box-shadow:var(--s1)}
+.featured-card:active{transform:scale(.97)}
+.featured-card img{width:200px;height:120px;object-fit:cover}
+.featured-card-body{padding:8px 10px}
+.featured-card-name{font-size:.8rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.featured-card-sub{font-size:.68rem;color:var(--c5)}
+
+/* ===== Route Panel ===== */
+.route-panel{position:fixed;bottom:0;left:0;right:0;background:var(--white);border-radius:var(--r3) var(--r3) 0 0;padding:16px 16px 32px;transform:translateY(100%);transition:transform .35s cubic-bezier(.22,1,.36,1);z-index:1000;max-height:88vh;overflow-y:auto;box-shadow:0 -4px 30px rgba(0,0,0,.1)}
+.route-panel.open{transform:translateY(0)}
+.route-handle{width:40px;height:4px;background:var(--c6);border-radius:2px;margin:0 auto 12px}
+.route-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.route-head h3{font-family:var(--font2);font-size:1.3rem}
+.route-close{width:32px;height:32px;border-radius:50%;background:var(--c8);font-size:.9rem;display:flex;align-items:center;justify-content:center;transition:var(--ease)}
+.route-close:hover{background:var(--accent);color:#fff}
+.route-summary{display:flex;gap:12px;align-items:center;padding:14px;background:var(--brand-light);border-radius:var(--r2);margin-bottom:12px}
+.route-summary-emoji{font-size:2rem}
+.route-summary-name{font-family:var(--font2);font-size:1.2rem;font-weight:700}
+.route-summary-stats{font-size:.9rem;color:var(--brand);font-weight:700}
+#routeMap{width:100%;height:260px;border-radius:var(--r2);margin-bottom:12px}
+.route-steps{list-style:none}
+.route-step{display:flex;gap:12px;padding:10px 0;border-bottom:1px solid var(--c7);align-items:flex-start}
+.step-num{width:30px;height:30px;border-radius:50%;background:var(--brand);color:#fff;display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:700;flex-shrink:0}
+.step-num.start{background:var(--success)}
+.step-num.end{background:var(--accent)}
+.step-text{font-size:.85rem;font-weight:600}
+.step-sub{font-size:.72rem;color:var(--c4)}
+.gmaps-nav-btn{display:block;width:100%;padding:14px;border-radius:var(--r2);background:var(--blue);color:#fff;font-size:.95rem;font-weight:700;text-align:center;margin-top:12px;transition:var(--ease)}
+
+/* ===== Itinerary Bar ===== */
+.iti-bar{position:fixed;bottom:0;left:0;right:0;background:var(--brand);color:#fff;padding:12px 16px;display:flex;align-items:center;gap:10px;z-index:999;transform:translateY(100%);transition:transform .3s cubic-bezier(.22,1,.36,1);border-radius:var(--r3) var(--r3) 0 0;box-shadow:0 -4px 20px rgba(99,102,241,.2)}
+.iti-bar.show{transform:translateY(0)}
+.iti-count{width:30px;height:30px;border-radius:50%;background:#fff;color:var(--brand);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.95rem}
+.iti-info{flex:1}.iti-info>div:first-child{font-size:.78rem;opacity:.85}.iti-info .total{font-weight:700;font-size:.9rem}
+.iti-btn{padding:7px 14px;border-radius:var(--r4);border:1.5px solid rgba(255,255,255,.4);background:rgba(255,255,255,.1);color:#fff;font-weight:700;font-size:.78rem;transition:var(--ease)}
+.iti-btn:active{background:rgba(255,255,255,.25)}
+
+/* ===== History ===== */
+.history-section{padding:16px;display:none}.history-section.show{display:block}
+.history-section h3{font-family:var(--font2);font-size:1.2rem;color:var(--c1);margin-bottom:10px}
+.history-group{margin-bottom:16px}
+.history-group-title{font-size:.8rem;font-weight:700;color:var(--c4);margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.history-list{display:flex;gap:8px;overflow-x:auto;padding-bottom:6px;scrollbar-width:none}.history-list::-webkit-scrollbar{display:none}
+.history-item{flex-shrink:0;width:130px;cursor:pointer;transition:var(--ease)}.history-item:active{transform:scale(.97)}
+.history-item img{width:130px;height:88px;border-radius:var(--r);object-fit:cover}
+.history-item .h-name{font-size:.72rem;font-weight:700;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.history-item .h-date{font-size:.6rem;color:var(--c5)}
+.history-empty{text-align:center;padding:24px;color:var(--c5);font-size:.85rem}
+.clear-history-btn{font-size:.7rem;color:var(--accent);cursor:pointer;margin-left:auto}
+
+/* ===== Detail Modal ===== */
+.detail-overlay{position:fixed;inset:0;background:rgba(15,23,42,.6);z-index:1100;display:none;align-items:flex-end;justify-content:center;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)}
+.detail-overlay.show{display:flex}
+.detail-modal{background:var(--white);border-radius:var(--r3) var(--r3) 0 0;width:100%;max-width:560px;max-height:90vh;overflow-y:auto;animation:su .3s ease-out}
+@keyframes su{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.detail-img{width:100%;height:200px;object-fit:cover}
+.detail-body{padding:20px}
+.detail-header{display:flex;align-items:flex-start;gap:10px;margin-bottom:10px}
+.detail-emoji{font-size:2rem}
+.detail-name{font-size:1.2rem;font-weight:700}
+.detail-en{font-size:.8rem;color:var(--c4);font-family:'Patrick Hand',cursive}
+.detail-desc{font-size:.88rem;line-height:1.75;color:var(--c3);margin-bottom:12px}
+.detail-meta{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:12px}
+.detail-meta-item{padding:10px;background:var(--c9);border-radius:var(--r);text-align:center}
+.detail-meta-item .label{font-size:.65rem;color:var(--c5);font-weight:500}
+.detail-meta-item .value{font-size:.9rem;font-weight:700;color:var(--c1)}
+
+/* ===== CTAs ===== */
+.affiliate-cta{display:flex;align-items:center;gap:12px;width:100%;padding:14px 16px;border-radius:var(--r2);background:var(--brand);color:#fff;text-decoration:none;margin-top:12px;transition:var(--ease);position:relative;overflow:hidden}
+.affiliate-cta::after{content:'';position:absolute;top:-50%;right:-50%;width:100%;height:200%;background:linear-gradient(45deg,transparent 40%,rgba(255,255,255,.06) 50%,transparent 60%);animation:sh 3s ease-in-out infinite}
+@keyframes sh{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
+.affiliate-cta:active{transform:scale(.98)}
+.affiliate-cta-icon{font-size:1.6rem;flex-shrink:0}
+.affiliate-cta-text{flex:1}
+.affiliate-cta-title{font-size:.9rem;font-weight:700}
+.affiliate-cta-sub{font-size:.68rem;opacity:.8;margin-top:1px}
+.affiliate-cta-arrow{font-size:1.1rem;flex-shrink:0;opacity:.6}
+.affiliate-cta.green{background:var(--success)}
+.affiliate-cta.orange{background:var(--orange)}
+.detail-actions{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:12px}
+.detail-action{display:flex;align-items:center;justify-content:center;gap:4px;padding:12px 6px;border-radius:var(--r);font-weight:700;font-size:.82rem;transition:var(--ease);text-align:center}
+.detail-action:active{transform:scale(.97)}
+.detail-action.primary{background:var(--blue);color:#fff}
+.detail-action.secondary{background:var(--accent);color:#fff}
+.detail-action.ghost{background:var(--c8);color:var(--c2)}
+.affiliate-btn{display:block;width:100%;padding:14px;border-radius:var(--r2);background:var(--brand);color:#fff;font-size:.95rem;font-weight:700;text-align:center;margin-top:8px;transition:var(--ease);text-decoration:none}
+
+/* ===== Tools ===== */
+.tool-overlay{position:fixed;inset:0;background:rgba(15,23,42,.5);z-index:1200;display:none;align-items:center;justify-content:center;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)}
+.tool-overlay.show{display:flex}
+.tool-modal{background:var(--white);border-radius:var(--r3);width:92%;max-width:380px;max-height:85vh;overflow-y:auto;padding:24px;animation:su .25s ease-out}
+.tool-modal h3{font-family:var(--font2);font-size:1.4rem;margin-bottom:12px;text-align:center}
+.tool-input{width:100%;padding:12px 16px;border-radius:var(--r);border:1.5px solid var(--c7);font-size:1.1rem;font-family:inherit;outline:none;text-align:center;margin-bottom:8px;transition:var(--ease);background:var(--c9)}
+.tool-input:focus{border-color:var(--brand);box-shadow:0 0 0 3px rgba(99,102,241,.1)}
+.tool-result{text-align:center;padding:14px;background:var(--c9);border-radius:var(--r);margin:8px 0;font-size:1.1rem;font-weight:700}
+.tool-close{display:block;width:100%;padding:12px;border-radius:var(--r);background:var(--c8);color:var(--c2);font-weight:700;text-align:center;margin-top:8px;font-size:.88rem;transition:var(--ease)}
+.tip-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:8px 0}
+.tip-btn{padding:10px;border-radius:var(--r);border:1.5px solid var(--c7);text-align:center;font-weight:700;cursor:pointer;transition:var(--ease);font-size:.85rem}
+.tip-btn:active,.tip-btn.active{border-color:var(--brand);background:var(--brand-light);color:var(--brand)}
+.coupon-card{display:flex;gap:10px;align-items:center;padding:10px;background:var(--warn-light);border:1.5px dashed var(--warn);border-radius:var(--r);margin-bottom:6px;cursor:pointer;transition:var(--ease)}
+.coupon-card:active{transform:scale(.98)}
+.coupon-pct{font-size:1.1rem;font-weight:700;color:var(--orange);min-width:50px;text-align:center}
+.coupon-info{flex:1}.coupon-name{font-weight:700;font-size:.82rem}.coupon-desc{font-size:.68rem;color:var(--c4)}
+.coupon-tag{padding:2px 8px;border-radius:var(--r4);background:var(--orange);color:#fff;font-size:.6rem;font-weight:700;flex-shrink:0}
+
+/* ===== Scroll Top ===== */
+.scroll-top{position:fixed;bottom:80px;right:16px;width:40px;height:40px;border-radius:50%;background:var(--brand);color:#fff;font-size:1rem;display:flex;align-items:center;justify-content:center;box-shadow:var(--s2);z-index:998;opacity:0;pointer-events:none;transition:var(--ease)}
+.scroll-top.show{opacity:1;pointer-events:auto}
+
+/* ===== Lang Toggle ===== */
+.lang-toggle{position:absolute;top:12px;right:14px;z-index:2;display:flex;border-radius:var(--r4);overflow:hidden;border:1.5px solid rgba(255,255,255,.3);font-size:.68rem;font-weight:700}
+.lang-btn{padding:4px 10px;background:rgba(255,255,255,.1);color:rgba(255,255,255,.7);transition:var(--ease)}
+.lang-btn.active{background:#fff;color:var(--brand)}
+
+/* ===== Cookie ===== */
+.cookie-banner{position:fixed;bottom:0;left:0;right:0;background:var(--c1);color:#fff;padding:14px 16px;display:flex;align-items:center;gap:10px;z-index:9998;font-size:.78rem;transform:translateY(100%);transition:transform .3s}
+.cookie-banner.show{transform:translateY(0)}
+.cookie-banner button{padding:8px 16px;border-radius:var(--r4);background:var(--brand);color:#fff;font-weight:700;font-size:.78rem;border:none;cursor:pointer;flex-shrink:0}
+
+/* ===== Loading ===== */
+.loader{position:fixed;inset:0;background:var(--white);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;transition:opacity .4s}
+.loader.hide{opacity:0;pointer-events:none}
+.loader-emoji{font-size:3rem;animation:bn .8s infinite}
+@keyframes bn{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+.loader-text{font-family:var(--font2);font-size:1.5rem;color:var(--brand);margin-top:8px}
+
+/* ===== Footer ===== */
+.app-footer{text-align:center;padding:24px 16px 48px;font-size:.72rem;color:var(--c5)}
+.app-footer a{color:var(--c4);margin:0 6px}
+.app-footer .biz-cta{display:inline-block;margin-top:8px;padding:10px 22px;border-radius:var(--r4);background:var(--brand);color:#fff;font-weight:700;font-size:.82rem;transition:var(--ease)}
+
+/* ===== Leaflet ===== */
+.leaflet-popup-content-wrapper{border-radius:var(--r)!important;font-family:var(--font)!important;box-shadow:var(--s3)!important}
+
+/* ===== Responsive ===== */
+@media(max-width:600px){
+  .header h1{font-size:1.8rem}
+  .suggest-row{flex-direction:column}
+  .search-area{flex-direction:column}
+  .area-select{width:100%}
+  .detail-meta{grid-template-columns:1fr}
+  .grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<div class="loader" id="loader">
+  <div class="loader-emoji">🌺</div>
+  <div class="loader-text">Aloha! Loading Oahu...</div>
+</div>
+
+<header class="header">
+  <div class="header-icons"><span>🌺</span><span>🏝️</span><span>🐠</span><span>🌴</span></div>
+  <div class="lang-toggle">
+    <button class="lang-btn active" onclick="setLang('ja')">JP</button>
+    <button class="lang-btn" onclick="setLang('en')">EN</button>
+  </div>
+  <h1>Oahu Explorer</h1>
+  <p id="headerSub">~ オアフ島 完全観光ガイド ~</p>
+</header>
+
+<div class="loc-bar" onclick="getLocation()">
+  <span class="pin">📍</span>
+  <div class="text"><div id="locText">タップして現在地を取得</div></div>
+  <span class="status pending" id="locStatus">取得中</span>
+</div>
+
+<!-- Quick Tools -->
+<div class="tools-grid">
+  <div class="tool-btn" onclick="openTool('tip')"><div class="t-icon">💰</div><div class="t-label">チップ計算</div></div>
+  <div class="tool-btn" onclick="openTool('currency')"><div class="t-icon">💱</div><div class="t-label">通貨換算</div></div>
+  <div class="tool-btn" onclick="openTool('weather')"><div class="t-icon">🌤️</div><div class="t-label">今日の天気</div></div>
+  <div class="tool-btn" onclick="openTool('bus')"><div class="t-icon">🚌</div><div class="t-label">バス案内</div></div>
+</div>
+
+<!-- Booking Quick Links -->
+<div class="booking-section">
+  <div class="booking-banner">
+    <a class="booking-card" href="https://www.booking.com/city/us/honolulu.html" target="_blank" rel="noopener" onclick="track('affiliate_click',{type:'hotel'})">
+      <div class="b-icon">🏨</div><div class="b-label">ホテル予約</div><div class="b-sub">Booking.com</div>
+    </a>
+    <a class="booking-card" href="https://www.viator.com/Oahu/d672-ttd" target="_blank" rel="noopener" onclick="track('affiliate_click',{type:'tour'})">
+      <div class="b-icon">🎫</div><div class="b-label">ツアー予約</div><div class="b-sub">Viator</div>
+    </a>
+    <a class="booking-card" href="https://www.rentalcars.com/en/city/us/honolulu/" target="_blank" rel="noopener" onclick="track('affiliate_click',{type:'car'})">
+      <div class="b-icon">🚗</div><div class="b-label">レンタカー</div><div class="b-sub">RentalCars</div>
+    </a>
+    <a class="booking-card" href="https://www.klook.com/en-US/city/703335-honolulu-things-to-do/" target="_blank" rel="noopener" onclick="track('affiliate_click',{type:'activity'})">
+      <div class="b-icon">🏄</div><div class="b-label">アクティビティ</div><div class="b-sub">Klook</div>
+    </a>
+    <div class="booking-card" onclick="switchTab('ranking');renderRanking('food')">
+      <div class="b-icon">🍽️</div><div class="b-label">グルメ検索</div><div class="b-sub">TOP20</div>
+    </div>
+    <div class="booking-card" onclick="openTool('coupon')">
+      <div class="b-icon">🎟️</div><div class="b-label">クーポン</div><div class="b-sub">お得情報</div>
+    </div>
+  </div>
+</div>
+
+<!-- Main Tabs -->
+<div class="main-tabs">
+  <div class="main-tab active" data-tab="explore" onclick="switchTab('explore')">🗺️ 探す</div>
+  <div class="main-tab" data-tab="ranking" onclick="switchTab('ranking')">🏆 ランキング</div>
+  <div class="main-tab" data-tab="plan" onclick="switchTab('plan')">📋 プラン</div>
+  <div class="main-tab" data-tab="history" onclick="switchTab('history')">🕐 履歴</div>
+</div>
+
+<!-- Explore Tab -->
+<div id="tab-explore">
+  <!-- Featured Section -->
+  <div class="featured-section">
+    <div class="featured-title" id="featuredTitle">🔥 おすすめスポット <span class="badge-sponsored">Sponsored</span></div>
+    <div class="featured-scroll" id="featuredScroll"></div>
+  </div>
+
+  <div class="suggest">
+    <h2>✨ イメージから探す ✨</h2>
+    <div class="suggest-presets">
+      <button class="suggest-preset" data-q="ビーチでのんびりリラックス">🏖️ のんびりビーチ</button>
+      <button class="suggest-preset" data-q="インスタ映え絶景">📸 映えスポット</button>
+      <button class="suggest-preset" data-q="子連れ家族で楽しめる">👨‍👩‍👧 ファミリー</button>
+      <button class="suggest-preset" data-q="ローカルハワイアンフード">🍽️ ローカルグルメ</button>
+      <button class="suggest-preset" data-q="サンセット夕日ロマンチック">🌅 サンセット</button>
+      <button class="suggest-preset" data-q="冒険アクティビティ体験">🤿 アクティビティ</button>
+      <button class="suggest-preset" data-q="カフェでまったりコーヒー">☕ カフェ巡り</button>
+      <button class="suggest-preset" data-q="ハワイ歴史文化を学ぶ">📖 歴史・文化</button>
+      <button class="suggest-preset" data-q="ショッピングお土産">🛍️ ショッピング</button>
+    </div>
+    <div class="suggest-row">
+      <input type="text" class="suggest-input" id="suggestInput" placeholder="例: 海がきれいでのんびりできるところ...">
+      <button class="suggest-btn" onclick="runSuggest()">提案して!</button>
+    </div>
+    <div class="suggest-results" id="suggestResults">
+      <div class="suggest-results-title" id="suggestTitle"></div>
+      <div id="suggestCards"></div>
+    </div>
+  </div>
+
+  <div class="search-area">
+    <div class="search-box"><input type="text" id="searchInput" placeholder="スポット名・キーワードで検索..."></div>
+    <select class="area-select" id="areaSelect">
+      <option value="all">全エリア</option>
+      <option value="waikiki">ワイキキ</option>
+      <option value="honolulu">ホノルル</option>
+      <option value="kailua">カイルア</option>
+      <option value="northshore">ノースショア</option>
+      <option value="westside">西海岸</option>
+      <option value="eastside">東海岸</option>
+      <option value="central">中部</option>
+    </select>
+  </div>
+
+  <div class="cats" id="cats">
+    <button class="cat active" data-c="all">🌈 すべて</button>
+    <button class="cat" data-c="beach">🏖️ ビーチ</button>
+    <button class="cat" data-c="nature">🌿 自然</button>
+    <button class="cat" data-c="food">🍽️ グルメ</button>
+    <button class="cat" data-c="cafe">☕ カフェ</button>
+    <button class="cat" data-c="culture">🏛️ 文化</button>
+    <button class="cat" data-c="activity">🏄 体験</button>
+    <button class="cat" data-c="scenic">📸 絶景</button>
+    <button class="cat" data-c="shopping">🛍️ 買い物</button>
+  </div>
+
+  <div class="spots">
+    <div class="spots-count" id="spotsCount"></div>
+    <div class="grid" id="grid"></div>
+  </div>
+</div>
+
+<!-- Plan Tab -->
+<div id="tab-plan" style="display:none">
+  <div style="padding:16px">
+    <h3 style="font-family:Caveat,cursive;font-size:1.4rem;margin-bottom:12px">📋 マイプラン</h3>
+    <p style="font-size:.85rem;color:var(--ink-light);margin-bottom:16px">スポットカードをタップして追加。ドラッグで順番変更。</p>
+    <div id="planList"></div>
+    <div id="planEmpty" style="text-align:center;padding:40px;color:var(--ink-muted)">
+      <div style="font-size:3rem;margin-bottom:10px">🗺️</div>
+      <div>「探す」タブでスポットをタップして<br>プランに追加しましょう</div>
+    </div>
+    <div id="planSummary" style="display:none;margin-top:16px;padding:14px;border-radius:var(--radius);background:var(--blue-bg);border:2px solid var(--blue-light)">
+      <div style="font-family:Caveat,cursive;font-size:1.2rem;color:var(--blue-deep);margin-bottom:6px">ルートサマリー</div>
+      <div id="planStats" style="font-size:.9rem"></div>
+      <button class="gmaps-nav-btn" onclick="openGmapsMulti()" style="margin-top:10px">🗺️ Googleマップでナビ開始</button>
+    </div>
+  </div>
+</div>
+
+<!-- Ranking Tab -->
+<div id="tab-ranking" style="display:none;padding:16px">
+  <h3 style="font-family:Caveat,cursive;font-size:1.5rem;margin-bottom:4px">🏆 オアフ島ランキング</h3>
+  <p style="font-size:.8rem;color:var(--ink-light);margin-bottom:14px">評価・人気度でランク付け</p>
+  <div style="display:flex;gap:6px;margin-bottom:14px;overflow-x:auto;scrollbar-width:none" id="rankCats">
+    <button class="cat active" data-rc="all" onclick="renderRanking('all')">🌈 総合</button>
+    <button class="cat" data-rc="beach" onclick="renderRanking('beach')">🏖️ ビーチ</button>
+    <button class="cat" data-rc="food" onclick="renderRanking('food')">🍽️ グルメ</button>
+    <button class="cat" data-rc="nature" onclick="renderRanking('nature')">🌿 自然</button>
+    <button class="cat" data-rc="activity" onclick="renderRanking('activity')">🏄 体験</button>
+    <button class="cat" data-rc="culture" onclick="renderRanking('culture')">🏛️ 文化</button>
+    <button class="cat" data-rc="cafe" onclick="renderRanking('cafe')">☕ カフェ</button>
+    <button class="cat" data-rc="shopping" onclick="renderRanking('shopping')">🛍️ 買い物</button>
+    <button class="cat" data-rc="near" onclick="renderRanking('near')">📍 近い順</button>
+  </div>
+  <div id="rankingList"></div>
+</div>
+
+<!-- History Tab -->
+<div id="tab-history" style="display:none" class="history-section show">
+  <h3>🕐 閲覧・選択履歴</h3>
+  <div class="history-group">
+    <div class="history-group-title">📍 最近選択したスポット <span class="clear-history-btn" onclick="clearHistory('selected')">クリア</span></div>
+    <div class="history-list" id="historySelected"></div>
+  </div>
+  <div class="history-group">
+    <div class="history-group-title">👁️ 最近閲覧したスポット <span class="clear-history-btn" onclick="clearHistory('viewed')">クリア</span></div>
+    <div class="history-list" id="historyViewed"></div>
+  </div>
+  <div class="history-group">
+    <div class="history-group-title">🔍 検索履歴 <span class="clear-history-btn" onclick="clearHistory('searches')">クリア</span></div>
+    <div id="historySearches" style="display:flex;flex-wrap:wrap;gap:6px"></div>
+  </div>
+</div>
+
+<!-- Detail Modal -->
+<div class="detail-overlay" id="detailOverlay" onclick="if(event.target===this)closeDetail()">
+  <div class="detail-modal" id="detailModal"></div>
+</div>
+
+<!-- Itinerary Bar -->
+<div class="iti-bar" id="itiBar">
+  <div class="iti-count" id="itiCount">0</div>
+  <div class="iti-info">
+    <div>選択中のスポット</div>
+    <div class="total" id="itiTotal">合計: ---</div>
+  </div>
+  <button class="iti-btn" onclick="showRoutePanel()">🗺️ ルート</button>
+  <button class="iti-btn" onclick="openGmapsMulti()">📍 Gマップ</button>
+  <button class="iti-btn" onclick="clearSelection()">✕</button>
+</div>
+
+<!-- Route Panel -->
+<div class="route-panel" id="routePanel">
+  <div class="route-handle"></div>
+  <div class="route-head">
+    <h3>🗺️ ルート案内</h3>
+    <button class="route-close" onclick="closeRoute()">✕</button>
+  </div>
+  <div id="routeContent"></div>
+  <div id="routeMap"></div>
+  <ul class="route-steps" id="routeSteps"></ul>
+  <div id="routeGmaps"></div>
+</div>
+
+<!-- Tool Modal -->
+<div class="tool-overlay" id="toolOverlay" onclick="if(event.target===this)closeTool()">
+  <div class="tool-modal" id="toolModal"></div>
+</div>
+
+<!-- Footer -->
+<footer class="app-footer">
+  <div><a href="mailto:contact@shinpartners.com">Contact</a><a href="#">Privacy</a><a href="#">About</a></div>
+  <div style="margin-top:6px">&copy; 2026 Shin Partners Inc. All rights reserved.</div>
+  <a href="mailto:contact@shinpartners.com?subject=Oahu Explorer Business Listing" class="biz-cta">🏪 Are you a local business? Get listed!</a>
+</footer>
+
+<!-- Scroll Top -->
+<button class="scroll-top" id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Scroll to top">↑</button>
+
+<!-- Cookie Banner -->
+<div class="cookie-banner" id="cookieBanner">
+  <div style="flex:1">🍪 This app uses cookies to improve your experience and save preferences.</div>
+  <button onclick="acceptCookies()">Accept</button>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+// ===== OAHU SPOT DATABASE =====
+const S = [
+  // ========== BEACHES ==========
+  {id:1,name:"ワイキキビーチ",en:"Waikiki Beach",emoji:"🏖️",area:"waikiki",cat:["beach","activity"],
+   lat:21.2766,lng:-157.8278,photo:"https://images.unsplash.com/photo-1507876466758-bc54f384809c?w=600&h=400&fit=crop&q=80",
+   tags:["relaxing","couple","family","sunset","surfing","beginner","instagram"],
+   rating:4.8,featured:true,
+   price:"無料",hours:"24時間",
+   desc:"世界で最も有名なビーチ。穏やかな波はサーフィン初心者に最適で、ダイヤモンドヘッドを背景にした夕日は格別。夕方のフラショーも無料で楽しめる。レンタルサーフボードやSUPも豊富。"},
+  {id:2,name:"ラニカイビーチ",en:"Lanikai Beach",emoji:"🏝️",area:"kailua",cat:["beach","scenic"],
+   lat:21.3922,lng:-157.7148,photo:"https://images.unsplash.com/photo-1559339352-11d035aa65de?w=600&h=400&fit=crop&q=80",
+   tags:["crystal-clear","secluded","instagram","romantic","couple","sunrise"],
+   rating:4.9,
+   price:"無料",hours:"24時間",
+   desc:"全米No.1ビーチに選出された天国のビーチ。エメラルドグリーンの海と白砂、沖合に浮かぶモクルア島が絵画のような美しさ。シャワー・トイレなし、住宅街を抜けてアクセス。"},
+  {id:3,name:"カイルアビーチ",en:"Kailua Beach Park",emoji:"🌊",area:"kailua",cat:["beach","activity"],
+   lat:21.3962,lng:-157.7265,photo:"https://images.unsplash.com/photo-1505852679233-d9fd70aff56d?w=600&h=400&fit=crop&q=80",
+   tags:["family","kayak","windsurf","safe","relaxing","spacious"],
+   rating:4.6,
+   price:"無料",hours:"5:00-22:00",
+   desc:"約4kmの白砂ビーチ。設備が充実しシャワー・トイレ・BBQ台完備。カヤックでモクルア島へ渡るのが人気。ウインドサーフィンやSUPも盛ん。子連れファミリーにも安心。"},
+  {id:4,name:"ノースショア（サンセットビーチ）",en:"Sunset Beach",emoji:"🏄",area:"northshore",cat:["beach","activity","scenic"],
+   lat:21.6786,lng:-158.0425,photo:"https://upload.wikimedia.org/wikipedia/commons/9/94/P%C5%ABp%C5%ABkea%2C_Hawaii_%288518603073%29.jpg",
+   tags:["surfing","bigwave","sunset","dramatic","winter","professional"],
+   rating:4.0,
+   price:"無料",hours:"24時間",
+   desc:"冬季は10m超のビッグウェーブが押し寄せるサーファーの聖地。夏は穏やかでシュノーケリングも可能。名前の通りサンセットが壮観。Triple Crown of Surfingの舞台。"},
+  {id:5,name:"ハナウマ湾",en:"Hanauma Bay",emoji:"🐠",area:"eastside",cat:["beach","nature","activity"],
+   lat:21.2690,lng:-157.6938,photo:"https://upload.wikimedia.org/wikipedia/commons/e/ec/Hanauma_Bay.JPG",
+   tags:["snorkeling","fish","turtle","family","nature","clear-water","reservation"],
+   rating:4.3,featured:true,affiliate:"https://www.viator.com/Oahu-attractions/Hanauma-Bay/d672-a1204",
+   price:"$25/人",hours:"6:45-16:00（水曜休）",
+   desc:"火山クレーターが海とつながった自然保護区。450種以上の魚が棲む透明な海で最高のシュノーケリング体験。ウミガメ遭遇率も高い。要オンライン事前予約。入場教育ビデオの視聴必須。"},
+  {id:6,name:"アラモアナビーチパーク",en:"Ala Moana Beach Park",emoji:"🌅",area:"honolulu",cat:["beach"],
+   lat:21.2887,lng:-157.8460,photo:"https://images.unsplash.com/photo-1471922694854-ff1b63b20054?w=600&h=400&fit=crop&q=80",
+   tags:["local","family","sunset","jogging","safe","free"],
+   rating:4.2,
+   price:"無料",hours:"4:00-22:00",
+   desc:"ロコに愛される穏やかなビーチ。リーフに守られた海は波が静かで子連れも安心。マジックアイランドから見るワイキキ方面のサンセットが絶景。週末はBBQで賑わう。"},
+  {id:7,name:"コオリナ・ラグーン",en:"Ko Olina Lagoons",emoji:"🏖️",area:"westside",cat:["beach"],
+   lat:21.3397,lng:-158.1233,photo:"https://images.unsplash.com/photo-1510414842594-a61c69b5ae57?w=600&h=400&fit=crop&q=80",
+   tags:["resort","family","safe","calm","luxury","couple"],
+   rating:4.7,
+   price:"無料（駐車場あり）",hours:"24時間",
+   desc:"人工のラグーン4つが並ぶリゾートビーチ。波がほぼ無く幼児連れでも安全。ディズニーリゾートAulagiが隣接。夕日も美しくハネムーナーにも人気。"},
+  {id:8,name:"ワイマナロビーチ",en:"Waimanalo Beach",emoji:"🏖️",area:"eastside",cat:["beach","scenic"],
+   lat:21.3340,lng:-157.6960,photo:"https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=600&h=400&fit=crop&q=80",
+   tags:["local","long-beach","quiet","authentic","nature","turquoise"],
+   rating:4.7,
+   price:"無料",hours:"7:00-19:45",
+   desc:"約8.5kmの長大なターコイズブルーのビーチ。観光客が少なくローカル感たっぷり。マカプウ側から見るコバルトブルーの海は息を呑む美しさ。"},
+
+  // ========== NATURE & SCENIC ==========
+  {id:10,name:"ダイヤモンドヘッド",en:"Diamond Head",emoji:"🌋",area:"waikiki",cat:["nature","scenic","activity"],
+   lat:21.2620,lng:-157.8055,photo:"https://upload.wikimedia.org/wikipedia/commons/9/93/Diamond_Head_Hawaii_From_Round_Top_Rd.JPG",
+   tags:["hiking","panorama","sunrise","exercise","instagram","must-see"],
+   rating:4.9,featured:true,affiliate:"https://www.viator.com/Oahu-attractions/Diamond-Head/d672-a1202",
+   price:"$5/人（要予約）",hours:"6:00-18:00",
+   desc:"ホノルルのシンボル。片道30-40分のトレイルで山頂からワイキキ〜カハラのパノラマビュー。早朝予約が取りにくいほど人気。帽子・水・スニーカー必須。"},
+  {id:11,name:"マノアの滝",en:"Manoa Falls",emoji:"🌿",area:"honolulu",cat:["nature"],
+   lat:21.3330,lng:-157.8025,photo:"https://upload.wikimedia.org/wikipedia/commons/8/85/Manoa_Falls%2C_Hawaii%2C_March_2012.jpg",
+   tags:["waterfall","rainforest","hiking","easy","nature","cool"],
+   rating:4.1,
+   price:"$5（駐車場）",hours:"日の出-日没",
+   desc:"ワイキキから車15分で行ける熱帯雨林ハイク。片道30分の平坦なトレイルの先に高さ45mの滝が出現。ジュラシックパークのロケ地にもなった鬱蒼とした森。雨上がりがベスト。"},
+  {id:12,name:"ココヘッド",en:"Koko Head",emoji:"⛰️",area:"eastside",cat:["nature","activity"],
+   lat:21.2782,lng:-157.6902,photo:"https://images.unsplash.com/photo-1551632811-561732d1e306?w=600&h=400&fit=crop&q=80",
+   tags:["hiking","hardcore","stairs","exercise","challenge","panorama"],
+   rating:4.4,
+   price:"無料",hours:"日の出-日没",
+   desc:"旧軍用鉄道の線路跡を登る1,048段の階段トレイル。急勾配でかなりハードだが山頂からの360度パノラマは圧巻。朝の涼しい時間帯推奨。水を十分に持参。"},
+  {id:13,name:"マカプウ灯台トレイル",en:"Makapuu Lighthouse Trail",emoji:"🐳",area:"eastside",cat:["nature","scenic"],
+   lat:21.3108,lng:-157.6504,photo:"https://images.unsplash.com/photo-1519046904884-53103b34b206?w=600&h=400&fit=crop&q=80",
+   tags:["whale","lighthouse","ocean-view","easy","winter","panorama"],
+   rating:4.0,
+   price:"無料",hours:"日の出-日没",
+   desc:"舗装路で歩きやすい絶景トレイル。冬季（12-4月）はザトウクジラのブリーチングを高確率で目撃可能。灯台と断崖の海岸線は息を呑む美しさ。"},
+  {id:14,name:"タンタラスの丘",en:"Tantalus Lookout",emoji:"🌃",area:"honolulu",cat:["scenic"],
+   lat:21.3280,lng:-157.8180,photo:"https://images.unsplash.com/photo-1514282401047-d79a71a590e8?w=600&h=400&fit=crop&q=80",
+   tags:["nightview","panorama","honolulu","couple","romantic","sunset"],
+   rating:4.2,
+   price:"無料",hours:"日の出-日没",
+   desc:"ホノルル市街とダイヤモンドヘッドを一望する展望台。夕暮れから夜景への移り変わりが特に美しい。カップルに人気のドライブスポット。"},
+  {id:15,name:"ホオマルヒア植物園",en:"Hoomaluhia Botanical Garden",emoji:"🌺",area:"kailua",cat:["nature","scenic"],
+   lat:21.3889,lng:-157.8047,photo:"https://images.unsplash.com/photo-1500964757637-c85e8a162699?w=600&h=400&fit=crop&q=80",
+   tags:["garden","instagram","peaceful","free","mountains","tropical"],
+   rating:4.5,
+   price:"無料",hours:"9:00-16:00",
+   desc:"コオラウ山脈を背景にした壮大な植物園。入口のフォトスポットはInstagramで大人気。世界中の熱帯植物が400エーカーに広がる。釣りやキャンプも可能。"},
+  {id:16,name:"ラニカイ・ピルボックス",en:"Lanikai Pillbox Trail",emoji:"🥾",area:"kailua",cat:["nature","scenic"],
+   lat:21.3853,lng:-157.7141,photo:"https://images.unsplash.com/photo-1682687220742-aba13b6e50ba?w=600&h=400&fit=crop&q=80",
+   tags:["hiking","sunrise","instagram","panorama","pillbox","easy-moderate"],
+   rating:4.0,
+   price:"無料",hours:"日の出-日没",
+   desc:"片道30分で到達するWWII時代の監視壕跡。カラフルにペイントされたピルボックスとラニカイの絶景が広がる。サンライズハイクの定番。滑りやすい箇所あり。"},
+
+  // ========== CULTURE ==========
+  {id:20,name:"パールハーバー（真珠湾）",en:"Pearl Harbor",emoji:"🏛️",area:"central",cat:["culture"],
+   lat:21.3649,lng:-157.9507,photo:"https://upload.wikimedia.org/wikipedia/commons/c/c3/USS_Arizona_Memorial_%28aerial_view%29.jpg",
+   tags:["history","wwii","museum","educational","must-see","reservation"],
+   rating:4.2,affiliate:"https://www.viator.com/Oahu-attractions/Pearl-Harbor-National-Memorial/d672-a1189",
+   price:"無料（ミズーリ$35）",hours:"7:00-17:00",
+   desc:"1941年日本軍の攻撃を受けた歴史的軍港。USSアリゾナ記念館（無料・要予約）、戦艦ミズーリ、航空博物館など。半日はかかる見応え。事前のオンライン予約が必須。"},
+  {id:21,name:"イオラニ宮殿",en:"Iolani Palace",emoji:"👑",area:"honolulu",cat:["culture"],
+   lat:21.3068,lng:-157.8583,photo:"https://images.unsplash.com/photo-1564507592333-c60657eea523?w=600&h=400&fit=crop&q=80",
+   tags:["history","royalty","hawaii-kingdom","educational","architecture"],
+   rating:4.6,
+   price:"$28（ガイド付）",hours:"9:00-16:00（月曜休）",
+   desc:"アメリカ唯一の王宮。ハワイ王朝最後の二人の王が暮らした建物で、リリウオカラニ女王の幽閉の間も見学可能。日本語オーディオガイドあり。"},
+  {id:22,name:"ビショップ・ミュージアム",en:"Bishop Museum",emoji:"🏛️",area:"honolulu",cat:["culture"],
+   lat:21.3333,lng:-157.8710,photo:"https://images.unsplash.com/photo-1566127444979-b3d2b654e3d7?w=600&h=400&fit=crop&q=80",
+   tags:["museum","polynesian","educational","family","science","planetarium"],
+   rating:4.5,
+   price:"$27.95",hours:"9:00-17:00",
+   desc:"ハワイ・ポリネシア文化の世界最大級の博物館。250万点以上のコレクション、プラネタリウム、サイエンスセンターも併設。家族連れにもおすすめ。"},
+  {id:23,name:"ポリネシア文化センター",en:"Polynesian Cultural Center",emoji:"🎭",area:"northshore",cat:["culture","activity"],
+   lat:21.6399,lng:-157.9225,photo:"https://images.unsplash.com/photo-1590523277543-a94d2e4eb00b?w=600&h=400&fit=crop&q=80",
+   tags:["culture","show","luau","family","educational","evening"],
+   rating:4.2,affiliate:"https://www.viator.com/Oahu/d672-ttd",
+   price:"$69.95〜",hours:"12:00-21:00（日曜休）",
+   desc:"ポリネシア6つの島の文化を体験できるテーマパーク。カヌーショー、ルアウディナー、イブニングショー「HA:Breath of Life」は圧巻。丸一日楽しめる。"},
+  {id:24,name:"平等院テンプル",en:"Byodo-In Temple",emoji:"⛩️",area:"eastside",cat:["culture","scenic"],
+   lat:21.4308,lng:-157.8325,photo:"https://upload.wikimedia.org/wikipedia/commons/6/65/Byodo-In_Temple_in_Hawaii.jpg",
+   tags:["temple","peaceful","japanese","garden","koi","photography"],
+   rating:4.6,
+   price:"$5",hours:"9:00-17:00",
+   desc:"京都の平等院鳳凰堂を模した寺院。コオラウ山脈を背景に立つ朱色の建物と日本庭園は圧巻。鯉に餌やりも可能。心が洗われる静寂な空間。"},
+
+  // ========== ACTIVITIES ==========
+  {id:30,name:"クアロア・ランチ",en:"Kualoa Ranch",emoji:"🎬",area:"eastside",cat:["activity","nature"],
+   lat:21.5207,lng:-157.8373,photo:"https://images.unsplash.com/photo-1536323760109-ca8c07450053?w=600&h=400&fit=crop&q=80",
+   tags:["movie","jurassicpark","horseback","zipline","atv","adventure","family"],
+   rating:4.8,affiliate:"https://www.viator.com/Oahu-attractions/Kualoa-Ranch/d672-a1187",
+   price:"$53〜",hours:"7:30-17:30",
+   desc:"映画『ジュラシック・パーク』『LOST』のロケ地。乗馬、ATV、ジップライン、映画ロケ地ツアーなど多彩。1日では回りきれないほど充実。弁当持参OK。"},
+  {id:31,name:"シャークスコーブ",en:"Shark's Cove",emoji:"🤿",area:"northshore",cat:["activity","beach"],
+   lat:21.6519,lng:-158.0635,photo:"https://images.unsplash.com/photo-1560275619-4662e36fa65c?w=600&h=400&fit=crop&q=80",
+   tags:["snorkeling","diving","fish","clear-water","summer","tidepool"],
+   rating:4.0,affiliate:"https://www.viator.com/Oahu/d672-ttd",
+   price:"無料",hours:"24時間",
+   desc:"名前に反してサメはいない安全なシュノーケリングスポット。夏季の透明度は抜群で熱帯魚やウミガメに高確率で出会える。冬は波が高く遊泳禁止。"},
+  {id:32,name:"ドール・プランテーション",en:"Dole Plantation",emoji:"🍍",area:"central",cat:["activity"],
+   lat:21.5263,lng:-158.0352,photo:"https://images.unsplash.com/photo-1490885578174-acda8905c2c6?w=600&h=400&fit=crop&q=80",
+   tags:["pineapple","family","maze","train","ice-cream","souvenir"],
+   rating:4.8,affiliate:"https://www.viator.com/Oahu/d672-ttd",
+   price:"入場無料（体験有料）",hours:"9:30-17:30",
+   desc:"パイナップル農園のテーマパーク。ギネス認定の巨大迷路（$8）、パイナップル列車（$14）が人気。名物ドールホイップ（パイナップルソフト）は必食。"},
+  {id:33,name:"シーライフパーク",en:"Sea Life Park",emoji:"🐬",area:"eastside",cat:["activity"],
+   lat:21.3122,lng:-157.6594,photo:"https://upload.wikimedia.org/wikipedia/commons/b/bc/Sea_Life_Park_Hawaii_%2816102122019%29.jpg",
+   tags:["dolphin","family","marine","interaction","educational"],
+   rating:4.7,affiliate:"https://www.viator.com/Oahu/d672-ttd",
+   price:"$44.99",hours:"10:00-17:00",
+   desc:"イルカやアシカとの触れ合い体験ができる水族館。ドルフィンスイムやシャークダイブなどのプログラムが人気。マカプウ岬のすぐ近くにあり景色も抜群。"},
+
+  // ========== FOOD & RESTAURANTS ==========
+  {id:40,name:"ジョバンニ（ガーリックシュリンプ）",en:"Giovanni's Shrimp Truck",emoji:"🦐",area:"northshore",cat:["food"],
+   lat:21.5801,lng:-158.1044,photo:"https://upload.wikimedia.org/wikipedia/commons/7/78/Hawaiian-dishes-01.jpg",
+   tags:["shrimp","garlic","famous","truck","must-eat","local","lunch"],
+   rating:4.3,featured:true,
+   price:"$15-18",hours:"10:30-17:00",
+   desc:"ノースショアで最も有名なガーリックシュリンプトラック。バターとガーリックたっぷりのスキャンピーが名物。白いトラック全体がサインで覆われたフォトスポットでもある。行列覚悟。"},
+  {id:41,name:"レインボー・ドライブイン",en:"Rainbow Drive-In",emoji:"🍱",area:"waikiki",cat:["food"],
+   lat:21.2732,lng:-157.8177,photo:"https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=600&h=400&fit=crop&q=80",
+   tags:["plate-lunch","local","cheap","classic","iconic","comfort"],
+   rating:4.2,
+   price:"$8-12",hours:"7:00-21:00",
+   desc:"1961年創業のロコモコ・プレートランチの名店。ボリューム満点で$10前後というコスパの良さ。ロコモコ、BBQチキン、マヒマヒが人気。地元の人も通うローカルの味。"},
+  {id:42,name:"マルカメうどん",en:"Marukame Udon",emoji:"🍜",area:"waikiki",cat:["food"],
+   lat:21.2811,lng:-157.8287,photo:"https://images.unsplash.com/photo-1555126634-323283e090fa?w=600&h=400&fit=crop&q=80",
+   tags:["udon","japanese","cheap","queue","popular","fast"],
+   rating:5.0,
+   price:"$5-10",hours:"10:00-22:00",
+   desc:"ワイキキのクヒオ通りにある讃岐うどん店。目の前で打つ生麺と安さが魅力で常に行列。かけうどん$4から。天ぷらやおむすびのサイドメニューも充実。"},
+  {id:43,name:"ヘレナズ・ハワイアンフード",en:"Helena's Hawaiian Food",emoji:"🥘",area:"honolulu",cat:["food"],
+   lat:21.3200,lng:-157.8665,photo:"https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=600&h=400&fit=crop&q=80",
+   tags:["hawaiian","traditional","laulau","poi","authentic","james-beard"],
+   rating:4.3,
+   price:"$12-20",hours:"10:00-19:30（日月休）",
+   desc:"ジェームズ・ビアード賞受賞のハワイアン料理の老舗。ラウラウ（豚肉のタロ葉包み蒸し）、ポイ、カルアピッグなど伝統料理を堪能。予約不可・早い者勝ち。"},
+  {id:44,name:"オノ・シーフード（ポケ）",en:"Ono Seafood",emoji:"🐟",area:"honolulu",cat:["food"],
+   lat:21.2819,lng:-157.8153,photo:"https://upload.wikimedia.org/wikipedia/commons/5/5d/Shoyu_and_onion_poke.jpg",
+   tags:["poke","fresh","must-eat","seafood","local","takeout"],
+   rating:4.1,
+   price:"$12-16",hours:"9:00-18:00（日曜休）",
+   desc:"ハワイNo.1との呼び声高いポケ専門店。新鮮なアヒ（マグロ）を使った醤油ポケとスパイシーポケが絶品。テイクアウト専門。ビーチで食べるのがベスト。"},
+  {id:45,name:"レナーズ・ベーカリー（マラサダ）",en:"Leonard's Bakery",emoji:"🍩",area:"honolulu",cat:["food","cafe"],
+   lat:21.2852,lng:-157.8115,photo:"https://images.unsplash.com/photo-1558326567-98ae2405596b?w=600&h=400&fit=crop&q=80",
+   tags:["malasada","donut","sweet","portuguese","must-eat","famous"],
+   rating:4.1,featured:true,
+   price:"$1.50-3",hours:"5:30-21:00",
+   desc:"1952年創業のマラサダ（ポルトガル風揚げドーナツ）の元祖。揚げたてアツアツのオリジナル、シナモンシュガー、カスタードクリーム入りが定番。朝イチがおすすめ。"},
+  {id:46,name:"テッズベーカリー",en:"Ted's Bakery",emoji:"🥧",area:"northshore",cat:["food","cafe"],
+   lat:21.6678,lng:-158.0350,photo:"https://images.unsplash.com/photo-1464305795204-6f5bbfc7fb81?w=600&h=400&fit=crop&q=80",
+   tags:["pie","chocolate","haupia","northshore","bakery","breakfast"],
+   rating:4.8,
+   price:"$5-12",hours:"7:00-18:00",
+   desc:"ノースショアの名物ベーカリー。ハウピアチョコレートパイはハワイで最も有名なパイの一つ。朝食プレートやガーリックシュリンプも美味。サンセットビーチの近く。"},
+  {id:47,name:"松本シェイブアイス",en:"Matsumoto Shave Ice",emoji:"🍧",area:"northshore",cat:["food"],
+   lat:21.5913,lng:-158.1033,photo:"https://upload.wikimedia.org/wikipedia/commons/d/db/Hilo_Ice_Shave.JPG",
+   tags:["shaveice","famous","sweet","refreshing","colorful","must-eat"],
+   rating:4.6,featured:true,
+   price:"$4-7",hours:"9:00-18:00",
+   desc:"1951年創業のハワイで最も有名なシェイブアイス。ふわふわの氷にカラフルなシロップをかけた一品は暑い日の救世主。レインボーカラーが定番。行列必至だが回転は早い。"},
+  {id:48,name:"デュークス・ワイキキ",en:"Duke's Waikiki",emoji:"🍹",area:"waikiki",cat:["food"],
+   lat:21.2753,lng:-157.8272,photo:"https://images.unsplash.com/photo-1551024709-8f23befc6f87?w=600&h=400&fit=crop&q=80",
+   tags:["beachfront","sunset","cocktail","live-music","steak","seafood"],
+   rating:4.8,
+   price:"$20-45",hours:"7:00-22:00",
+   desc:"ワイキキビーチ真横のレストラン&バー。オーシャンビューのテラスで楽しむサンセットカクテルは最高。ライブミュージックも毎日開催。フラパイとマイタイが名物。予約推奨。"},
+  {id:49,name:"サイドストリート・イン",en:"Side Street Inn",emoji:"🍗",area:"honolulu",cat:["food"],
+   lat:21.2946,lng:-157.8400,photo:"https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=600&h=400&fit=crop&q=80",
+   tags:["local","fried-rice","pork-chops","late-night","large-portions"],
+   rating:4.7,
+   price:"$15-25",hours:"14:00-23:30",
+   desc:"地元シェフが仕事終わりに集う名店。キムチフライドライスとポークチョップはオアフ島最高との評価。ボリューム満点で2-3人でシェアがおすすめ。深夜まで営業。"},
+  {id:50,name:"ブーツ＆キモズ",en:"Boots & Kimo's",emoji:"🥞",area:"kailua",cat:["food","cafe"],
+   lat:21.3954,lng:-157.7410,photo:"https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=600&h=400&fit=crop&q=80",
+   tags:["pancake","macadamia","breakfast","famous","queue","morning"],
+   rating:4.5,
+   price:"$12-18",hours:"7:30-14:30（火曜休）",
+   desc:"マカダミアナッツソースのパンケーキで全米に名を馳せる朝食の聖地。ふわふわのパンケーキに濃厚なナッツソースが絶品。朝7時半から行列。1時間待ちも覚悟。"},
+  {id:51,name:"リリハ・ベーカリー",en:"Liliha Bakery",emoji:"🧁",area:"honolulu",cat:["food","cafe"],
+   lat:21.3266,lng:-157.8565,photo:"https://images.unsplash.com/photo-1558961363-fa8fdf82db35?w=600&h=400&fit=crop&q=80",
+   tags:["cocoa-puff","bakery","local","breakfast","diner","cream-puff"],
+   rating:5.0,
+   price:"$3-15",hours:"6:00-20:00",
+   desc:"1950年創業のロコ御用達ベーカリー。名物ココパフ（チョコシュークリーム）は1個$1.75で幸せになれる。ダイナーも併設しオックステールスープやロコモコも人気。"},
+  {id:52,name:"ブルーウォーター・シュリンプ",en:"Blue Water Shrimp",emoji:"🦐",area:"waikiki",cat:["food"],
+   lat:21.2813,lng:-157.8290,photo:"https://upload.wikimedia.org/wikipedia/commons/c/c3/Spicy_fried_King_Prawns.jpg",
+   tags:["shrimp","garlic","waikiki","quick","coconut-shrimp"],
+   rating:4.4,
+   price:"$16-20",hours:"10:00-21:00",
+   desc:"ワイキキで手軽にガーリックシュリンプが食べられるフードコート内の人気店。ノースショアまで行かなくてもOK。ココナッツシュリンプも絶品。ロイヤルハワイアンセンター内。"},
+
+  // ========== CAFES ==========
+  {id:55,name:"アイランド・ヴィンテージ・コーヒー",en:"Island Vintage Coffee",emoji:"☕",area:"waikiki",cat:["cafe"],
+   lat:21.2793,lng:-157.8290,photo:"https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=600&h=400&fit=crop&q=80",
+   tags:["coffee","acai","kona","healthy","instagram","breakfast"],
+   rating:4.6,
+   price:"$8-16",hours:"6:00-22:00",
+   desc:"100%コナコーヒーとアサイーボウルの人気カフェ。フレッシュフルーツたっぷりのアサイーボウルはインスタ映え抜群。ロイヤルハワイアンセンター内。朝食にも最適。"},
+  {id:56,name:"アロハコーヒーラボ",en:"Aloha Coffee Lab",emoji:"☕",area:"honolulu",cat:["cafe"],
+   lat:21.2900,lng:-157.8430,photo:"https://images.unsplash.com/photo-1442512595331-e89e73853f31?w=600&h=400&fit=crop&q=80",
+   tags:["specialty-coffee","pour-over","hipster","local","quiet"],
+   rating:4.8,
+   price:"$5-9",hours:"7:00-16:00",
+   desc:"ハワイ産スペシャルティコーヒーにこだわるサードウェーブ系カフェ。丁寧なハンドドリップで一杯ずつ淹れる。コーヒー好きなら外せない。静かな雰囲気でまったり。"},
+  {id:57,name:"Banan（バナン）",en:"Banan",emoji:"🍌",area:"waikiki",cat:["cafe"],
+   lat:21.2655,lng:-157.8070,photo:"https://images.unsplash.com/photo-1488477181946-6428a0291777?w=600&h=400&fit=crop&q=80",
+   tags:["banana-softserve","healthy","vegan","instagram","beachside"],
+   rating:4.6,
+   price:"$7-11",hours:"9:00-18:00",
+   desc:"ハワイ産バナナで作るヴィーガンソフトクリーム。ダイヤモンドヘッド近くのモンサラット通り沿い。アサイーボウルやスムージーも人気。ヘルシー志向の方に。"},
+
+  // ========== SHOPPING ==========
+  {id:60,name:"アラモアナセンター",en:"Ala Moana Center",emoji:"🛍️",area:"honolulu",cat:["shopping","food"],
+   lat:21.2910,lng:-157.8440,photo:"https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=600&h=400&fit=crop&q=80",
+   tags:["shopping","brands","food-court","souvenirs","huge","family"],
+   rating:4.9,
+   price:"入場無料",hours:"10:00-20:00",
+   desc:"世界最大級のオープンエアモール。350+店舗にハワイ限定ブランドも多数。白木屋やニジヤなど日本語対応店舗も充実。フードコートの充実度もトップクラス。"},
+  {id:61,name:"ロイヤルハワイアンセンター",en:"Royal Hawaiian Center",emoji:"🛍️",area:"waikiki",cat:["shopping"],
+   lat:21.2797,lng:-157.8283,photo:"https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=600&h=400&fit=crop&q=80",
+   tags:["shopping","waikiki","luxury","culture-class","free-hula"],
+   rating:4.6,
+   price:"入場無料",hours:"10:00-22:00",
+   desc:"ワイキキのメインストリート沿いの大型モール。無料のフラレッスンやレイメイキング教室も開催。高級ブランドからお土産ショップまで幅広い品揃え。"},
+  {id:62,name:"ワイケレ・プレミアム・アウトレット",en:"Waikele Premium Outlets",emoji:"🏷️",area:"central",cat:["shopping"],
+   lat:21.3960,lng:-158.0027,photo:"https://upload.wikimedia.org/wikipedia/commons/e/eb/Waikele_Premium_Outlets.JPG",
+   tags:["outlet","bargain","brands","coach","nike","shopping"],
+   rating:4.7,
+   price:"入場無料",hours:"9:00-21:00",
+   desc:"50+のアウトレット店舗。コーチ、ケイトスペード、ナイキなどが30-70%OFFに。ワイキキからシャトルバス（$20往復）もあり。半日は楽しめる。"},
+  {id:63,name:"ハレイワタウン",en:"Haleiwa Town",emoji:"🎨",area:"northshore",cat:["shopping","food"],
+   lat:21.5942,lng:-158.1044,photo:"https://images.unsplash.com/photo-1476610182048-b716b8518aae?w=600&h=400&fit=crop&q=80",
+   tags:["surf-shops","art","gallery","boutique","local","nostalgic"],
+   rating:4.0,
+   price:"入場無料",hours:"店舗により異なる",
+   desc:"ノースショアの玄関口となるサーフタウン。カラフルなサーフショップ、アートギャラリー、ブティックが並ぶ。ノスタルジックな町並みを散策しながらショッピングを楽しめる。"},
+  {id:64,name:"インターナショナルマーケットプレイス",en:"International Market Place",emoji:"🌳",area:"waikiki",cat:["shopping"],
+   lat:21.2802,lng:-157.8272,photo:"https://upload.wikimedia.org/wikipedia/commons/a/a7/International_Marketplace_-_Waikiki_%2811678680515%29.jpg",
+   tags:["luxury","shopping","dining","banyan-tree","waikiki"],
+   rating:4.2,
+   price:"入場無料",hours:"10:00-22:00",
+   desc:"巨大なバニヤンツリーを中心にした高級ショッピングモール。サックスフィフスアベニューやハワイ限定ショップが入る。3階のフードホールも充実。"},
+];
+
+// ===== KEYWORD ENGINE =====
+const KW={
+  'のんびり':['relaxing','calm','peaceful'],'リラックス':['relaxing','calm','beach'],
+  'ビーチ':['beach','clear-water','snorkeling'],'海':['beach','clear-water','surfing','ocean-view'],
+  '映え':['instagram','panorama','colorful'],'インスタ':['instagram','panorama','dramatic'],
+  '写真':['instagram','panorama','photography'],'絶景':['panorama','dramatic','ocean-view'],
+  '子連れ':['family','safe','educational'],'家族':['family','safe','educational'],
+  'ファミリー':['family','safe','educational'],'子ども':['family','safe'],
+  '冒険':['adventure','hiking','zipline'],'アクティビティ':['adventure','surfing','snorkeling','zipline'],
+  'シュノーケリング':['snorkeling','clear-water','fish'],'ダイビング':['diving','snorkeling'],
+  '歴史':['history','museum','educational'],'文化':['history','educational','culture'],
+  'グルメ':['must-eat','famous','local'],'美味しい':['must-eat','famous','local'],
+  '食べ':['must-eat','plate-lunch','shrimp','poke'],'ローカル':['local','authentic','cheap'],
+  'カフェ':['coffee','acai','bakery','breakfast'],'コーヒー':['coffee','kona','pour-over'],
+  'ショッピング':['shopping','brands','souvenirs'],'買い物':['shopping','outlet','bargain'],
+  'カップル':['couple','romantic','sunset'],'ロマンチック':['romantic','couple','sunset','nightview'],
+  'デート':['couple','romantic','sunset'],'サンセット':['sunset','romantic','beachfront'],
+  '夕日':['sunset','panorama','beachfront'],'朝日':['sunrise','hiking'],
+  'サーフィン':['surfing','bigwave','beach'],'ハイキング':['hiking','nature','panorama','exercise'],
+  '自然':['nature','tropical','rainforest'],'大自然':['nature','dramatic','waterfall'],
+  '動物':['turtle','dolphin','whale','fish'],'ウミガメ':['turtle','snorkeling'],
+  'イルカ':['dolphin','marine'],'クジラ':['whale','winter'],
+  '静か':['quiet','secluded','peaceful'],'穴場':['secluded','quiet','local'],
+  'パンケーキ':['pancake','breakfast','macadamia'],'朝食':['breakfast','morning','pancake'],
+  'シュリンプ':['shrimp','garlic','famous'],'ポケ':['poke','fresh','seafood'],
+  'ドーナツ':['malasada','donut','sweet'],'スイーツ':['sweet','pie','shaveice','malasada'],
+  '安い':['cheap','fast','local'],'夜景':['nightview','romantic'],
+  'ドライブ':['panorama','scenic','northshore'],
+};
+
+// ===== TOOLS =====
+function openTool(type){
+  const m=document.getElementById('toolModal');
+  if(type==='tip') m.innerHTML=tipCalcHTML();
+  else if(type==='currency') m.innerHTML=currencyHTML();
+  else if(type==='weather') m.innerHTML=weatherHTML();
+  else if(type==='bus') m.innerHTML=busHTML();
+  else if(type==='coupon') m.innerHTML=couponHTML();
+  document.getElementById('toolOverlay').classList.add('show');
+  track('tool_open',{type});
+}
+function closeTool(){document.getElementById('toolOverlay').classList.remove('show')}
+
+function tipCalcHTML(){
+  return `<h3>💰 チップ計算機</h3>
+    <p style="font-size:.82rem;color:var(--ink-light);text-align:center;margin-bottom:12px">お会計金額を入力してください</p>
+    <input type="number" class="tool-input" id="tipAmount" placeholder="$0.00" oninput="calcTip()">
+    <div class="tip-grid">
+      <div class="tip-btn active" onclick="setTipPct(15,this)">15%<br><small>普通</small></div>
+      <div class="tip-btn" onclick="setTipPct(18,this)">18%<br><small>良い</small></div>
+      <div class="tip-btn" onclick="setTipPct(20,this)">20%<br><small>最高</small></div>
+    </div>
+    <div class="tool-result" id="tipResult">チップ: $0.00<br>合計: $0.00<br><small style="color:var(--ink-light)">≈ ¥0</small></div>
+    <p style="font-size:.72rem;color:var(--ink-muted);text-align:center;margin-top:8px">
+      🍽️ レストラン: 15-20% / ☕ カフェ: $1-2 / 🚕 タクシー: 15% / 💇 美容: 15-20%
+    </p>
+    <button class="tool-close" onclick="closeTool()">閉じる</button>`;
+}
+let tipPct=15;
+function setTipPct(p,el){tipPct=p;document.querySelectorAll('.tip-btn').forEach(b=>b.classList.remove('active'));el.classList.add('active');calcTip()}
+function calcTip(){
+  const amt=parseFloat(document.getElementById('tipAmount').value)||0;
+  const tip=amt*tipPct/100;const total=amt+tip;const yen=Math.round(total*150);
+  document.getElementById('tipResult').innerHTML=`チップ: $${tip.toFixed(2)}<br>合計: <b>$${total.toFixed(2)}</b><br><small style="color:var(--ink-light)">≈ ¥${yen.toLocaleString()}</small>`;
+}
+
+function currencyHTML(){
+  return `<h3>💱 通貨換算</h3>
+    <p style="font-size:.82rem;color:var(--ink-light);text-align:center;margin-bottom:12px">USD ↔ JPY（レート: 1$ ≈ ¥150）</p>
+    <div style="display:flex;gap:8px;align-items:center">
+      <div style="flex:1;text-align:center"><div style="font-size:.75rem;color:var(--ink-light);margin-bottom:4px">USD ($)</div>
+        <input type="number" class="tool-input" id="usdInput" placeholder="0" oninput="convertCurrency('usd')"></div>
+      <div style="font-size:1.5rem">⇄</div>
+      <div style="flex:1;text-align:center"><div style="font-size:.75rem;color:var(--ink-light);margin-bottom:4px">JPY (¥)</div>
+        <input type="number" class="tool-input" id="jpyInput" placeholder="0" oninput="convertCurrency('jpy')"></div>
+    </div>
+    <div style="margin-top:12px;font-size:.78rem;color:var(--ink-light)">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;text-align:center">
+        <div style="padding:8px;background:#f8f8f8;border-radius:8px">$10 = ¥1,500</div>
+        <div style="padding:8px;background:#f8f8f8;border-radius:8px">$50 = ¥7,500</div>
+        <div style="padding:8px;background:#f8f8f8;border-radius:8px">$100 = ¥15,000</div>
+        <div style="padding:8px;background:#f8f8f8;border-radius:8px">$500 = ¥75,000</div>
+      </div>
+    </div>
+    <button class="tool-close" onclick="closeTool()">閉じる</button>`;
+}
+function convertCurrency(from){
+  const rate=150;
+  if(from==='usd'){const v=parseFloat(document.getElementById('usdInput').value)||0;document.getElementById('jpyInput').value=Math.round(v*rate)}
+  else{const v=parseFloat(document.getElementById('jpyInput').value)||0;document.getElementById('usdInput').value=(v/rate).toFixed(2)}
+}
+
+function weatherHTML(){
+  const hour=new Date().getHours();
+  const isDay=hour>=6&&hour<18;
+  const weatherIcon=isDay?'☀️':'🌙';
+  return `<h3>🌤️ オアフ島の天気</h3>
+    <div class="tool-result" style="font-size:1rem">
+      <div style="font-size:2.5rem;margin-bottom:8px">${weatherIcon}</div>
+      <div style="font-size:1.3rem;font-weight:700">27°C / 81°F</div>
+      <div style="color:var(--ink-light);font-size:.85rem;margin-top:4px">湿度: 65% / 風: 15km/h</div>
+      <div style="color:var(--blue-deep);font-size:.85rem;margin-top:4px">🌊 波: 1-2ft（穏やか）</div>
+    </div>
+    <div style="margin-top:12px">
+      <div style="font-weight:700;font-size:.85rem;margin-bottom:8px">📅 今日のおすすめ</div>
+      <div style="display:flex;flex-direction:column;gap:6px">
+        ${isDay?`
+          <div style="padding:10px;background:var(--blue-bg);border-radius:8px;font-size:.82rem" onclick="closeTool();renderRanking('beach')">🏖️ <b>ビーチ日和！</b> 波が穏やかでシュノーケリングに最適</div>
+          <div style="padding:10px;background:var(--green-bg);border-radius:8px;font-size:.82rem" onclick="closeTool();renderRanking('nature')">🥾 <b>ハイキング推奨</b> 朝の涼しいうちにダイヤモンドヘッドへ</div>
+        `:`
+          <div style="padding:10px;background:var(--purple-light);border-radius:8px;font-size:.82rem" onclick="closeTool();openDetail(14)">🌃 <b>夜景スポット</b> タンタラスの丘からホノルルを一望</div>
+          <div style="padding:10px;background:var(--orange-light);border-radius:8px;font-size:.82rem" onclick="closeTool();openDetail(48)">🍹 <b>ディナータイム</b> デュークスでサンセットカクテル</div>
+        `}
+      </div>
+    </div>
+    <a href="https://www.viator.com/Oahu/d672-ttd" target="_blank" rel="noopener" class="affiliate-btn" style="margin-top:12px" onclick="track('affiliate_click',{type:'weather_tour'})">🎫 今日のおすすめツアーを予約</a>
+    <button class="tool-close" onclick="closeTool()">閉じる</button>`;
+}
+
+function busHTML(){
+  return `<h3>🚌 TheBus 路線ガイド</h3>
+    <p style="font-size:.82rem;color:var(--ink-light);text-align:center;margin-bottom:12px">オアフ島の主要バス路線</p>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <div style="padding:12px;background:#E3F2FD;border-radius:8px">
+        <div style="font-weight:700;font-size:.88rem">🔵 Route 2 / 13 — ワイキキ ↔ アラモアナ</div>
+        <div style="font-size:.75rem;color:var(--ink-light)">5-10分間隔 / 所要15分 / $3.00</div>
+      </div>
+      <div style="padding:12px;background:#E8F5E9;border-radius:8px">
+        <div style="font-weight:700;font-size:.88rem">🟢 Route 20 — ワイキキ → ノースショア</div>
+        <div style="font-size:.75rem;color:var(--ink-light)">30分間隔 / 所要2時間 / $3.00</div>
+      </div>
+      <div style="padding:12px;background:#FFF3E0;border-radius:8px">
+        <div style="font-weight:700;font-size:.88rem">🟠 Route 22 — ワイキキ → ハナウマ湾</div>
+        <div style="font-size:.75rem;color:var(--ink-light)">30分間隔 / 所要45分 / $3.00</div>
+      </div>
+      <div style="padding:12px;background:#F3E5F5;border-radius:8px">
+        <div style="font-weight:700;font-size:.88rem">🟣 Route 42 — ワイキキ → カイルア</div>
+        <div style="font-size:.75rem;color:var(--ink-light)">20分間隔 / 所要50分 / $3.00</div>
+      </div>
+      <div style="padding:12px;background:#FCE4EC;border-radius:8px">
+        <div style="font-weight:700;font-size:.88rem">🔴 W Line — ワイキキ → 空港</div>
+        <div style="font-size:.75rem;color:var(--ink-light)">10分間隔 / 所要40分 / $3.00</div>
+      </div>
+    </div>
+    <div style="margin-top:12px;padding:10px;background:#f8f8f8;border-radius:8px;font-size:.78rem">
+      <b>💡 Tips:</b> HOLOカード($2)で乗り放題2.5時間。大きなスーツケースは持込不可。
+    </div>
+    <a href="https://www.rentalcars.com/en/city/us/honolulu/" target="_blank" rel="noopener" class="affiliate-btn" style="margin-top:10px;background:linear-gradient(135deg,#4285F4,#34A853)" onclick="track('affiliate_click',{type:'bus_to_car'})">🚗 やっぱりレンタカーで自由に！</a>
+    <button class="tool-close" onclick="closeTool()">閉じる</button>`;
+}
+
+function couponHTML(){
+  const coupons=[
+    {name:'アラモアナセンター',desc:'ゲストパスで割引クーポンブック',pct:'無料',tag:'ショッピング'},
+    {name:'ハナウマ湾',desc:'オンライン事前予約で確実に入場',pct:'要予約',tag:'自然'},
+    {name:'ワイケレアウトレット',desc:'VIPクーポンブック（インフォメーション）',pct:'最大70%OFF',tag:'ショッピング'},
+    {name:'ドールプランテーション',desc:'パイナップル列車+迷路セット割',pct:'$2 OFF',tag:'体験'},
+    {name:'ポリネシア文化センター',desc:'公式サイト事前購入で割引',pct:'最大$30 OFF',tag:'文化'},
+    {name:'クアロア・ランチ',desc:'コンボパッケージで体験をまとめて',pct:'パック割',tag:'体験'},
+    {name:'シーライフパーク',desc:'オンライン事前購入で割引',pct:'最大20%OFF',tag:'体験'},
+  ];
+  return `<h3>🎟️ クーポン & お得情報</h3>
+    <p style="font-size:.82rem;color:var(--ink-light);text-align:center;margin-bottom:14px">知ってる人だけ得する！</p>
+    ${coupons.map(c=>`<div class="coupon-card">
+      <div class="coupon-pct">${c.pct}</div>
+      <div class="coupon-info"><div class="coupon-name">${c.name}</div><div class="coupon-desc">${c.desc}</div></div>
+      <span class="coupon-tag">${c.tag}</span>
+    </div>`).join('')}
+    <div style="margin-top:12px;padding:12px;background:var(--pink-bg);border-radius:var(--radius);text-align:center;font-size:.82rem">
+      💡 <b>アプリ限定クーポン</b>は近日公開予定！<br>通知をオンにしてお待ちください。
+    </div>
+    <a href="https://www.klook.com/en-US/city/703335-honolulu-things-to-do/" target="_blank" rel="noopener" class="affiliate-btn" style="margin-top:10px" onclick="track('affiliate_click',{type:'coupon_klook'})">🎫 Klookで割引ツアーを探す</a>
+    <button class="tool-close" onclick="closeTool()">閉じる</button>`;
+}
+
+// ===== ANALYTICS =====
+function track(event,data={}){
+  try{
+    let a=JSON.parse(localStorage.getItem('oahu_analytics')||'[]');
+    a.push({e:event,d:data,t:Date.now()});
+    if(a.length>500)a=a.slice(-500);
+    localStorage.setItem('oahu_analytics',JSON.stringify(a));
+  }catch(e){}
+}
+
+// ===== i18n =====
+let lang=localStorage.getItem('oahu_lang')||'ja';
+const I18N={
+  ja:{sub:'~ オアフ島 完全観光ガイド ~',explore:'🗺️ 探す',ranking:'🏆 ランキング',plan:'📋 プラン',history:'🕐 履歴',suggest:'✨ イメージから探す ✨',suggestPh:'例: 海がきれいでのんびりできるところ...',suggestBtn:'提案して!',searchPh:'スポット名・キーワードで検索...',allArea:'全エリア',allCat:'🌈 すべて',featured:'🔥 おすすめスポット',locTap:'タップして現在地を取得',locGetting:'取得中...',book:'予約する',addPlan:'📌 プランに追加',selected:'✓ 選択済み',share:'共有',close:'閉じる',gmaps:'🗺️ Googleマップ',dist:'距離',drive:'車で',price:'料金',hours:'営業時間'},
+  en:{sub:'~ Your Complete Oahu Guide ~',explore:'🗺️ Explore',ranking:'🏆 Ranking',plan:'📋 Plan',history:'🕐 History',suggest:'✨ Find by mood ✨',suggestPh:'e.g. relaxing beach, family friendly...',suggestBtn:'Suggest!',searchPh:'Search spots...',allArea:'All Areas',allCat:'🌈 All',featured:'🔥 Featured Spots',locTap:'Tap to get location',locGetting:'Getting location...',book:'Book Now',addPlan:'📌 Add to Plan',selected:'✓ Selected',share:'Share',close:'Close',gmaps:'🗺️ Google Maps',dist:'Distance',drive:'Drive',price:'Price',hours:'Hours'}
+};
+function t(key){return I18N[lang][key]||I18N.ja[key]||key}
+function setLang(l){
+  lang=l;localStorage.setItem('oahu_lang',l);
+  document.querySelectorAll('.lang-btn').forEach(b=>b.classList.toggle('active',b.textContent===l.toUpperCase()));
+  document.getElementById('headerSub').textContent=t('sub');
+  document.querySelectorAll('.main-tab').forEach((tab,i)=>{
+    const keys=['explore','ranking','plan','history'];tab.textContent=t(keys[i]);
+  });
+  document.getElementById('featuredTitle').innerHTML=t('featured')+' <span class="badge-sponsored">Sponsored</span>';
+  document.getElementById('suggestInput').placeholder=t('suggestPh');
+  document.getElementById('searchInput').placeholder=t('searchPh');
+  renderFeatured();renderSpots();
+  track('language_change',{lang:l});
+}
+
+// ===== STATE =====
+let userLat=null,userLng=null,selCat='all',selArea='all',selected=[],rMap=null,currentTab='explore';
+const STORAGE_KEY='oahu_explorer_';
+
+// ===== INIT =====
+window.addEventListener('load',()=>{
+  setTimeout(()=>document.getElementById('loader').classList.add('hide'),700);
+  selected=JSON.parse(localStorage.getItem(STORAGE_KEY+'selected')||'[]');
+  setupListeners();
+  renderFeatured();
+  renderSpots();
+  updateItiBar();
+  getLocation();
+  setLang(lang);
+  track('page_view');
+  // Cookie banner
+  if(!localStorage.getItem(STORAGE_KEY+'cookie_ok'))setTimeout(()=>document.getElementById('cookieBanner').classList.add('show'),1500);
+  // Scroll top
+  window.addEventListener('scroll',()=>{document.getElementById('scrollTop').classList.toggle('show',window.scrollY>300)});
+  // Service Worker
+  if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
+});
+function acceptCookies(){localStorage.setItem(STORAGE_KEY+'cookie_ok','1');document.getElementById('cookieBanner').classList.remove('show')}
+
+// ===== FEATURED =====
+function renderFeatured(){
+  const el=document.getElementById('featuredScroll');
+  const feat=S.filter(s=>s.featured);
+  el.innerHTML=feat.map(s=>`
+    <div class="featured-card" onclick="openDetail(${s.id})">
+      ${s.photo?`<img src="${s.photo}" alt="${s.name}" loading="lazy" onerror="this.style.display='none'">`:''}
+      <div class="featured-card-body">
+        <div class="featured-card-name">${s.emoji} ${lang==='en'?s.en:s.name}</div>
+        <div class="featured-card-sub">★ ${s.rating||4.5} ${s.price||''}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function setupListeners(){
+  document.querySelectorAll('.cat').forEach(c=>c.onclick=()=>{
+    document.querySelectorAll('.cat').forEach(x=>x.classList.remove('active'));
+    c.classList.add('active');selCat=c.dataset.c;renderSpots();
+  });
+  document.getElementById('searchInput').addEventListener('input',()=>{
+    renderSpots();
+    const q=document.getElementById('searchInput').value.trim();
+    if(q.length>2)saveSearch(q);
+  });
+  document.getElementById('areaSelect').addEventListener('change',e=>{selArea=e.target.value;renderSpots()});
+  document.querySelectorAll('.suggest-preset').forEach(b=>{
+    b.onclick=()=>{
+      document.querySelectorAll('.suggest-preset').forEach(x=>x.classList.remove('active'));
+      b.classList.add('active');document.getElementById('suggestInput').value=b.dataset.q;runSuggest();
+    };
+  });
+  document.getElementById('suggestInput').addEventListener('keydown',e=>{if(e.key==='Enter')runSuggest()});
+}
+
+// ===== TABS =====
+function switchTab(tab){
+  currentTab=tab;
+  document.querySelectorAll('.main-tab').forEach(t=>t.classList.toggle('active',t.dataset.tab===tab));
+  ['explore','ranking','plan','history'].forEach(t=>{
+    const el=document.getElementById('tab-'+t);
+    if(el)el.style.display=tab===t?'':'none';
+  });
+  if(tab==='plan')renderPlan();
+  if(tab==='history')renderHistory();
+  if(tab==='ranking')renderRanking('all');
+}
+
+// ===== RANKING =====
+function renderRanking(cat){
+  document.querySelectorAll('#rankCats .cat').forEach(c=>c.classList.toggle('active',c.dataset.rc===cat));
+  let spots=[...S];
+  if(cat==='near'&&userLat){
+    spots.forEach(s=>s._d=hav(userLat,userLng,s.lat,s.lng));
+    spots.sort((a,b)=>a._d-b._d);
+  } else if(cat!=='all'){
+    spots=spots.filter(s=>s.cat.includes(cat));
+    spots.sort((a,b)=>(b.rating||4.5)-(a.rating||4.5));
+  } else {
+    spots.sort((a,b)=>(b.rating||4.5)-(a.rating||4.5));
+  }
+  const areas={waikiki:'ワイキキ',honolulu:'ホノルル',kailua:'カイルア',northshore:'ノースショア',westside:'西海岸',eastside:'東海岸',central:'中部'};
+  const medals=['🥇','🥈','🥉'];
+  document.getElementById('rankingList').innerHTML=spots.slice(0,20).map((s,i)=>{
+    const d=userLat?fmtD(hav(userLat,userLng,s.lat,s.lng)):'';
+    const dm=userLat?driveMin(hav(userLat,userLng,s.lat,s.lng))+'分':'';
+    const medal=i<3?medals[i]:`<span style="color:var(--ink-muted);font-size:.85rem">${i+1}</span>`;
+    const spotName=lang==='en'?s.en:s.name;
+    return `<div style="display:flex;gap:12px;align-items:center;padding:12px;margin-bottom:8px;background:var(--white);border-radius:var(--radius);box-shadow:0 1px 6px rgba(0,0,0,.05);cursor:pointer;transition:var(--transition)" onclick="openDetail(${s.id})" onmouseover="this.style.transform='translateX(4px)'" onmouseout="this.style.transform=''">
+      <div style="font-size:1.4rem;width:32px;text-align:center;flex-shrink:0">${medal}</div>
+      ${s.photo?`<img src="${s.photo}" style="width:64px;height:64px;border-radius:12px;object-fit:cover;flex-shrink:0" loading="lazy" onerror="this.outerHTML='<div style=\\'width:64px;height:64px;border-radius:12px;background:#f0f0f0;display:flex;align-items:center;justify-content:center;font-size:1.5rem;flex-shrink:0\\'>${s.emoji}</div>'">`
+        :`<div style="width:64px;height:64px;border-radius:12px;background:#f0f0f0;display:flex;align-items:center;justify-content:center;font-size:1.5rem;flex-shrink:0">${s.emoji}</div>`}
+      <div style="flex:1;min-width:0">
+        <div style="font-weight:700;font-size:.92rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${s.emoji} ${spotName}</div>
+        <div style="font-size:.75rem;color:var(--ink-light)">${areas[s.area]||s.area}${d?' / '+d:''}${dm?' / 🚗'+dm:''}</div>
+        <div style="display:flex;gap:6px;align-items:center;margin-top:2px">
+          <span style="color:#FFB300;font-size:.8rem;font-weight:700">★ ${s.rating||4.5}</span>
+          ${s.price?`<span style="font-size:.7rem;color:var(--orange)">${s.price}</span>`:''}
+        </div>
+      </div>
+      <button class="card-btn btn-gmaps" style="flex-shrink:0" onclick="event.stopPropagation();openGmaps(${s.id})">Maps</button>
+    </div>`;
+  }).join('');
+  track('ranking_view',{cat});
+}
+
+// ===== LOCATION =====
+function getLocation(){
+  const t=document.getElementById('locText'),s=document.getElementById('locStatus');
+  t.textContent='取得中...';s.textContent='取得中';s.classList.add('pending');
+  if(!navigator.geolocation){t.textContent='位置情報非対応';s.textContent='エラー';return}
+  navigator.geolocation.getCurrentPosition(p=>{
+    userLat=p.coords.latitude;userLng=p.coords.longitude;
+    t.textContent=`${userLat.toFixed(4)}, ${userLng.toFixed(4)}`;
+    s.textContent='取得済み';s.classList.remove('pending');renderSpots();
+  },()=>{
+    userLat=21.2866;userLng=-157.8298; // Prince Waikiki area
+    t.textContent='ワイキキ（デモ位置）';s.textContent='デモ';s.classList.remove('pending');renderSpots();
+  },{enableHighAccuracy:true,timeout:8000});
+}
+
+// ===== DISTANCE =====
+function hav(a1,n1,a2,n2){
+  const R=6371,dL=(a2-a1)*Math.PI/180,dN=(n2-n1)*Math.PI/180;
+  const a=Math.sin(dL/2)**2+Math.cos(a1*Math.PI/180)*Math.cos(a2*Math.PI/180)*Math.sin(dN/2)**2;
+  return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
+}
+function fmtD(km){return km<1?`${Math.round(km*1000)}m`:`${km.toFixed(1)}km`}
+// Oahu driving time estimate (avg 35km/h with road factor 1.4)
+function driveMin(km){return Math.max(3,Math.round(km*1.4/35*60))}
+
+// ===== RENDER SPOTS =====
+function renderSpots(){
+  const grid=document.getElementById('grid'),cnt=document.getElementById('spotsCount');
+  const q=document.getElementById('searchInput').value.toLowerCase();
+  let spots=S.filter(s=>{
+    if(selArea!=='all'&&s.area!==selArea)return false;
+    if(selCat!=='all'&&!s.cat.includes(selCat))return false;
+    if(q&&!s.name.includes(q)&&!s.en.toLowerCase().includes(q)&&!s.desc.includes(q)&&!s.tags.some(t=>t.includes(q)))return false;
+    return true;
+  });
+  if(userLat){spots.forEach(s=>s._d=hav(userLat,userLng,s.lat,s.lng));spots.sort((a,b)=>a._d-b._d)}
+  const areas={waikiki:'ワイキキ',honolulu:'ホノルル',kailua:'カイルア',northshore:'ノースショア',westside:'西海岸',eastside:'東海岸',central:'中部'};
+  cnt.textContent=`${spots.length} スポット${selArea!=='all'?' / '+areas[selArea]:''}`;
+  grid.innerHTML=spots.map((s,i)=>{
+    const d=s._d?fmtD(s._d):'---';const isSel=selected.includes(s.id);const si=selected.indexOf(s.id);
+    const catL={beach:'🏖️ビーチ',nature:'🌿自然',culture:'🏛️文化',food:'🍽️グルメ',activity:'🏄体験',shopping:'🛍️買い物',scenic:'📸絶景',cafe:'☕カフェ'};
+    const spotName=lang==='en'?s.en:s.name;
+    return `<div class="card${isSel?' selected':''}" onclick="openDetail(${s.id})">
+      ${s.photo?`<img class="card-img" src="${s.photo}" alt="${spotName}" loading="lazy" onerror="this.outerHTML='<div class=card-img-placeholder>${s.emoji}</div>'">`
+        :`<div class="card-img-placeholder">${s.emoji}</div>`}
+      <div class="card-num">${i+1}</div>
+      ${s.featured?'<div class="badge-featured">★ Featured</div>':''}
+      ${isSel?`<div class="card-sel">${si+1}</div>`:''}
+      <div class="card-body">
+        <div class="card-top">
+          <span class="card-emoji">${s.emoji}</span>
+          <div><div class="card-title">${spotName}</div><div class="card-en">${lang==='en'?s.name:s.en}</div>
+          <span class="card-area-tag">${areas[s.area]||s.area}</span></div>
+        </div>
+        <div class="card-rating">★ ${s.rating||'4.5'} <span>${s.cat.includes('food')||s.cat.includes('cafe')?'Food':'Spot'}</span></div>
+        <div class="card-desc">${s.desc}</div>
+        <div class="card-tags">${s.cat.map(c=>`<span class="card-tag${c==='food'||c==='cafe'?' food-tag':''}">${catL[c]||c}</span>`).join('')}</div>
+        ${s.price?`<div class="card-price">${s.price}</div>`:''}
+        ${s.hours?`<div class="card-hours">🕐 ${s.hours}</div>`:''}
+        <div class="card-footer">
+          <span class="card-dist">📏 ${d}${s._d?' / 🚗'+driveMin(s._d)+'分':''}</span>
+          <div class="card-actions">
+            <button class="card-btn btn-gmaps" onclick="event.stopPropagation();openGmaps(${s.id})">G Maps</button>
+            <button class="card-btn btn-route" onclick="event.stopPropagation();toggleSelect(${s.id})">
+              ${isSel?'✓ 選択済':'+ 追加'}</button>
+          </div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ===== DETAIL MODAL =====
+function openDetail(id){
+  const s=S.find(x=>x.id===id);if(!s)return;
+  saveView(id);
+  const d=userLat?fmtD(hav(userLat,userLng,s.lat,s.lng)):'---';
+  const dm=userLat?driveMin(hav(userLat,userLng,s.lat,s.lng)):'?';
+  const isSel=selected.includes(id);
+  const areas={waikiki:'ワイキキ',honolulu:'ホノルル',kailua:'カイルア',northshore:'ノースショア',westside:'西海岸',eastside:'東海岸',central:'中部'};
+  const spotName=lang==='en'?s.en:s.name;
+  const reviews=Math.floor(80+s.id*7.3)%500+50;
+  document.getElementById('detailModal').innerHTML=`
+    ${s.photo?`<img class="detail-img" src="${s.photo}" alt="${spotName}" onerror="this.style.display='none'">`:''}
+    <div class="detail-body">
+      <div class="detail-header">
+        <span class="detail-emoji">${s.emoji}</span>
+        <div>
+          <div class="detail-name">${spotName}</div>
+          <div class="detail-en">${lang==='en'?s.name:s.en} - ${areas[s.area]}</div>
+          <div style="display:flex;align-items:center;gap:6px;margin-top:6px">
+            <span style="color:#FFB300;font-weight:700">★ ${s.rating||'4.5'}</span>
+            <span style="font-size:.75rem;color:var(--ink-light)">(${reviews}件のレビュー)</span>
+          </div>
+        </div>
+      </div>
+      <div class="detail-desc">${s.desc}</div>
+      <div class="detail-meta">
+        <div class="detail-meta-item"><div class="label">${t('dist')}</div><div class="value">${d}</div></div>
+        <div class="detail-meta-item"><div class="label">${t('drive')}</div><div class="value">🚗 ${dm}分</div></div>
+        <div class="detail-meta-item"><div class="label">${t('price')}</div><div class="value">${s.price||'---'}</div></div>
+        <div class="detail-meta-item"><div class="label">${t('hours')}</div><div class="value">${s.hours||'---'}</div></div>
+      </div>
+      ${s.affiliate?`
+        <a href="${s.affiliate}" target="_blank" rel="noopener" class="affiliate-cta" onclick="track('affiliate_click',{id:${s.id},name:'${s.en}'})">
+          <span class="affiliate-cta-icon">🎫</span>
+          <div class="affiliate-cta-text">
+            <div class="affiliate-cta-title">${lang==='en'?'Book tickets & tours':'チケット・ツアーを予約'}</div>
+            <div class="affiliate-cta-sub">${lang==='en'?'Free cancellation · Best price guaranteed':'無料キャンセル・最低価格保証・${reviews}件のレビュー'}</div>
+          </div>
+          <span class="affiliate-cta-arrow">→</span>
+        </a>
+        <div style="text-align:center;font-size:.7rem;color:var(--ink-muted);margin-top:6px">⚡ ${lang==='en'?'Popular — booked by '+Math.floor(reviews/3)+' travelers this week':'人気 — 今週'+Math.floor(reviews/3)+'人が予約'}</div>
+      `:''}
+      <div class="detail-actions">
+        <button class="detail-action primary" onclick="openGmaps(${s.id})">📍 ${lang==='en'?'Navigate':'ルート案内'}</button>
+        <button class="detail-action secondary" onclick="toggleSelect(${s.id});closeDetail()">
+          ${isSel?'✓ '+(lang==='en'?'Added':'追加済'):'＋ '+(lang==='en'?'Add to plan':'プランに追加')}</button>
+        <button class="detail-action ghost" onclick="shareSpot(${s.id})">↗ ${t('share')}</button>
+        <button class="detail-action ghost" onclick="closeDetail()">✕ ${t('close')}</button>
+      </div>
+    </div>`;
+  document.getElementById('detailOverlay').classList.add('show');
+}
+function closeDetail(){document.getElementById('detailOverlay').classList.remove('show')}
+
+// ===== SHARE =====
+function shareSpot(id){
+  const s=S.find(x=>x.id===id);if(!s)return;
+  const text=`${s.emoji} ${s.name} (${s.en}) - Oahu Explorer`;
+  const url='https://shinpartnersgroup-oss.github.io/hawaii-explorer/';
+  if(navigator.share){navigator.share({title:s.name,text:text,url:url}).catch(()=>{})}
+  else{navigator.clipboard.writeText(text+' '+url).then(()=>alert('Copied to clipboard!')).catch(()=>{})}
+  track('share',{id:id});
+}
+
+// ===== GOOGLE MAPS =====
+function openGmaps(id){
+  const s=S.find(x=>x.id===id);if(!s)return;
+  let url=`https://www.google.com/maps/dir/?api=1&destination=${s.lat},${s.lng}&travelmode=driving`;
+  if(userLat)url+=`&origin=${userLat},${userLng}`;
+  window.open(url,'_blank');
+}
+function openGmapsMulti(){
+  if(selected.length===0)return;
+  const spots=selected.map(id=>S.find(x=>x.id===id)).filter(Boolean);
+  const last=spots[spots.length-1];
+  let url=`https://www.google.com/maps/dir/?api=1&destination=${last.lat},${last.lng}&travelmode=driving`;
+  if(userLat)url+=`&origin=${userLat},${userLng}`;
+  if(spots.length>1){
+    const waypoints=spots.slice(0,-1).map(s=>`${s.lat},${s.lng}`).join('|');
+    url+=`&waypoints=${waypoints}`;
+  }
+  window.open(url,'_blank');
+}
+
+// ===== SELECTION =====
+function toggleSelect(id){
+  const i=selected.indexOf(id);
+  if(i>=0){selected.splice(i,1);removeSelectedHistory(id)}
+  else{selected.push(id);saveSelected(id)}
+  localStorage.setItem(STORAGE_KEY+'selected',JSON.stringify(selected));
+  updateItiBar();renderSpots();if(currentTab==='plan')renderPlan();
+}
+function clearSelection(){selected=[];localStorage.setItem(STORAGE_KEY+'selected','[]');updateItiBar();renderSpots()}
+function updateItiBar(){
+  const bar=document.getElementById('itiBar');
+  document.getElementById('itiCount').textContent=selected.length;
+  if(!selected.length){bar.classList.remove('show');return}
+  bar.classList.add('show');
+  let total=0,prev=userLat?{lat:userLat,lng:userLng}:null;
+  selected.forEach(id=>{const s=S.find(x=>x.id===id);if(prev&&s)total+=hav(prev.lat,prev.lng,s.lat,s.lng);if(s)prev={lat:s.lat,lng:s.lng}});
+  document.getElementById('itiTotal').textContent=userLat?`合計: ${fmtD(total)} / 🚗${driveMin(total)}分`:'合計: ---';
+}
+
+// ===== PLAN TAB =====
+function renderPlan(){
+  const list=document.getElementById('planList'),empty=document.getElementById('planEmpty'),summary=document.getElementById('planSummary');
+  if(!selected.length){list.innerHTML='';empty.style.display='';summary.style.display='none';return}
+  empty.style.display='none';summary.style.display='';
+  const areas={waikiki:'ワイキキ',honolulu:'ホノルル',kailua:'カイルア',northshore:'ノースショア',westside:'西海岸',eastside:'東海岸',central:'中部'};
+  let totalD=0,legs=[],prev=userLat?{lat:userLat,lng:userLng}:null;
+  const spots=selected.map(id=>S.find(x=>x.id===id)).filter(Boolean);
+  spots.forEach(s=>{
+    const d=prev?hav(prev.lat,prev.lng,s.lat,s.lng):0;totalD+=d;
+    legs.push({spot:s,dist:d,cumD:totalD});prev={lat:s.lat,lng:s.lng};
+  });
+  list.innerHTML=legs.map((l,i)=>`
+    <div style="display:flex;gap:12px;align-items:center;padding:12px;margin-bottom:8px;background:var(--white);border:2px solid #e8e8e8;border-radius:var(--radius);transition:var(--transition)">
+      <div style="width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--pink),var(--orange));color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-family:Caveat,cursive;font-size:1.1rem;flex-shrink:0">${i+1}</div>
+      ${l.spot.photo?`<img src="${l.spot.photo}" style="width:50px;height:50px;border-radius:10px;object-fit:cover" onerror="this.style.display='none'">`:''}
+      <div style="flex:1;min-width:0">
+        <div style="font-weight:700;font-size:.9rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${l.spot.emoji} ${l.spot.name}</div>
+        <div style="font-size:.75rem;color:var(--ink-light)">${areas[l.spot.area]} / ${l.dist>0?'移動 '+fmtD(l.dist)+' (🚗'+driveMin(l.dist)+'分)':'スタート'}</div>
+        <div style="font-size:.72rem;color:var(--ink-muted)">累計: ${fmtD(l.cumD)}</div>
+      </div>
+      <button onclick="openGmaps(${l.spot.id})" style="padding:4px 10px;border-radius:var(--radius-full);background:#4285F4;color:#fff;font-size:.7rem;font-weight:700;border:none;cursor:pointer">Maps</button>
+      <button onclick="toggleSelect(${l.spot.id})" style="padding:4px 8px;border-radius:50%;background:#eee;font-size:.85rem;border:none;cursor:pointer">✕</button>
+    </div>
+  `).join('');
+  document.getElementById('planStats').innerHTML=`
+    <div>📍 ${spots.length}箇所 / 📏 合計 ${fmtD(totalD)} / 🚗 約${driveMin(totalD)}分</div>
+    <div style="font-size:.78rem;color:var(--ink-light);margin-top:4px">※直線距離×1.4で計算。実際の道路状況により変動します</div>
+  `;
+}
+
+// ===== ROUTE PANEL =====
+function showRoutePanel(){
+  if(!selected.length)return;
+  const panel=document.getElementById('routePanel'),content=document.getElementById('routeContent'),steps=document.getElementById('routeSteps'),gmaps=document.getElementById('routeGmaps');
+  const spots=selected.map(id=>S.find(x=>x.id===id)).filter(Boolean);
+  let totalD=0,legs=[];
+  let prev=userLat?{lat:userLat,lng:userLng}:null;
+  spots.forEach(s=>{const d=prev?hav(prev.lat,prev.lng,s.lat,s.lng):0;totalD+=d;legs.push({spot:s,dist:d,cumD:totalD});prev={lat:s.lat,lng:s.lng}});
+  content.innerHTML=`<div class="route-summary"><span class="route-summary-emoji">🗺️</span><div><div class="route-summary-name">${spots.length}箇所のルート</div><div class="route-summary-stats">📏 合計 ${fmtD(totalD)} / 🚗 約${driveMin(totalD)}分</div></div></div>`;
+  let html='';
+  if(userLat)html+=`<li class="route-step"><div class="step-num start">📍</div><div><div class="step-text">現在地を出発</div></div></li>`;
+  legs.forEach((l,i)=>{html+=`<li class="route-step"><div class="step-num">${i+1}</div><div><div class="step-text">${l.spot.emoji} ${l.spot.name}</div><div class="step-sub">移動: ${fmtD(l.dist)} (🚗${driveMin(l.dist)}分) / 累計: ${fmtD(l.cumD)}</div></div></li>`});
+  steps.innerHTML=html;
+  gmaps.innerHTML=`<button class="gmaps-nav-btn" onclick="openGmapsMulti()">🗺️ Googleマップでナビ開始</button>`;
+  panel.classList.add('open');
+  setTimeout(()=>{
+    if(rMap){rMap.remove();rMap=null}
+    const pts=spots.map(s=>[s.lat,s.lng]);if(userLat)pts.unshift([userLat,userLng]);
+    rMap=L.map('routeMap').setView(pts[0],10);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'&copy; OSM'}).addTo(rMap);
+    if(userLat)L.marker([userLat,userLng],{icon:L.divIcon({className:'',html:'<div style="font-size:20px">📍</div>',iconSize:[24,24],iconAnchor:[12,24]})}).addTo(rMap).bindPopup('現在地');
+    spots.forEach((s,i)=>{
+      L.marker([s.lat,s.lng],{icon:L.divIcon({className:'',html:`<div style="background:linear-gradient(135deg,#F06292,#FF8A65);color:#fff;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;border:2px solid #fff;font-family:Caveat,cursive;font-size:1rem;box-shadow:0 2px 8px rgba(0,0,0,.2)">${i+1}</div>`,iconSize:[30,30],iconAnchor:[15,15]})}).addTo(rMap).bindPopup(`<b>${s.emoji} ${s.name}</b>`);
+    });
+    L.polyline(pts,{color:'#F06292',weight:4,dashArray:'10,8',opacity:.8}).addTo(rMap);
+    rMap.fitBounds(pts,{padding:[40,40]});
+  },150);
+}
+function closeRoute(){document.getElementById('routePanel').classList.remove('open');if(rMap){rMap.remove();rMap=null}}
+
+// ===== SUGGEST ENGINE =====
+function runSuggest(){
+  const input=document.getElementById('suggestInput').value.trim();if(!input)return;
+  saveSearch(input);
+  const res=document.getElementById('suggestResults'),cards=document.getElementById('suggestCards'),title=document.getElementById('suggestTitle');
+  res.classList.add('show');title.textContent='';cards.innerHTML='<div style="text-align:center;padding:16px;font-family:Caveat,cursive;font-size:1.1rem;color:var(--pink)">ぴったりのスポットを探しています...</div>';
+  setTimeout(()=>{
+    let tags=[];
+    for(const[k,v]of Object.entries(KW)){if(input.includes(k))tags.push(...v)}
+    const scored=S.map(s=>{
+      let sc=0;const ts=new Set(tags);
+      s.tags.forEach(t=>{if(ts.has(t))sc+=3});
+      input.replace(/[をにがでのはもと、。!！?？]/g,' ').split(/\s+/).filter(w=>w.length>1).forEach(w=>{
+        if(s.desc.includes(w))sc+=2;if(s.name.includes(w))sc+=4;
+      });
+      const tagLabels={relaxing:'リラックス',beach:'ビーチ',couple:'カップル向け',family:'ファミリー向け',sunset:'サンセット',instagram:'インスタ映え',hiking:'ハイキング',romantic:'ロマンチック',nature:'自然',history:'歴史',shopping:'ショッピング',surfing:'サーフィン',snorkeling:'シュノーケリング',coffee:'コーヒー',must_eat:'必食',famous:'有名',local:'ローカル',poke:'ポケ',shrimp:'シュリンプ',pancake:'パンケーキ',breakfast:'朝食'};
+      const reason=s.tags.filter(t=>ts.has(t)).slice(0,3).map(t=>tagLabels[t]||t).join(' / ');
+      return{...s,sc,reason};
+    }).filter(x=>x.sc>0).sort((a,b)=>b.sc-a.sc).slice(0,6);
+    if(!scored.length){title.textContent='別のキーワードを試してみてください';cards.innerHTML='';return}
+    const mx=scored[0].sc;
+    title.textContent=`「${input}」にぴったりの ${scored.length} スポット`;
+    cards.innerHTML=scored.map(s=>{
+      const pct=Math.min(100,Math.round(s.sc/mx*100));
+      const d=userLat?fmtD(hav(userLat,userLng,s.lat,s.lng)):'';
+      return `<div class="sr-card" onclick="openDetail(${s.id})">
+        ${s.photo?`<img src="${s.photo}" alt="${s.name}" onerror="this.style.display='none'">`:`<span style="font-size:2rem">${s.emoji}</span>`}
+        <div class="sr-info"><div class="sr-name">${s.emoji} ${s.name} <small style="color:var(--ink-muted)">${d}</small></div><div class="sr-reason">${s.reason||s.desc.substring(0,50)+'...'}</div></div>
+        <div class="sr-match">${pct}%</div>
+      </div>`;
+    }).join('');
+  },500);
+}
+
+// ===== HISTORY (localStorage) =====
+function saveView(id){
+  let h=JSON.parse(localStorage.getItem(STORAGE_KEY+'viewed')||'[]');
+  h=h.filter(x=>x.id!==id);h.unshift({id,ts:Date.now()});h=h.slice(0,30);
+  localStorage.setItem(STORAGE_KEY+'viewed',JSON.stringify(h));
+}
+function saveSelected(id){
+  let h=JSON.parse(localStorage.getItem(STORAGE_KEY+'sel_history')||'[]');
+  h=h.filter(x=>x.id!==id);h.unshift({id,ts:Date.now()});h=h.slice(0,30);
+  localStorage.setItem(STORAGE_KEY+'sel_history',JSON.stringify(h));
+}
+function removeSelectedHistory(id){/* keep in history even if deselected */}
+function saveSearch(q){
+  if(!q||q.length<2)return;
+  let h=JSON.parse(localStorage.getItem(STORAGE_KEY+'searches')||'[]');
+  h=h.filter(x=>x!==q);h.unshift(q);h=h.slice(0,20);
+  localStorage.setItem(STORAGE_KEY+'searches',JSON.stringify(h));
+}
+function clearHistory(type){
+  if(type==='selected')localStorage.removeItem(STORAGE_KEY+'sel_history');
+  else if(type==='viewed')localStorage.removeItem(STORAGE_KEY+'viewed');
+  else if(type==='searches')localStorage.removeItem(STORAGE_KEY+'searches');
+  renderHistory();
+}
+function renderHistory(){
+  const viewed=JSON.parse(localStorage.getItem(STORAGE_KEY+'viewed')||'[]');
+  const selH=JSON.parse(localStorage.getItem(STORAGE_KEY+'sel_history')||'[]');
+  const searches=JSON.parse(localStorage.getItem(STORAGE_KEY+'searches')||'[]');
+  const fmt=ts=>{const d=new Date(ts);return `${d.getMonth()+1}/${d.getDate()} ${d.getHours()}:${String(d.getMinutes()).padStart(2,'0')}`};
+  const renderList=(items,elId)=>{
+    const el=document.getElementById(elId);
+    if(!items.length){el.innerHTML='<div class="history-empty">まだ履歴はありません</div>';return}
+    el.innerHTML=items.map(item=>{
+      const s=S.find(x=>x.id===item.id);if(!s)return '';
+      return `<div class="history-item" onclick="openDetail(${s.id})">
+        ${s.photo?`<img src="${s.photo}" alt="${s.name}" loading="lazy" onerror="this.style.background='var(--blue-bg)'">`
+          :`<div style="width:140px;height:95px;border-radius:12px;background:var(--blue-bg);display:flex;align-items:center;justify-content:center;font-size:2rem">${s.emoji}</div>`}
+        <div class="h-name">${s.emoji} ${s.name}</div>
+        <div class="h-date">${fmt(item.ts)}</div>
+      </div>`;
+    }).join('');
+  };
+  renderList(selH,'historySelected');
+  renderList(viewed,'historyViewed');
+  const searchEl=document.getElementById('historySearches');
+  if(!searches.length){searchEl.innerHTML='<div class="history-empty">まだ検索履歴はありません</div>';return}
+  searchEl.innerHTML=searches.map(q=>`<button style="padding:6px 14px;border-radius:var(--radius-full);border:2px solid #e0e0e0;background:var(--white);font-size:.82rem;cursor:pointer;transition:var(--transition)" onclick="document.getElementById('searchInput').value='${q.replace(/'/g,"\\'")}';switchTab('explore');renderSpots()">${q}</button>`).join('');
+}
+</script>
+</body>
+</html>

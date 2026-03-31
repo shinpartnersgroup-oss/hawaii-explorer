@@ -1,0 +1,12 @@
+{
+  "appId": "com.shinpartners.oahuexplorer",
+  "appName": "Oahu Explorer",
+  "webDir": "www",
+  "server": {
+    "androidScheme": "https"
+  },
+  "ios": {
+    "contentInset": "automatic",
+    "backgroundColor": "#f8fafc"
+  }
+}
