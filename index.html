@@ -366,8 +366,12 @@ img{display:block;max-width:100%}
 <div class="tools-grid">
   <div class="tool-btn" onclick="openTool('tip')"><div class="t-icon">💰</div><div class="t-label">チップ計算</div></div>
   <div class="tool-btn" onclick="openTool('currency')"><div class="t-icon">💱</div><div class="t-label">通貨換算</div></div>
-  <div class="tool-btn" onclick="openTool('weather')"><div class="t-icon">🌤️</div><div class="t-label">今日の天気</div></div>
+  <div class="tool-btn" onclick="openTool('weather')"><div class="t-icon">🌤️</div><div class="t-label">今の天気</div></div>
   <div class="tool-btn" onclick="openTool('bus')"><div class="t-icon">🚌</div><div class="t-label">バス案内</div></div>
+  <div class="tool-btn" onclick="openTool('prep')"><div class="t-icon">📋</div><div class="t-label">渡航準備</div></div>
+  <div class="tool-btn" onclick="openTool('emergency')"><div class="t-icon">🆘</div><div class="t-label">緊急連絡</div></div>
+  <div class="tool-btn" onclick="openTool('model')"><div class="t-icon">🗓️</div><div class="t-label">モデルコース</div></div>
+  <div class="tool-btn" onclick="openTool('souvenir')"><div class="t-icon">🎁</div><div class="t-label">お土産</div></div>
 </div>
 
 <!-- Booking Quick Links -->
@@ -896,6 +900,10 @@ function openTool(type){
   else if(type==='weather') m.innerHTML=weatherHTML();
   else if(type==='bus') m.innerHTML=busHTML();
   else if(type==='coupon') m.innerHTML=couponHTML();
+  else if(type==='prep') m.innerHTML=prepHTML();
+  else if(type==='emergency') m.innerHTML=emergencyHTML();
+  else if(type==='model') m.innerHTML=modelHTML();
+  else if(type==='souvenir') m.innerHTML=souvenirHTML();
   document.getElementById('toolOverlay').classList.add('show');
   track('tool_open',{type});
 }
@@ -1030,6 +1038,156 @@ function couponHTML(){
       💡 <b>アプリ限定クーポン</b>は近日公開予定！<br>通知をオンにしてお待ちください。
     </div>
     <a href="https://www.klook.com/en-US/city/703335-honolulu-things-to-do/" target="_blank" rel="noopener" class="affiliate-btn" style="margin-top:10px" onclick="track('affiliate_click',{type:'coupon_klook'})">🎫 Klookで割引ツアーを探す</a>
+    <button class="tool-close" onclick="closeTool()">閉じる</button>`;
+}
+
+function prepHTML(){
+  return `<h3>📋 渡航準備チェックリスト</h3>
+    <p style="font-size:.78rem;color:var(--c4);text-align:center;margin-bottom:12px">出発前にチェック!</p>
+    <div id="prepList" style="display:flex;flex-direction:column;gap:6px">
+    ${[
+      {t:'パスポート（有効期限6ヶ月以上）',c:'passport'},
+      {t:'ESTA申請（渡航72時間前まで）',c:'esta'},
+      {t:'航空券・ホテル予約確認書',c:'booking'},
+      {t:'海外旅行保険',c:'insurance'},
+      {t:'クレジットカード（VISA/Master推奨）',c:'card'},
+      {t:'eSIM / WiFi手配',c:'esim'},
+      {t:'現金（$100〜200程度・空港で両替）',c:'cash'},
+      {t:'運転免許証（レンタカー用）',c:'license'},
+      {t:'ダイヤモンドヘッド事前予約',c:'dh'},
+      {t:'ハナウマ湾事前予約',c:'hanauma'},
+      {t:'変圧器不要（ハワイは日本と同じAタイプ）',c:'plug'},
+      {t:'日焼け止め（リーフセーフのみ使用可）',c:'sunscreen'},
+      {t:'帰国時：ビーフジャーキー持込不可に注意',c:'beef'},
+    ].map(i=>{
+      const checked=localStorage.getItem('prep_'+i.c)==='1';
+      return `<label style="display:flex;align-items:center;gap:10px;padding:10px;background:${checked?'var(--success-light)':'var(--c9)'};border-radius:var(--r);cursor:pointer;transition:var(--ease);font-size:.82rem">
+        <input type="checkbox" ${checked?'checked':''} onchange="localStorage.setItem('prep_${i.c}',this.checked?'1':'0');this.parentElement.style.background=this.checked?'var(--success-light)':'var(--c9)'" style="width:18px;height:18px;accent-color:var(--success)">
+        <span>${i.t}</span>
+      </label>`;
+    }).join('')}
+    </div>
+    <div style="margin-top:12px;padding:10px;background:var(--warn-light);border-radius:var(--r);font-size:.75rem">
+      <b>💡 eSIMが便利:</b> 到着前にスマホにeSIMをインストールしておけば、着いた瞬間からネット使えます。空港でSIM買う必要なし！
+    </div>
+    <a href="https://www.klook.com/en-US/activity/122888-klook-pass-hawaii-oahu-island/" target="_blank" rel="noopener" class="affiliate-cta" style="margin-top:10px" onclick="track('affiliate_click',{type:'prep_klook'})">
+      <span class="affiliate-cta-icon">🎫</span>
+      <div class="affiliate-cta-text"><div class="affiliate-cta-title">Klookパスでお得にアクティビティ</div><div class="affiliate-cta-sub">複数スポットをまとめて割引</div></div>
+      <span class="affiliate-cta-arrow">→</span>
+    </a>
+    <button class="tool-close" onclick="closeTool()">閉じる</button>`;
+}
+
+function emergencyHTML(){
+  return `<h3>🆘 緊急連絡先・お役立ち情報</h3>
+    <div style="display:flex;flex-direction:column;gap:8px;margin-top:12px">
+      <a href="tel:911" style="display:flex;align-items:center;gap:12px;padding:14px;background:#ef4444;color:#fff;border-radius:var(--r);text-decoration:none;font-weight:700">
+        <span style="font-size:1.5rem">🚨</span><div><div>911（緊急通報）</div><div style="font-size:.72rem;opacity:.8">警察・消防・救急</div></div>
+      </a>
+      <a href="tel:+81335013000" style="display:flex;align-items:center;gap:12px;padding:12px;background:var(--c9);border-radius:var(--r);text-decoration:none;color:var(--c1)">
+        <span style="font-size:1.3rem">🇯🇵</span><div><div style="font-weight:700;font-size:.88rem">在ホノルル日本国総領事館</div><div style="font-size:.72rem;color:var(--c4)">+1-808-543-3111 / 1742 Nuuanu Ave</div></div>
+      </a>
+      <div style="padding:12px;background:var(--c9);border-radius:var(--r)">
+        <div style="font-weight:700;font-size:.88rem">🏥 主要病院</div>
+        <div style="font-size:.75rem;color:var(--c3);margin-top:4px">
+          <div>• Straub Medical Center: +1-808-522-4000</div>
+          <div>• Queens Medical Center: +1-808-691-1000</div>
+          <div>• 日本語対応: ドクターズ・オン・コール +1-808-923-9966</div>
+        </div>
+      </div>
+      <div style="padding:12px;background:var(--c9);border-radius:var(--r)">
+        <div style="font-weight:700;font-size:.88rem">📱 知っておくべき番号</div>
+        <div style="font-size:.75rem;color:var(--c3);margin-top:4px">
+          <div>• JCBプラザ ワイキキ: +1-808-971-2489</div>
+          <div>• クレジットカード紛失: 各社番号をメモしておく</div>
+          <div>• 海外旅行保険デスク: 保険証に記載の番号</div>
+        </div>
+      </div>
+      <div style="padding:12px;background:var(--warn-light);border-radius:var(--r)">
+        <div style="font-weight:700;font-size:.85rem">⚠️ ハワイの安全Tips</div>
+        <div style="font-size:.75rem;color:var(--c3);margin-top:4px">
+          <div>• 車上荒らし多発 → 車内に荷物を放置しない</div>
+          <div>• ビーチで貴重品は持ち歩かない</div>
+          <div>• 夜のアラワイ運河沿いは避ける</div>
+          <div>• 日焼けは想像以上に強い → SPF50+必須</div>
+        </div>
+      </div>
+    </div>
+    <button class="tool-close" onclick="closeTool()">閉じる</button>`;
+}
+
+function modelHTML(){
+  const courses=[
+    {title:'🌅 王道3日間コース',sub:'初ハワイにおすすめ',days:[
+      {d:'Day 1',spots:'ワイキキビーチ → アラモアナセンター → デュークスでサンセットディナー',tip:'到着日はワイキキ周辺でのんびり'},
+      {d:'Day 2',spots:'ダイヤモンドヘッド(朝) → カイルア/ラニカイ → ブーツ&キモズ → ホオマルヒア植物園',tip:'朝6時予約でダイヤモンドヘッドへ'},
+      {d:'Day 3',spots:'ノースショア(ジョバンニ → 松本シェイブアイス → サンセットビーチ) → ハレイワ散策',tip:'レンタカー推奨・1日かけて'}
+    ]},
+    {title:'👨‍👩‍👧 ファミリー4日間',sub:'子連れでも安心',days:[
+      {d:'Day 1',spots:'ワイキキビーチ(波穏やか) → アラモアナビーチパーク(BBQ可)',tip:'時差ボケ対策にビーチでのんびり'},
+      {d:'Day 2',spots:'ハナウマ湾(要予約) → シーライフパーク',tip:'シュノーケリングは午前中がベスト'},
+      {d:'Day 3',spots:'クアロア・ランチ(乗馬/ATV) → ドール・プランテーション(迷路)',tip:'子供はジープツアーが大人気'},
+      {d:'Day 4',spots:'コオリナ・ラグーン(波なし) → ワイケレアウトレット',tip:'最終日はのんびり+お買い物'}
+    ]},
+    {title:'💕 カップル3日間',sub:'ロマンチック旅',days:[
+      {d:'Day 1',spots:'ランカイ・ピルボックス(サンライズ) → カイルアカフェ → ラニカイビーチ',tip:'朝5時出発で絶景サンライズ'},
+      {d:'Day 2',spots:'マノアの滝 → コナコーヒー → タンタラスの丘(夕日→夜景)',tip:'夕方からタンタラスへ'},
+      {d:'Day 3',spots:'ハレアカラ → ノースショア → テッズベーカリー(パイ)',tip:'ドライブデート'}
+    ]},
+    {title:'🍽️ グルメ巡り2日間',sub:'食べ尽くし!',days:[
+      {d:'Day 1',spots:'レナーズ(朝マラサダ) → マルカメうどん → オノシーフード(ポケ) → サイドストリートイン(夜)',tip:'レナーズは朝イチ5:30〜'},
+      {d:'Day 2',spots:'ブーツ&キモズ(朝パンケーキ) → ジョバンニ(昼シュリンプ) → 松本シェイブアイス → デュークス(夜)',tip:'ブーツ&キモズは1時間待ち覚悟'}
+    ]}
+  ];
+  return `<h3>🗓️ モデルコース</h3>
+    <p style="font-size:.78rem;color:var(--c4);text-align:center;margin-bottom:12px">目的別のおすすめプラン</p>
+    ${courses.map(c=>`
+      <div style="margin-bottom:14px;padding:14px;background:var(--c9);border-radius:var(--r2)">
+        <div style="font-weight:700;font-size:.95rem;margin-bottom:2px">${c.title}</div>
+        <div style="font-size:.72rem;color:var(--c4);margin-bottom:10px">${c.sub}</div>
+        ${c.days.map(d=>`
+          <div style="margin-bottom:8px;padding:8px;background:var(--white);border-radius:var(--r);border-left:3px solid var(--brand)">
+            <div style="font-weight:700;font-size:.78rem;color:var(--brand)">${d.d}</div>
+            <div style="font-size:.78rem;color:var(--c2);margin-top:2px">${d.spots}</div>
+            <div style="font-size:.68rem;color:var(--c5);margin-top:2px">💡 ${d.tip}</div>
+          </div>
+        `).join('')}
+      </div>
+    `).join('')}
+    <a href="https://www.viator.com/Oahu/d672-ttd" target="_blank" rel="noopener" class="affiliate-cta" onclick="track('affiliate_click',{type:'model_viator'})">
+      <span class="affiliate-cta-icon">🎫</span>
+      <div class="affiliate-cta-text"><div class="affiliate-cta-title">ガイド付きツアーで効率的に</div><div class="affiliate-cta-sub">送迎付き・日本語対応あり</div></div>
+      <span class="affiliate-cta-arrow">→</span>
+    </a>
+    <button class="tool-close" onclick="closeTool()">閉じる</button>`;
+}
+
+function souvenirHTML(){
+  const items=[
+    {name:'ホノルルクッキー',where:'アラモアナセンター/空港',price:'$12-30',icon:'🍪',tip:'パイナップル型が定番。空港でも買えるが店舗の方が品揃え◎'},
+    {name:'コナコーヒー',where:'ABCストア/専門店',price:'$10-25',icon:'☕',tip:'100% Konaと書いてあるものを。10%ブレンドに注意'},
+    {name:'マカダミアナッツチョコ',where:'ABCストア/ドンキ',price:'$8-15',icon:'🍫',tip:'ドンキホーテが最安。バラマキ土産に最適'},
+    {name:'ハワイアンホースト',where:'ABCストア/コストコ',price:'$5-20',icon:'🎁',tip:'コストコの大袋がコスパ最強'},
+    {name:'ライオンコーヒー',where:'スーパー/ABCストア',price:'$8-12',icon:'☕',tip:'バニラマカダミア味が人気No.1'},
+    {name:'日焼け止め・リップ',where:'ABCストア/Whole Foods',price:'$5-15',icon:'🧴',tip:'ハワイ限定コスメもおすすめ'},
+    {name:'Tシャツ・サーフブランド',where:'ハレイワ/アラモアナ',price:'$20-50',icon:'👕',tip:'ハレイワのローカルブランドが穴場'},
+    {name:'ウクレレ',where:'ウクレレプアプア/Island Bazaar',price:'$50-500',icon:'🎸',tip:'$100前後で良い入門用が買える'},
+  ];
+  return `<h3>🎁 お土産ガイド</h3>
+    <p style="font-size:.78rem;color:var(--c4);text-align:center;margin-bottom:12px">人気のお土産 & 買える場所</p>
+    ${items.map(i=>`
+      <div style="display:flex;gap:10px;align-items:flex-start;padding:10px;background:var(--c9);border-radius:var(--r);margin-bottom:6px">
+        <span style="font-size:1.5rem">${i.icon}</span>
+        <div style="flex:1">
+          <div style="font-weight:700;font-size:.85rem">${i.name} <span style="color:var(--orange);font-size:.75rem">${i.price}</span></div>
+          <div style="font-size:.72rem;color:var(--c4)">📍 ${i.where}</div>
+          <div style="font-size:.68rem;color:var(--c5);margin-top:2px">💡 ${i.tip}</div>
+        </div>
+      </div>
+    `).join('')}
+    <div style="margin-top:10px;padding:10px;background:var(--warn-light);border-radius:var(--r);font-size:.75rem">
+      <b>⚠️ 注意:</b> ビーフジャーキー・生フルーツは日本に持ち込めません！
+    </div>
     <button class="tool-close" onclick="closeTool()">閉じる</button>`;
 }
 
