@@ -1,4 +1,4 @@
-const CACHE_NAME = 'oahu-explorer-v1';
+const CACHE_NAME = 'oahu-explorer-v3';
 const PRECACHE_URLS = [
   './',
   './index.html',
