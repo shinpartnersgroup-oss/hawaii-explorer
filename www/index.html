@@ -496,8 +496,11 @@ img{display:block;max-width:100%}
 <!-- Plan Tab -->
 <div id="tab-plan" style="display:none">
   <div style="padding:16px">
-    <h3 style="font-family:Caveat,cursive;font-size:1.4rem;margin-bottom:12px">📋 マイプラン</h3>
-    <p style="font-size:.85rem;color:var(--ink-light);margin-bottom:16px">スポットカードをタップして追加。ドラッグで順番変更。</p>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+      <h3 style="font-family:var(--font2);font-size:1.3rem">📋 マイプラン</h3>
+      <button onclick="sharePlan()" style="padding:6px 14px;border-radius:var(--r4);background:var(--brand);color:#fff;font-size:.75rem;font-weight:700">↗ プランを共有</button>
+    </div>
+    <p style="font-size:.78rem;color:var(--c4);margin-bottom:14px">スポットをタップして追加 → Googleマップでナビ</p>
     <div id="planList"></div>
     <div id="planEmpty" style="text-align:center;padding:40px;color:var(--ink-muted)">
       <div style="font-size:3rem;margin-bottom:10px">🗺️</div>
@@ -1479,7 +1482,8 @@ function sunsetHTML(){
 
 function firstTimeHTML(){
   const tips=[
-    {icon:'💵',title:'チップは必須（任意ではない）',desc:'レストラン15-20%、カフェ$1-2、タクシー15%。払わないと非常に失礼。最近はタブレットで25%を勧められるが18-20%で十分。'},
+    {icon:'💵',title:'チップは必須（任意ではない）',desc:'レストラン15-20%、カフェ$1-2、タクシー15%。払わないと非常に失礼。タブレットで25%を勧められるが18-20%で十分。'},
+    {icon:'🍽️',title:'レストランのマナーが日本と違う',desc:'手を上げてスタッフを呼ぶのはNG。担当が決まっている。水は自動で出てこない。「Water, please」と言う。会計はテーブルで。'},
     {icon:'🔌',title:'変圧器・変換プラグ不要',desc:'ハワイは日本と同じAタイプ。電圧は120V（日本は100V）でほぼ同じ。スマホ充電器はそのまま使えます。'},
     {icon:'🚗',title:'右側通行に注意',desc:'レンタカーは右側通行。特に左折時と駐車場出口で要注意。赤信号でも右折OKの場所が多い（一時停止後）。'},
     {icon:'☀️',title:'日焼けは想像の3倍',desc:'ハワイの紫外線は日本の2-3倍。SPF50+を2時間おきに塗り直し。リーフセーフの日焼け止めのみ使用可（法律）。'},
@@ -1793,6 +1797,18 @@ function shareSpot(id){
   if(navigator.share){navigator.share({title:s.name,text:text,url:url}).catch(()=>{})}
   else{navigator.clipboard.writeText(text+' '+url).then(()=>alert('Copied to clipboard!')).catch(()=>{})}
   track('share',{id:id});
+}
+
+// ===== SHARE PLAN =====
+function sharePlan(){
+  if(!selected.length){alert('プランにスポットを追加してください');return}
+  const spots=selected.map(id=>S.find(x=>x.id===id)).filter(Boolean);
+  let text='🌺 My Oahu Plan - Oahu Explorer\n\n';
+  spots.forEach((s,i)=>{text+=`${i+1}. ${s.emoji} ${s.name} (${s.en})\n   📍 ${s.area}\n\n`});
+  text+='🗺️ https://shinpartnersgroup-oss.github.io/hawaii-explorer/';
+  if(navigator.share){navigator.share({title:'My Oahu Plan',text:text}).catch(()=>{})}
+  else{navigator.clipboard.writeText(text).then(()=>alert('プランをコピーしました！LINEやメッセージに貼り付けてシェアできます。')).catch(()=>{})}
+  track('share_plan',{count:selected.length});
 }
 
 // ===== GOOGLE MAPS =====
