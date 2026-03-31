@@ -378,6 +378,8 @@ img{display:block;max-width:100%}
   <div class="tool-btn" onclick="openTool('phrases')"><div class="t-icon">💬</div><div class="t-label">英会話</div></div>
   <div class="tool-btn" onclick="openTool('firsttime')"><div class="t-icon">🔰</div><div class="t-label">初ハワイ</div></div>
   <div class="tool-btn" onclick="openTool('coupon')"><div class="t-icon">🎟️</div><div class="t-label">クーポン</div></div>
+  <div class="tool-btn" onclick="openTool('parking')"><div class="t-icon">🅿️</div><div class="t-label">駐車場</div></div>
+  <div class="tool-btn" onclick="openTool('sunset')"><div class="t-icon">🌅</div><div class="t-label">日の出入り</div></div>
 </div>
 
 <!-- Booking Quick Links -->
@@ -923,6 +925,8 @@ function openTool(type){
   else if(type==='budget') m.innerHTML=budgetHTML();
   else if(type==='phrases') m.innerHTML=phrasesHTML();
   else if(type==='firsttime') m.innerHTML=firstTimeHTML();
+  else if(type==='parking') m.innerHTML=parkingHTML();
+  else if(type==='sunset') m.innerHTML=sunsetHTML();
   document.getElementById('toolOverlay').classList.add('show');
   track('tool_open',{type});
 }
@@ -1358,6 +1362,77 @@ function phrasesHTML(){
         `).join('')}
       </div>
     `).join('')}
+    <button class="tool-close" onclick="closeTool()">閉じる</button>`;
+}
+
+function parkingHTML(){
+  const spots=[
+    {n:'カピオラニ公園',price:'無料',note:'ワイキキ最寄りの無料駐車場。Zoo横。24h OK',icon:'🟢'},
+    {n:'ワイキキシェル（Montserrat Ave）',price:'無料',note:'ダイヤモンドヘッド側。路上駐車可。夜間OK',icon:'🟢'},
+    {n:'路上メーター（日曜・祝日）',price:'無料',note:'日曜と州祝日はメーター無料。平日7-18時有料',icon:'🟢'},
+    {n:'ワイキキバンヤン駐車場',price:'$15/24h',note:'201 Ohua Ave。週$80。出入り自由。ワイキキ最安級',icon:'🟡'},
+    {n:'ロイヤルハワイアンセンター',price:'買い物で1h無料',note:'何か購入でバリデーション。立地最高',icon:'🟡'},
+    {n:'アラモアナセンター',price:'最初4h無料',note:'広大な無料駐車場。買い物ついでに便利',icon:'🟢'},
+    {n:'ハワイアンモナーク',price:'$5/h',note:'交渉でフラットレートも。聞いてみる価値あり',icon:'🟡'},
+  ];
+  return `<h3>🅿️ ワイキキ駐車場ガイド</h3>
+    <p style="font-size:.78rem;color:var(--c4);text-align:center;margin-bottom:12px">知らないと$30-50/日かかる！</p>
+    ${spots.map(s=>`
+      <div style="display:flex;gap:10px;align-items:center;padding:10px;background:var(--c9);border-radius:var(--r);margin-bottom:4px">
+        <span style="font-size:1.2rem">${s.icon}</span>
+        <div style="flex:1">
+          <div style="font-weight:700;font-size:.82rem">${s.n} <span style="color:var(--success);font-size:.78rem">${s.price}</span></div>
+          <div style="font-size:.68rem;color:var(--c4)">${s.note}</div>
+        </div>
+      </div>
+    `).join('')}
+    <div style="margin-top:10px;padding:10px;background:#fef2f2;border-radius:var(--r);font-size:.75rem;color:#991b1b">
+      <b>⚠️ 注意:</b> 車上荒らし多発。車内に荷物・バッグを絶対に残さない。トランクも狙われます。
+    </div>
+    <a href="https://www.rentalcars.com/en/city/us/honolulu/" target="_blank" rel="noopener" class="affiliate-cta green" style="margin-top:10px" onclick="track('affiliate_click',{type:'parking_rental'})">
+      <span class="affiliate-cta-icon">🚗</span>
+      <div class="affiliate-cta-text"><div class="affiliate-cta-title">レンタカーを最安値で比較</div><div class="affiliate-cta-sub">RentalCars.com</div></div>
+      <span class="affiliate-cta-arrow">→</span>
+    </a>
+    <button class="tool-close" onclick="closeTool()">閉じる</button>`;
+}
+
+function sunsetHTML(){
+  const now=new Date();const m=now.getMonth();
+  const times=[ // Approximate Honolulu sunrise/sunset by month
+    {sr:'7:10',ss:'18:00'},{sr:'6:55',ss:'18:20'},{sr:'6:30',ss:'18:35'},
+    {sr:'6:05',ss:'18:45'},{sr:'5:50',ss:'19:00'},{sr:'5:50',ss:'19:15'},
+    {sr:'6:00',ss:'19:15'},{sr:'6:10',ss:'19:00'},{sr:'6:15',ss:'18:35'},
+    {sr:'6:20',ss:'18:05'},{sr:'6:40',ss:'17:50'},{sr:'7:05',ss:'17:55'}
+  ];
+  const t=times[m];
+  const sunriseSpots=['ラニカイ・ピルボックス','マカプウ灯台','ダイヤモンドヘッド山頂'];
+  const sunsetSpots=['マジックアイランド（アラモアナ）','サンセットビーチ（ノースショア）','タンタラスの丘','コオリナ・ラグーン'];
+  return `<h3>🌅 日の出・日の入り時刻</h3>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0">
+      <div style="padding:16px;background:linear-gradient(135deg,#fef3c7,#fff);border-radius:var(--r);text-align:center">
+        <div style="font-size:2rem;margin-bottom:4px">🌅</div>
+        <div style="font-size:.75rem;color:var(--c4)">日の出</div>
+        <div style="font-size:1.5rem;font-weight:700;color:var(--warn)">${t.sr}</div>
+      </div>
+      <div style="padding:16px;background:linear-gradient(135deg,#fce7f3,#fff);border-radius:var(--r);text-align:center">
+        <div style="font-size:2rem;margin-bottom:4px">🌇</div>
+        <div style="font-size:.75rem;color:var(--c4)">日の入り</div>
+        <div style="font-size:1.5rem;font-weight:700;color:var(--accent)">${t.ss}</div>
+      </div>
+    </div>
+    <div style="font-size:.72rem;color:var(--c5);text-align:center;margin-bottom:12px">${m+1}月の目安（ホノルル）</div>
+    <div style="margin-bottom:10px">
+      <div style="font-weight:700;font-size:.85rem;margin-bottom:6px">🌅 サンライズおすすめスポット</div>
+      ${sunriseSpots.map(s=>`<div style="padding:6px 10px;background:var(--warn-light);border-radius:6px;margin-bottom:3px;font-size:.78rem">${s}</div>`).join('')}
+    </div>
+    <div style="margin-bottom:10px">
+      <div style="font-weight:700;font-size:.85rem;margin-bottom:6px">🌇 サンセットおすすめスポット</div>
+      ${sunsetSpots.map(s=>`<div style="padding:6px 10px;background:var(--accent-light);border-radius:6px;margin-bottom:3px;font-size:.78rem">${s}</div>`).join('')}
+    </div>
+    <div style="padding:10px;background:var(--c9);border-radius:var(--r);font-size:.75rem">
+      <b>📸 ゴールデンアワー:</b> 日の出後・日の入り前の30-60分が写真撮影のベストタイム。ハワイは赤道に近いため短めなので早めにスタンバイ！
+    </div>
     <button class="tool-close" onclick="closeTool()">閉じる</button>`;
 }
 
