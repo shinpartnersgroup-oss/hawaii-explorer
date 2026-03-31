@@ -31,7 +31,7 @@
 :root{
   --c1:#0f172a;--c2:#1e293b;--c3:#334155;--c4:#64748b;--c5:#94a3b8;--c6:#cbd5e1;--c7:#e2e8f0;--c8:#f1f5f9;--c9:#f8fafc;
   --white:#fff;--bg:#f8fafc;
-  --brand:#6366f1;--brand2:#818cf8;--brand-light:#eef2ff;
+  --brand:#287DFA;--brand2:#1CB0F6;--brand-light:#EFF6FF;
   --accent:#ec4899;--accent2:#f472b6;--accent-light:#fce7f3;
   --success:#10b981;--success-light:#d1fae5;
   --warn:#f59e0b;--warn-light:#fef3c7;
@@ -50,7 +50,7 @@ button{cursor:pointer;font-family:inherit;border:none;background:none;-webkit-ta
 img{display:block;max-width:100%}
 
 /* ===== Header ===== */
-.header{background:linear-gradient(135deg,#667eea 0%,#764ba2 50%,#ec4899 100%);padding:clamp(32px,6vw,48px) 20px clamp(36px,6vw,52px);text-align:center;position:relative;overflow:hidden}
+.header{background:linear-gradient(135deg,#287DFA 0%,#1CB0F6 50%,#06B6D4 100%);padding:clamp(32px,6vw,48px) 20px clamp(36px,6vw,52px);text-align:center;position:relative;overflow:hidden}
 .header::before{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg width='60' height='60' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='30' cy='30' r='1.5' fill='rgba(255,255,255,.08)'/%3E%3C/svg%3E");pointer-events:none}
 .header::after{content:'';position:absolute;bottom:-1px;left:0;right:0;height:32px;background:var(--bg);border-radius:32px 32px 0 0}
 .header h1{font-family:var(--font2);font-size:clamp(2rem,7vw,3rem);color:#fff;text-shadow:0 2px 16px rgba(0,0,0,.15);position:relative;z-index:1;letter-spacing:.5px}
@@ -74,25 +74,35 @@ img{display:block;max-width:100%}
 /* ===== Tools Grid ===== */
 .tools-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;padding:8px 16px}
 @media(max-width:360px){.tools-grid{grid-template-columns:repeat(3,1fr)}}
-.tool-btn{padding:12px 6px;border-radius:var(--r2);background:var(--white);box-shadow:var(--s1);text-align:center;transition:var(--ease)}
-.tool-btn:active{transform:scale(.95)}
-.tool-btn .t-icon{font-size:1.4rem;margin-bottom:2px}
-.tool-btn .t-label{font-size:.65rem;font-weight:600;color:var(--c3)}
+.tool-btn{padding:10px 6px;border-radius:var(--r2);background:var(--white);text-align:center;transition:var(--ease)}
+.tool-btn:active{transform:scale(.93)}
+.tool-btn .t-icon{width:40px;height:40px;margin:0 auto 4px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.2rem}
+.tool-btn:nth-child(1) .t-icon{background:#FFF3E0}.tool-btn:nth-child(2) .t-icon{background:#E8F5E9}
+.tool-btn:nth-child(3) .t-icon{background:#E3F2FD}.tool-btn:nth-child(4) .t-icon{background:#F3E5F5}
+.tool-btn:nth-child(5) .t-icon{background:#FFF8E1}.tool-btn:nth-child(6) .t-icon{background:#FFEBEE}
+.tool-btn:nth-child(7) .t-icon{background:#E0F7FA}.tool-btn:nth-child(8) .t-icon{background:#FCE4EC}
+.tool-btn:nth-child(9) .t-icon{background:#F1F8E9}.tool-btn:nth-child(10) .t-icon{background:#E8EAF6}
+.tool-btn:nth-child(11) .t-icon{background:#FFF3E0}.tool-btn:nth-child(12) .t-icon{background:#E0F2F1}
+.tool-btn:nth-child(13) .t-icon{background:#FFFDE7}.tool-btn:nth-child(14) .t-icon{background:#F9FBE7}
+.tool-btn:nth-child(15) .t-icon{background:#EDE7F6}.tool-btn:nth-child(16) .t-icon{background:#E1F5FE}
+.tool-btn:nth-child(17) .t-icon{background:#FBE9E7}.tool-btn:nth-child(18) .t-icon{background:#E8F5E9}
+.tool-btn:nth-child(19) .t-icon{background:#FFF8E1}
+.tool-btn .t-label{font-size:.62rem;font-weight:600;color:var(--c3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 
 /* ===== Booking Banner ===== */
 .booking-section{padding:6px 16px}
 .booking-banner{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding:2px 0}
 .booking-banner::-webkit-scrollbar{display:none}
-.booking-card{flex-shrink:0;padding:10px 16px;border-radius:var(--r2);background:var(--white);box-shadow:var(--s1);text-align:center;transition:var(--ease);min-width:100px;text-decoration:none;color:var(--c1)}
-.booking-card:active{transform:scale(.95)}
-.booking-card .b-icon{font-size:1.2rem}
-.booking-card .b-label{font-size:.7rem;font-weight:700;margin-top:2px}
-.booking-card .b-sub{font-size:.58rem;color:var(--c5)}
+.booking-card{flex-shrink:0;padding:12px 16px;border-radius:var(--r2);background:var(--white);box-shadow:0 1px 6px rgba(0,0,0,.05);text-align:center;transition:var(--ease);min-width:100px;text-decoration:none;color:var(--c1);border:1px solid var(--c7)}
+.booking-card:active{transform:scale(.95);border-color:var(--brand)}
+.booking-card .b-icon{font-size:1.3rem}
+.booking-card .b-label{font-size:.72rem;font-weight:700;margin-top:3px;color:var(--c1)}
+.booking-card .b-sub{font-size:.58rem;color:var(--brand);font-weight:600}
 
 /* ===== Tabs ===== */
-.main-tabs{display:flex;gap:2px;margin:10px 16px;border-radius:var(--r);background:var(--c8);padding:3px}
-.main-tab{flex:1;padding:9px 4px;text-align:center;font-size:.78rem;font-weight:700;transition:var(--ease);border-radius:10px;color:var(--c4)}
-.main-tab.active{background:var(--white);color:var(--c1);box-shadow:var(--s1)}
+.main-tabs{display:flex;gap:0;margin:10px 16px;border-radius:var(--r2);background:var(--white);padding:3px;box-shadow:var(--s1)}
+.main-tab{flex:1;padding:10px 4px;text-align:center;font-size:.78rem;font-weight:700;transition:var(--ease);border-radius:12px;color:var(--c4);position:relative}
+.main-tab.active{background:var(--brand);color:#fff;box-shadow:0 2px 8px rgba(40,125,250,.2)}
 
 /* ===== Suggest ===== */
 .suggest{margin:8px 16px;padding:18px;border-radius:var(--r3);background:var(--white);box-shadow:var(--s2)}
@@ -155,8 +165,8 @@ img{display:block;max-width:100%}
 @media(max-width:700px){.grid{grid-template-columns:1fr}}
 
 /* ===== Card ===== */
-.card{border-radius:var(--r2);background:var(--white);overflow:hidden;cursor:pointer;transition:var(--ease);position:relative;box-shadow:var(--s1)}
-.card:hover{box-shadow:var(--s3);transform:translateY(-4px)}
+.card{border-radius:var(--r2);background:var(--white);overflow:hidden;cursor:pointer;transition:var(--ease);position:relative;box-shadow:0 1px 8px rgba(0,0,0,.06)}
+.card:hover{box-shadow:0 4px 20px rgba(0,0,0,.1);transform:translateY(-2px)}
 .card:active{transform:scale(.985)}
 .card.selected{ring:3px solid var(--accent);box-shadow:0 0 0 3px var(--accent),var(--s2)}
 .card-img{width:100%;height:180px;object-fit:cover;background:linear-gradient(135deg,var(--blue-light),var(--success-light))}
@@ -332,6 +342,47 @@ img:-moz-loading{opacity:0}
 /* ===== Leaflet ===== */
 .leaflet-popup-content-wrapper{border-radius:var(--r)!important;font-family:var(--font)!important;box-shadow:var(--s3)!important}
 
+/* ===== Onboarding ===== */
+.ob-overlay{position:fixed;inset:0;z-index:10000;background:var(--white)}
+.ob-overlay.done{opacity:0;pointer-events:none;transition:opacity .5s}
+.ob-progress{position:absolute;top:0;left:0;height:4px;background:linear-gradient(90deg,#287DFA,#1CB0F6);border-radius:0 2px 2px 0;transition:width .4s cubic-bezier(.4,0,.2,1);z-index:1}
+.ob-screen{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;padding:60px 24px 32px;opacity:0;transform:translateX(60px);pointer-events:none;transition:all .4s cubic-bezier(.4,0,.2,1);overflow-y:auto}
+.ob-screen.active{opacity:1;transform:translateX(0);pointer-events:auto}
+.ob-screen.exit{opacity:0;transform:translateX(-60px);pointer-events:none}
+.ob-mascot{font-size:4rem;margin-bottom:8px;animation:ob-bounce 1s ease-in-out infinite alternate}
+@keyframes ob-bounce{0%{transform:translateY(0)}100%{transform:translateY(-8px)}}
+.ob-title{font-family:var(--font2);font-size:clamp(1.4rem,5vw,1.8rem);font-weight:700;color:var(--c1);text-align:center;margin-bottom:4px;line-height:1.3}
+.ob-sub{font-size:.88rem;color:var(--c4);text-align:center;margin-bottom:24px;line-height:1.6}
+.ob-options{display:flex;flex-direction:column;gap:10px;width:100%;max-width:360px}
+.ob-opt{display:flex;align-items:center;gap:14px;padding:16px 18px;border-radius:14px;border:2px solid var(--c7);background:var(--white);cursor:pointer;transition:all .2s;font-size:.92rem;font-weight:600;color:var(--c2)}
+.ob-opt:active{transform:scale(.97)}
+.ob-opt.selected{border-color:#287DFA;background:#EFF6FF;color:#287DFA;box-shadow:0 2px 12px rgba(40,125,250,.12)}
+.ob-opt .ob-icon{font-size:1.5rem;flex-shrink:0;width:36px;text-align:center}
+.ob-opt-multi.selected::after{content:'✓';position:absolute;right:16px;color:#287DFA;font-weight:700;font-size:1rem}
+.ob-opt-multi{position:relative;padding-right:40px}
+.ob-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;width:100%;max-width:360px}
+.ob-grid-item{display:flex;flex-direction:column;align-items:center;gap:6px;padding:18px 8px;border-radius:14px;border:2px solid var(--c7);background:var(--white);cursor:pointer;transition:all .2s;text-align:center}
+.ob-grid-item:active{transform:scale(.95)}
+.ob-grid-item.selected{border-color:#287DFA;background:#EFF6FF;box-shadow:0 2px 12px rgba(40,125,250,.12)}
+.ob-grid-item .ob-g-icon{font-size:2rem}
+.ob-grid-item .ob-g-label{font-size:.72rem;font-weight:700;color:var(--c2)}
+.ob-next{width:100%;max-width:360px;padding:16px;border-radius:14px;background:#E0E0E0;color:#999;font-size:1rem;font-weight:700;border:none;cursor:not-allowed;transition:all .25s;margin-top:auto;letter-spacing:.3px}
+.ob-next.ready{background:#287DFA;color:#fff;cursor:pointer;box-shadow:0 4px 16px rgba(40,125,250,.25)}
+.ob-next.ready:active{transform:scale(.97);box-shadow:0 2px 8px rgba(40,125,250,.3)}
+.ob-skip{font-size:.78rem;color:var(--c5);margin-top:10px;cursor:pointer;padding:8px}
+.ob-skip:hover{color:var(--c3)}
+.ob-welcome{text-align:center}
+.ob-welcome-emoji{font-size:5rem;margin-bottom:12px;animation:ob-pop .6s cubic-bezier(.22,1,.36,1)}
+@keyframes ob-pop{0%{transform:scale(0)}60%{transform:scale(1.15)}100%{transform:scale(1)}}
+.ob-tag{display:inline-block;padding:4px 12px;border-radius:var(--r4);background:#EFF6FF;color:#287DFA;font-size:.75rem;font-weight:700;margin:2px}
+
+/* ===== Trip.com-style UX ===== */
+.section-header{display:flex;align-items:center;justify-content:space-between;padding:16px 16px 8px}
+.section-title{font-size:1rem;font-weight:700;color:var(--c1)}
+.section-more{font-size:.78rem;color:#287DFA;font-weight:600;cursor:pointer}
+.skeleton{background:linear-gradient(90deg,var(--c8) 25%,var(--c7) 50%,var(--c8) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:var(--r)}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
 /* ===== Responsive ===== */
 @media(max-width:600px){
   .header h1{font-size:1.8rem}
@@ -340,12 +391,132 @@ img:-moz-loading{opacity:0}
   .area-select{width:100%}
   .detail-meta{grid-template-columns:1fr}
   .grid{grid-template-columns:1fr}
+  .ob-grid{grid-template-columns:repeat(2,1fr)}
 }
 </style>
 </head>
 <body>
 
-<div class="loader" id="loader">
+<!-- ===== ONBOARDING ===== -->
+<div class="ob-overlay" id="onboarding">
+  <div class="ob-progress" id="obProgress" style="width:0%"></div>
+
+  <!-- Screen 0: Welcome -->
+  <div class="ob-screen active" id="ob-0">
+    <div class="ob-mascot">🐢</div>
+    <div class="ob-title">Aloha!<br>Oahu Explorerへようこそ</div>
+    <div class="ob-sub">あなたにぴったりのハワイ旅行プランを<br>一緒に作りましょう 🌺</div>
+    <div style="display:flex;flex-direction:column;gap:6px;align-items:center;margin-bottom:24px">
+      <span class="ob-tag">🏖️ 50+スポット</span>
+      <span class="ob-tag">🍽️ グルメ情報</span>
+      <span class="ob-tag">📍 ルート案内</span>
+    </div>
+    <button class="ob-next ready" onclick="obNext(0)">はじめる</button>
+  </div>
+
+  <!-- Screen 1: Discovery channel -->
+  <div class="ob-screen" id="ob-1">
+    <div style="font-size:2.5rem;margin-bottom:8px">📱</div>
+    <div class="ob-title">このアプリをどこで<br>知りましたか？</div>
+    <div class="ob-sub">サービス改善に活用させていただきます</div>
+    <div class="ob-options" id="ob1opts">
+      <div class="ob-opt" onclick="obSelect(1,this,'sns')"><span class="ob-icon">📸</span>SNS（Instagram・TikTok）</div>
+      <div class="ob-opt" onclick="obSelect(1,this,'friend')"><span class="ob-icon">👫</span>友人・家族の紹介</div>
+      <div class="ob-opt" onclick="obSelect(1,this,'search')"><span class="ob-icon">🔍</span>Google検索</div>
+      <div class="ob-opt" onclick="obSelect(1,this,'appstore')"><span class="ob-icon">📲</span>App Store</div>
+      <div class="ob-opt" onclick="obSelect(1,this,'blog')"><span class="ob-icon">📝</span>ブログ・記事</div>
+      <div class="ob-opt" onclick="obSelect(1,this,'other')"><span class="ob-icon">💡</span>その他</div>
+    </div>
+    <button class="ob-next" id="ob1next" onclick="obNext(1)">次へ</button>
+    <div class="ob-skip" onclick="obNext(1)">スキップ</div>
+  </div>
+
+  <!-- Screen 2: Travel status -->
+  <div class="ob-screen" id="ob-2">
+    <div style="font-size:2.5rem;margin-bottom:8px">✈️</div>
+    <div class="ob-title">今のハワイ旅行の<br>ステータスは？</div>
+    <div class="ob-sub">あなたの状況に合わせた情報をお届けします</div>
+    <div class="ob-options" id="ob2opts">
+      <div class="ob-opt" onclick="obSelect(2,this,'in_hawaii')"><span class="ob-icon">🌴</span>今ハワイにいる！</div>
+      <div class="ob-opt" onclick="obSelect(2,this,'soon')"><span class="ob-icon">🎫</span>もうすぐ出発（1ヶ月以内）</div>
+      <div class="ob-opt" onclick="obSelect(2,this,'planning')"><span class="ob-icon">📅</span>計画中（1〜6ヶ月後）</div>
+      <div class="ob-opt" onclick="obSelect(2,this,'dreaming')"><span class="ob-icon">💭</span>いつか行きたい</div>
+    </div>
+    <button class="ob-next" id="ob2next" onclick="obNext(2)">次へ</button>
+  </div>
+
+  <!-- Screen 3: Who with -->
+  <div class="ob-screen" id="ob-3">
+    <div style="font-size:2.5rem;margin-bottom:8px">👥</div>
+    <div class="ob-title">誰と旅行しますか？</div>
+    <div class="ob-sub">メンバーに合った提案をします</div>
+    <div class="ob-options" id="ob3opts">
+      <div class="ob-opt" onclick="obSelect(3,this,'solo')"><span class="ob-icon">🧳</span>一人旅</div>
+      <div class="ob-opt" onclick="obSelect(3,this,'couple')"><span class="ob-icon">💑</span>カップル・夫婦</div>
+      <div class="ob-opt" onclick="obSelect(3,this,'family')"><span class="ob-icon">👨‍👩‍👧‍👦</span>家族（子連れ）</div>
+      <div class="ob-opt" onclick="obSelect(3,this,'friends')"><span class="ob-icon">👯</span>友人グループ</div>
+    </div>
+    <button class="ob-next" id="ob3next" onclick="obNext(3)">次へ</button>
+  </div>
+
+  <!-- Screen 4: Interests (multi-select) -->
+  <div class="ob-screen" id="ob-4">
+    <div style="font-size:2.5rem;margin-bottom:8px">🎯</div>
+    <div class="ob-title">興味のあるジャンルは？</div>
+    <div class="ob-sub">複数選べます（あとで変更可）</div>
+    <div class="ob-grid" id="ob4opts">
+      <div class="ob-grid-item" onclick="obMulti(4,this,'beach')"><div class="ob-g-icon">🏖️</div><div class="ob-g-label">ビーチ</div></div>
+      <div class="ob-grid-item" onclick="obMulti(4,this,'food')"><div class="ob-g-icon">🍽️</div><div class="ob-g-label">グルメ</div></div>
+      <div class="ob-grid-item" onclick="obMulti(4,this,'nature')"><div class="ob-g-icon">🌿</div><div class="ob-g-label">自然・ハイキング</div></div>
+      <div class="ob-grid-item" onclick="obMulti(4,this,'culture')"><div class="ob-g-icon">🏛️</div><div class="ob-g-label">歴史・文化</div></div>
+      <div class="ob-grid-item" onclick="obMulti(4,this,'shopping')"><div class="ob-g-icon">🛍️</div><div class="ob-g-label">ショッピング</div></div>
+      <div class="ob-grid-item" onclick="obMulti(4,this,'activity')"><div class="ob-g-icon">🏄</div><div class="ob-g-label">アクティビティ</div></div>
+      <div class="ob-grid-item" onclick="obMulti(4,this,'cafe')"><div class="ob-g-icon">☕</div><div class="ob-g-label">カフェ</div></div>
+      <div class="ob-grid-item" onclick="obMulti(4,this,'sunset')"><div class="ob-g-icon">🌅</div><div class="ob-g-label">サンセット</div></div>
+      <div class="ob-grid-item" onclick="obMulti(4,this,'instagram')"><div class="ob-g-icon">📸</div><div class="ob-g-label">映えスポット</div></div>
+    </div>
+    <button class="ob-next" id="ob4next" onclick="obNext(4)">次へ</button>
+  </div>
+
+  <!-- Screen 5: Budget -->
+  <div class="ob-screen" id="ob-5">
+    <div style="font-size:2.5rem;margin-bottom:8px">💰</div>
+    <div class="ob-title">旅行の予算感は？</div>
+    <div class="ob-sub">おすすめの費用感を調整します</div>
+    <div class="ob-options" id="ob5opts">
+      <div class="ob-opt" onclick="obSelect(5,this,'budget')"><span class="ob-icon">🪙</span>できるだけリーズナブルに</div>
+      <div class="ob-opt" onclick="obSelect(5,this,'moderate')"><span class="ob-icon">💵</span>バランス重視</div>
+      <div class="ob-opt" onclick="obSelect(5,this,'luxury')"><span class="ob-icon">💎</span>贅沢に楽しみたい</div>
+    </div>
+    <button class="ob-next" id="ob5next" onclick="obNext(5)">次へ</button>
+  </div>
+
+  <!-- Screen 6: Experience -->
+  <div class="ob-screen" id="ob-6">
+    <div style="font-size:2.5rem;margin-bottom:8px">🗺️</div>
+    <div class="ob-title">ハワイは何回目ですか？</div>
+    <div class="ob-sub">経験に合わせた穴場もご紹介します</div>
+    <div class="ob-options" id="ob6opts">
+      <div class="ob-opt" onclick="obSelect(6,this,'first')"><span class="ob-icon">🔰</span>初めて</div>
+      <div class="ob-opt" onclick="obSelect(6,this,'second')"><span class="ob-icon">✌️</span>2回目</div>
+      <div class="ob-opt" onclick="obSelect(6,this,'repeat')"><span class="ob-icon">🏅</span>3回以上（リピーター）</div>
+    </div>
+    <button class="ob-next" id="ob6next" onclick="obNext(6)">次へ</button>
+  </div>
+
+  <!-- Screen 7: Complete -->
+  <div class="ob-screen" id="ob-7">
+    <div class="ob-welcome">
+      <div class="ob-welcome-emoji">🌺</div>
+      <div class="ob-title">準備完了！</div>
+      <div class="ob-sub" id="obCompleteSub">あなた専用のハワイガイドを<br>ご用意しました</div>
+      <div id="obSummaryTags" style="margin:16px 0"></div>
+    </div>
+    <button class="ob-next ready" onclick="obComplete()" style="margin-top:24px">ガイドを見る 🌴</button>
+  </div>
+</div>
+
+<div class="loader" id="loader" style="display:none">
   <div class="loader-emoji">🌺</div>
   <div class="loader-text">Aloha! Loading Oahu...</div>
 </div>
@@ -434,6 +605,15 @@ img:-moz-loading{opacity:0}
 
 <!-- Explore Tab -->
 <div id="tab-explore">
+  <!-- Personalized Section -->
+  <div class="featured-section" id="personalizedSection" style="display:none">
+    <div class="section-header" style="padding:8px 0">
+      <div class="section-title" id="personalizedTitle">🎯 あなたへのおすすめ</div>
+      <div class="section-more" onclick="document.getElementById('onboarding').style.display='';document.getElementById('ob-0').classList.add('active');localStorage.removeItem('oahu_ob_done')">設定変更</div>
+    </div>
+    <div class="featured-scroll" id="personalizedScroll"></div>
+  </div>
+
   <!-- Featured Section -->
   <div class="featured-section">
     <div class="featured-title" id="featuredTitle">🔥 おすすめスポット <span class="badge-sponsored">Sponsored</span></div>
@@ -492,6 +672,7 @@ img:-moz-loading{opacity:0}
   <div style="padding:4px 16px;display:flex;justify-content:space-between;align-items:center">
     <div class="spots-count" id="spotsCount"></div>
     <select id="sortSelect" onchange="renderSpots()" style="padding:6px 10px;border-radius:var(--r4);border:1.5px solid var(--c7);font-size:.75rem;font-family:inherit;background:var(--white);color:var(--c3)">
+      <option value="personal">🎯 あなた向け</option>
       <option value="distance">📍 近い順</option>
       <option value="rating">⭐ 評価順</option>
       <option value="name">あ 名前順</option>
@@ -612,6 +793,140 @@ img:-moz-loading{opacity:0}
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
+// ===== ONBOARDING =====
+const OB_KEY='oahu_ob_';
+const obData={};
+let obMultiData={};
+
+(function initOnboarding(){
+  if(localStorage.getItem(OB_KEY+'done')){
+    document.getElementById('onboarding').style.display='none';
+    document.getElementById('loader').style.display='';
+    return;
+  }
+  document.getElementById('onboarding').style.display='';
+  document.getElementById('loader').style.display='none';
+})();
+
+function obSelect(step,el,val){
+  const parent=el.parentElement;
+  parent.querySelectorAll('.ob-opt').forEach(o=>o.classList.remove('selected'));
+  el.classList.add('selected');
+  obData[step]=val;
+  const btn=document.getElementById('ob'+step+'next');
+  if(btn)btn.classList.add('ready');
+}
+
+function obMulti(step,el,val){
+  el.classList.toggle('selected');
+  if(!obMultiData[step])obMultiData[step]=new Set();
+  if(obMultiData[step].has(val))obMultiData[step].delete(val);
+  else obMultiData[step].add(val);
+  obData[step]=[...obMultiData[step]];
+  const btn=document.getElementById('ob'+step+'next');
+  if(btn){
+    if(obMultiData[step].size>0)btn.classList.add('ready');
+    else btn.classList.remove('ready');
+  }
+}
+
+function obNext(step){
+  const totalSteps=7;
+  const current=document.getElementById('ob-'+step);
+  const next=document.getElementById('ob-'+(step+1));
+  if(!next)return;
+  current.classList.remove('active');
+  current.classList.add('exit');
+  next.classList.add('active');
+  const pct=Math.round(((step+1)/totalSteps)*100);
+  document.getElementById('obProgress').style.width=pct+'%';
+  if(step+1===totalSteps){
+    renderObSummary();
+  }
+}
+
+function renderObSummary(){
+  const labels={
+    sns:'SNS',friend:'友人紹介',search:'検索',appstore:'App Store',blog:'ブログ',other:'その他',
+    in_hawaii:'現地滞在中',soon:'もうすぐ出発',planning:'計画中',dreaming:'検討中',
+    solo:'一人旅',couple:'カップル',family:'家族',friends:'友人',
+    beach:'ビーチ',food:'グルメ',nature:'自然',culture:'文化',shopping:'ショッピング',activity:'アクティビティ',cafe:'カフェ',sunset:'サンセット',instagram:'映えスポット',
+    budget:'リーズナブル',moderate:'バランス',luxury:'贅沢',
+    first:'初ハワイ',second:'2回目',repeat:'リピーター'
+  };
+  const tags=[];
+  if(obData[3])tags.push(labels[obData[3]]||obData[3]);
+  if(obData[2])tags.push(labels[obData[2]]||obData[2]);
+  if(Array.isArray(obData[4]))obData[4].forEach(v=>tags.push(labels[v]||v));
+  if(obData[5])tags.push(labels[obData[5]]||obData[5]);
+  if(obData[6])tags.push(labels[obData[6]]||obData[6]);
+  const el=document.getElementById('obSummaryTags');
+  el.innerHTML=tags.map(t=>`<span class="ob-tag">${t}</span>`).join(' ');
+  const sub=document.getElementById('obCompleteSub');
+  const who=labels[obData[3]]||'あなた';
+  const status=obData[2]==='in_hawaii'?'ハワイ滞在をもっと楽しく！':obData[2]==='soon'?'出発前の準備もバッチリ！':'最高のハワイ旅行を一緒に計画しましょう！';
+  sub.innerHTML=`${who}の${status}<br>パーソナライズされたガイドをどうぞ`;
+}
+
+function obComplete(){
+  // Save all data
+  localStorage.setItem(OB_KEY+'done','1');
+  localStorage.setItem(OB_KEY+'source',obData[1]||'');
+  localStorage.setItem(OB_KEY+'status',obData[2]||'');
+  localStorage.setItem(OB_KEY+'party',obData[3]||'');
+  localStorage.setItem(OB_KEY+'interests',JSON.stringify(obData[4]||[]));
+  localStorage.setItem(OB_KEY+'budget',obData[5]||'');
+  localStorage.setItem(OB_KEY+'experience',obData[6]||'');
+  // Animate out
+  const overlay=document.getElementById('onboarding');
+  overlay.classList.add('done');
+  document.getElementById('loader').style.display='';
+  setTimeout(()=>{
+    overlay.style.display='none';
+    initApp();
+  },500);
+}
+
+function getUserProfile(){
+  return{
+    source:localStorage.getItem(OB_KEY+'source')||'',
+    status:localStorage.getItem(OB_KEY+'status')||'',
+    party:localStorage.getItem(OB_KEY+'party')||'',
+    interests:JSON.parse(localStorage.getItem(OB_KEY+'interests')||'[]'),
+    budget:localStorage.getItem(OB_KEY+'budget')||'',
+    experience:localStorage.getItem(OB_KEY+'experience')||''
+  };
+}
+
+function getPersonalizedSpots(spots){
+  const p=getUserProfile();
+  if(!p.interests.length&&!p.party)return spots;
+  const scored=spots.map(s=>{
+    let sc=0;
+    // Interest matching
+    if(p.interests.length){
+      p.interests.forEach(interest=>{
+        if(s.cat.includes(interest))sc+=5;
+        if(interest==='sunset'&&s.tags.includes('sunset'))sc+=4;
+        if(interest==='instagram'&&s.tags.includes('instagram'))sc+=4;
+      });
+    }
+    // Party matching
+    if(p.party==='couple'&&(s.tags.includes('couple')||s.tags.includes('romantic')))sc+=3;
+    if(p.party==='family'&&(s.tags.includes('family')||s.tags.includes('safe')))sc+=3;
+    if(p.party==='solo'&&(s.tags.includes('secluded')||s.tags.includes('local')))sc+=2;
+    if(p.party==='friends'&&(s.tags.includes('adventure')||s.tags.includes('instagram')))sc+=2;
+    // Budget matching
+    if(p.budget==='budget'&&s.price&&s.price.includes('無料'))sc+=3;
+    if(p.budget==='luxury'&&s.tags.includes('luxury'))sc+=3;
+    // Experience matching
+    if(p.experience==='first'&&(s.tags.includes('must-see')||s.tags.includes('famous')||s.featured))sc+=3;
+    if(p.experience==='repeat'&&(s.tags.includes('local')||s.tags.includes('secluded')))sc+=3;
+    return{...s,_personalScore:sc};
+  });
+  return scored;
+}
+
 // ===== OAHU SPOT DATABASE =====
 const S = [
   // ========== BEACHES ==========
@@ -1639,23 +1954,25 @@ let userLat=null,userLng=null,selCat='all',selArea='all',selected=[],rMap=null,c
 const STORAGE_KEY='oahu_explorer_';
 
 // ===== INIT =====
-window.addEventListener('load',()=>{
+function initApp(){
+  document.getElementById('loader').style.display='';
   setTimeout(()=>document.getElementById('loader').classList.add('hide'),700);
   selected=JSON.parse(localStorage.getItem(STORAGE_KEY+'selected')||'[]');
   setupListeners();
+  renderPersonalized();
   renderFeatured();
   renderSpots();
   updateItiBar();
   getLocation();
   setLang(lang);
   track('page_view');
-  // Cookie banner
   if(!localStorage.getItem(STORAGE_KEY+'cookie_ok'))setTimeout(()=>document.getElementById('cookieBanner').classList.add('show'),1500);
-  // Scroll top
   window.addEventListener('scroll',()=>{document.getElementById('scrollTop').classList.toggle('show',window.scrollY>300)});
-  // Service Worker
   if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
   updateTripBanner();
+}
+window.addEventListener('load',()=>{
+  if(localStorage.getItem(OB_KEY+'done'))initApp();
 });
 function acceptCookies(){localStorage.setItem(STORAGE_KEY+'cookie_ok','1');document.getElementById('cookieBanner').classList.remove('show')}
 
@@ -1672,6 +1989,33 @@ function renderFeatured(){
       <div class="featured-card-body">
         <div class="featured-card-name">${s.emoji} ${lang==='en'?s.en:s.name}</div>
         <div class="featured-card-sub">★ ${s.rating||4.5} ${s.price||''}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ===== PERSONALIZED SECTION =====
+function renderPersonalized(){
+  const el=document.getElementById('personalizedSection');
+  if(!el)return;
+  const p=getUserProfile();
+  if(!p.interests.length&&!p.party){el.style.display='none';return}
+  el.style.display='';
+  const scored=getPersonalizedSpots(S).sort((a,b)=>(b._personalScore||0)-(a._personalScore||0)).filter(s=>s._personalScore>0).slice(0,8);
+  if(!scored.length){el.style.display='none';return}
+  const partyLabels={solo:'一人旅',couple:'カップル',family:'ファミリー',friends:'友達グループ'};
+  const titleText=p.party?`${partyLabels[p.party]||'あなた'}へのおすすめ`:'あなたへのおすすめ';
+  document.getElementById('personalizedTitle').textContent=titleText;
+  document.getElementById('personalizedScroll').innerHTML=scored.map(s=>`
+    <div class="featured-card" onclick="openDetail(${s.id})" style="min-width:180px">
+      <div style="position:relative;width:180px;height:110px;background:linear-gradient(135deg,var(--blue-light),var(--accent-light));overflow:hidden;border-radius:var(--r2) var(--r2) 0 0">
+        <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:2.2rem">${s.emoji}</div>
+        ${s.photo?`<img src="${s.photo}" alt="${s.name}" loading="lazy" style="width:180px;height:110px;object-fit:cover;position:relative;z-index:1" onerror="this.style.display='none'">`:''}
+        <div style="position:absolute;top:6px;right:6px;padding:2px 8px;border-radius:var(--r4);background:rgba(40,125,250,.85);color:#fff;font-size:.6rem;font-weight:700;z-index:2">おすすめ</div>
+      </div>
+      <div style="padding:8px 10px">
+        <div style="font-size:.78rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${s.emoji} ${lang==='en'?s.en:s.name}</div>
+        <div style="font-size:.65rem;color:var(--c5)">★ ${s.rating} ${s.price||''}</div>
       </div>
     </div>
   `).join('');
@@ -1779,18 +2123,19 @@ function driveMin(km){return Math.max(3,Math.round(km*1.4/35*60))}
 function renderSpots(){
   const grid=document.getElementById('grid'),cnt=document.getElementById('spotsCount');
   const q=document.getElementById('searchInput').value.toLowerCase();
-  let spots=S.filter(s=>{
+  let spots=getPersonalizedSpots(S.filter(s=>{
     if(selArea!=='all'&&s.area!==selArea)return false;
     if(selCat!=='all'&&!s.cat.includes(selCat))return false;
     if(q&&!s.name.includes(q)&&!s.en.toLowerCase().includes(q)&&!s.desc.includes(q)&&!s.tags.some(t=>t.includes(q)))return false;
     return true;
-  });
+  }));
   if(userLat)spots.forEach(s=>s._d=hav(userLat,userLng,s.lat,s.lng));
   const sort=document.getElementById('sortSelect')?.value||'distance';
   if(sort==='distance'&&userLat)spots.sort((a,b)=>(a._d||999)-(b._d||999));
   else if(sort==='rating')spots.sort((a,b)=>(b.rating||4)-(a.rating||4));
   else if(sort==='name')spots.sort((a,b)=>a.name.localeCompare(b.name,'ja'));
   else if(sort==='price')spots.sort((a,b)=>{const fa=a.price&&a.price.includes('無料')?0:1;const fb=b.price&&b.price.includes('無料')?0:1;return fa-fb});
+  else if(sort==='personal')spots.sort((a,b)=>(b._personalScore||0)-(a._personalScore||0));
   const areas={waikiki:'ワイキキ',honolulu:'ホノルル',kailua:'カイルア',northshore:'ノースショア',westside:'西海岸',eastside:'東海岸',central:'中部'};
   cnt.textContent=`${spots.length} スポット${selArea!=='all'?' / '+areas[selArea]:''}`;
   grid.innerHTML=spots.map((s,i)=>{
